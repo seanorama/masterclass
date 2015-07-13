@@ -29,7 +29,4 @@ gcloud compute --project "siq-haas" instances create \
   --boot-disk-type "pd-standard" --boot-disk-size 50GB  --no-scopes
 
 gcloud preview --project "siq-haas" instance-groups --zone "europe-west1-b" \
-  create "hdp-partner-workshop" --network "hdp-partner-workshop"
-
-gcloud preview --project "siq-haas" instance-groups --zone "europe-west1-b" \
   instances --group "hdp-partner-workshop" add "p-lab${lab}-ipa" "p-lab${lab}-hdp"

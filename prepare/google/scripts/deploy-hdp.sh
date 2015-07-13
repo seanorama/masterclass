@@ -44,8 +44,6 @@ EOF
 
 curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat6/repositories/HDP-2.3 -T /tmp/post-data.json
 
-exit
-
 cd ~/ambari-bootstrap/deploy
 export ambari_services="AMBARI_METRICS KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
 #export ambari_services="AMBARI_METRICS KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE RANGER RANGER_KMS"
