@@ -19,7 +19,7 @@ git clone -b centos-7 https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
 sudo install_ambari_server=true ./ambari-bootstrap.sh
 
-sudo curl -sSL -o /etc/ambari-agent/conf/public-hostname-gcloud.sh https://github.com/GoogleCloudPlatform/bdutil/blob/master/platforms/hdp/resources/public-hostname-gcloud.sh
+sudo curl -sSL -o /etc/ambari-agent/conf/public-hostname-gcloud.sh https://raw.githubusercontent.com/GoogleCloudPlatform/bdutil/master/platforms/hdp/resources/public-hostname-gcloud.sh
 sudo sed -i.bak "/\[agent\]/ a public_hostname_script=\/etc\/ambari-agent\/conf\/public-hostname-gcloud.sh" /etc/ambari-agent/conf/ambari-agent.ini
 sudo service ambari-agent restart
 
