@@ -11,7 +11,7 @@ sudo yum -y install haveged
 sudo service haveged start; sudo chkconfig haveged on
 sudo service ntpd restart
 
-curl -sSL -O https://github.com/seanorama/masterclass/blob/master/prepare/google/scripts/ipautil.patch
+curl -sSL -O https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/ipautil.patch
 sudo patch -b /usr/lib/python2.7/site-packages/ipapython/ipautil.py < ipautil.patch
 
 ip=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
