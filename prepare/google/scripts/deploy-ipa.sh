@@ -15,11 +15,12 @@ curl -sSL -O https://github.com/seanorama/masterclass/blob/master/prepare/google
 sudo patch -b /usr/lib/python2.7/site-packages/ipapython/ipautil.py < ipautil.patch
 
 ip=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+
 sudo ipa-server-install --domain=hortonworks.local \
   --realm=HORTONWORKS.LOCAL --ds-password=${pass} \
   --master-password=${pass} --admin-password=${pass} \
   --zonemgr 'sroberts+workshop@hortonworks.com' \
-  --hostname=$(hostname -f) --ip-address=$(ip)
+  --hostname=$(hostname -f) --ip-address=${ip} \
   --setup-dns --forwarder=8.8.8.8 \
   --unattended --mkhomedir --no-ui-redirect
 
