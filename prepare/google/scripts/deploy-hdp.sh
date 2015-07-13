@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-#exec 3>&1 4>&2
-#trap 'exec 2>&4 1>&3' 0 1 2 3
-#exec 1>prep-hdp.out 2>&1
 
-# Everything below will go to the file 'log.out':
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
   "6")
@@ -15,7 +11,7 @@ case ${el_version} in
   ;;
 esac
 
-sudo yum -y install ipa-client openldap-clients git python-argparse epel-release patch
+sudo yum -y install openldap-clients git python-argparse epel-release
 sudo service ntpd restart
 
 git clone -b centos-7 https://github.com/seanorama/ambari-bootstrap

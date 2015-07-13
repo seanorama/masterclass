@@ -21,8 +21,8 @@ sudo ipa-server-install --domain=hortonworks.com \
   --master-password=${pass} --admin-password=${pass} \
   --zonemgr 'sroberts+workshop@hortonworks.com' \
   --hostname=$(hostname -f) --ip-address=${ip} \
-  --setup-dns --forwarder=8.8.8.8 \
   --unattended --mkhomedir --no-ui-redirect
+  #--setup-dns --forwarder=8.8.8.8 \
 
 echo ${pass} | kinit admin
 echo ${pass} | sudo kinit admin
