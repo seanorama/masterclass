@@ -1,0 +1,14 @@
+--- /usr/lib/python2.6/site-packages/ipapython/ipautil.py	2014-10-16 15:02:34.000000000 +0000
++++ /home/sroberts/ipautil.py	2015-07-13 13:55:15.247400058 +0000
+@@ -163,11 +163,6 @@
+             elif addr.version == 6:
+                 net = netaddr.IPNetwork(str(addr) + '/64')
+
+-        if not allow_network and  addr == net.network:
+-            raise ValueError("cannot use IP network address")
+-        if not allow_broadcast and addr.version == 4 and addr == net.broadcast:
+-            raise ValueError("cannot use broadcast IP address")
+-
+         super(CheckedIPAddress, self).__init__(addr, flags=self.netaddr_ip_flags)
+         self.prefixlen = net.prefixlen
+         self.defaultnet = defnet

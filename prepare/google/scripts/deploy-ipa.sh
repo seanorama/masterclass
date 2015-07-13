@@ -11,8 +11,8 @@ sudo yum -y install haveged
 sudo service haveged start; sudo chkconfig haveged on
 sudo service ntpd restart
 
-curl -sSL -O https://gist.githubusercontent.com/seanorama/fca566e558b6a459d362/raw/ae2c9ba08c771d91c41df2c97dda0eccfe137fc0/ipautil.el6.patch
-sudo patch -b /usr/lib/python2.7/site-packages/ipapython/ipautil.py < ipautil.el6.patch
+curl -sSL -O https://github.com/seanorama/masterclass/blob/master/prepare/google/scripts/ipautil.patch
+sudo patch -b /usr/lib/python2.7/site-packages/ipapython/ipautil.py < ipautil.patch
 
 ip=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
 sudo ipa-server-install --domain=hortonworks.local \
