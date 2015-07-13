@@ -6,6 +6,7 @@
 
 pass="hortonworks"
 
+sudo yum makecache
 sudo yum -y install *ipa-server bind bind-dyndb-ldap epel-release ntpd screen patch
 sudo yum -y install haveged
 sudo service haveged start; sudo chkconfig haveged on

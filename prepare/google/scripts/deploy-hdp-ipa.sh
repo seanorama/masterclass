@@ -2,6 +2,7 @@
 
 pass=hortonworks
 
+sudo yum makecache
 sudo yum -y install ipa-client openldap-clients patch
 sudo service ntpd restart
 

@@ -11,6 +11,7 @@ case ${el_version} in
   ;;
 esac
 
+sudo yum makecache
 sudo yum -y install openldap-clients git python-argparse epel-release
 sudo service ntpd restart
 
