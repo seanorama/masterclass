@@ -12,7 +12,8 @@ case ${el_version} in
 esac
 
 sudo yum makecache
-sudo yum -y install openldap-clients git python-argparse epel-release
+sudo yum -y install git python-argparse epel-release
+sudo yum -y install jq
 sudo service ntpd restart
 
 git clone -b centos-7 https://github.com/seanorama/ambari-bootstrap
