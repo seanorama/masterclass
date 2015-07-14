@@ -1,0 +1,15 @@
+{
+  "ViewInstanceInfo": {
+    "instance_name": "Files",
+    "label": "Files",
+    "visible": true,
+    "icon_path": "",
+    "icon64_path": "",
+    "description": "Files",
+    "properties": {
+      "webhdfs.username": "${username}",
+      "webhdfs.auth": null
+    },
+    "cluster_handle": "mycluster"
+  }
+}
