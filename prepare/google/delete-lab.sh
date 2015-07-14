@@ -12,8 +12,8 @@ set -o nounset
 
 lab="${lab:-99}"
 
-gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-hdp
-gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-ipa
+echo gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-hdp -q \&
+echo gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-ipa -q \&
 
-gcloud preview --project "siq-haas" instance-groups --zone "europe-west1-b" \
-  instances --group "hdp-partner-workshop" remove "p-lab${lab}-ipa" "p-lab${lab}-hdp"
+echo gcloud preview --project "siq-haas" instance-groups --zone "europe-west1-b" \
+  instances --group "hdp-partner-workshop" remove "p-lab${lab}-ipa" "p-lab${lab}-hdp" -q \&
