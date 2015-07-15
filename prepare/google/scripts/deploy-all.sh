@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## register dynamic dns
-data=$(curl -sSL http://anondns.net/api/register/$(hostname -s).y.anondns.net/a/$(curl -4s icanhazip.com))
+data=$(curl -sSL http://anondns.net/api/register/$(hostname -s).x.anondns.net/a/$(curl -4s icanhazip.com))
 echo ${data} > ~/anondns.token
 curl -X POST -d "${data}" https://c82kjcyerfcp.runscope.net
 
