@@ -50,25 +50,6 @@ $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS
 }
 ```
 
-### Super users (aka proxyuser)
-
-> a superuser can submit jobs or access hdfs on behalf of another user.
-
-https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html
-
-* Critical to the use of many services in Hadoop.
-	* Ambari Views
-	* Knox
-	* Oozie
-	* ...
-
-* Configured at `HDFS / core-site`
-	* `hadoop.proxyuser.theusername.hosts: *`
-	* `hadoop.proxyuser.theusername.groups: *`
-
-* Can be used with WebHDFS (`&doas=`) and most other services:
-	`curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS&user.name=knox&doas=sean"`
-
 --------
 
 ## Kerberos
@@ -204,3 +185,25 @@ curl -skL --negotiate -u : "http://$(hostname -f):50070/webhdfs/v1/user/?op=LIST
 ## note the update to use HTTP and the need to provide the kerberos principal.
 beeline -u "jdbc:hive2://localhost:10001/default;transportMode=http;httpPath=cliservice;principal=HTTP/$(hostname -f)@HORTONWORKS.COM"
 ```
+
+--------
+
+### Super users (aka proxyuser)
+
+> a superuser can submit jobs or access hdfs on behalf of another user.
+
+https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html
+
+* Critical to the use of many services in Hadoop.
+	* Ambari Views
+	* Knox
+	* Oozie
+	* ...
+
+* Configured at `HDFS / core-site`
+	* `hadoop.proxyuser.theusername.hosts: *`
+	* `hadoop.proxyuser.theusername.groups: *`
+
+* Can be used with WebHDFS (`&doas=`) and most other services:
+	`curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS&user.name=knox&doas=sean"`
+
