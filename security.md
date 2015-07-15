@@ -12,6 +12,7 @@ Notes and rough agenda
 Each user environment has 2 servers:
 
 1. `p-labNN-hdp`:  CentOS with Ambari 2.1 & HDP 2.3
+	- Private name:  
 2. `p-labNN-ipa`: CentOS with FreeIPA (Kerberos/LDAP)
 
 Details:
@@ -22,7 +23,8 @@ Details:
 	* Key:
 	* Web SSH client: https://hostname:4200/
 * HDP
-	* Ambari: p-labNN-hdp.dns.net:8080
+	* Ambari: p-labNN-hdp:8080
+		* Credentials: admin/admin
 	* Knox:   p-labNN-hdp:8443
 * FreeIPA (Kerberos & LDAP)
 	* Realm: HORTONWORKS.COM
@@ -38,6 +40,10 @@ Details:
 --------
 
 ## Getting to know the environment
+
+Ambari
+
+* http://p-labXX:8080
 
 SSH
 
