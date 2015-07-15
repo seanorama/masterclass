@@ -41,6 +41,7 @@ Each user environment has 2 servers:
 #### Hadoop
 
 * Hadoop Commands:
+	* list a directory: `hadoop fs -ls /directoryname`
 	* make a directory: `hadoop fs -mkdir -p /dir/in/hadoop`
 	* Put local file(s) into HDFS: `hadoop fs -put file1.csv file2.csv /dir/in/hadoop/`
 	* Connect to Hive with beeline:
@@ -59,3 +60,4 @@ beeline -n admin -u jdbc:hive2://localhost:10000/default`
 1. Note the internal hostname of the server
 1. Make the HDFS directory /tmp/lab01
 1. Upload `hadoop-sample-data/trucks.csv` into /tmp/lab01
+1. List the files in /tmp/lab01. (Note that the owner is the same name as your system user
