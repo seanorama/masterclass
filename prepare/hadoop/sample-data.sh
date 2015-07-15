@@ -44,7 +44,7 @@ beeline -n admin -u jdbc:hive2://$(hostname -f):10000/default -f sample-populate
 curl -O https://raw.githubusercontent.com/seanorama/masterclass/master/data/Geolocation.zip
 unzip Geolocation.zip
 HADOOP_USER_NAME=admin sudo sudo -u admin hadoop fs -mkdir -p /temp/admin/data
-HADOOP_USER_NAME=admin sudo sudo -u hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
+HADOOP_USER_NAME=admin sudo sudo -u admin hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
 
 
 ## Trucking demo tables
