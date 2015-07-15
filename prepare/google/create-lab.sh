@@ -18,7 +18,7 @@ gcloud compute --project "siq-haas" instances create \
   --metadata-from-file sshKeys=./metadata-sshkeys \
   --zone "europe-west1-b" --network "hdp-partner-workshop" \
   --maintenance-policy "MIGRATE" --tags "hdp-partner-workshop" \
-  --boot-disk-type "pd-standard" --boot-disk-size 50GB  --no-scopes
+  --boot-disk-type "pd-standard" --boot-disk-size 50GB  --no-scopes &
 
 gcloud compute --project "siq-haas" instances create \
   "p-lab${lab}-ipa" --boot-disk-device-name "p-lab${lab}-ipa" \

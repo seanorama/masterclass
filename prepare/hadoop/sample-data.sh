@@ -16,19 +16,19 @@ cd ~/hadoop-sample-data
 ####
 ##
 ipa_server=$(cat /etc/ipa/default.conf | awk '/^server =/ {print $3}')
-ipa_pass=${ipapass:-hortonworks}
+ipa_pass=${ipa_pass:-hortonworks}
 users=$(ldapsearch -h ${ipa_server} -w ${ipa_pass} -D 'uid=admin,cn=users,cn=accounts,dc=hortonworks,dc=com' -x -b 'cn=users,cn=accounts,dc=hortonworks,dc=com' "(homeDirectory=/home/*)" uid | awk '/^uid: / {print $2}')
 users+=" $(getent passwd | grep '/home' | cut -d ':' -f 1)"
 users=$(echo ${users} | sort -u)
-HADOOP_USERNAME=hdfs
+export HADOOP_USER_NAME=hdfs
 for user in ${users}; do
-  dfs_cmd="hadoop fs"
+  dfs_cmd="sudo sudo -u hdfs hadoop fs"
   if ! ${dfs_cmd} -stat /user/${user}; then
     ${dfs_cmd} -mkdir -p "/user/${user}"
     ${dfs_cmd} -chown "${user}" "/user/${user}"
   fi
 done
-unset HADOOP_USERNAME
+unset HADOOP_USER_NAME
 
 ####
 ## populate data
@@ -43,8 +43,8 @@ beeline -n admin -u jdbc:hive2://$(hostname -f):10000/default -f sample-populate
 ## Trucking demo data sets
 curl -O https://raw.githubusercontent.com/seanorama/masterclass/master/data/Geolocation.zip
 unzip Geolocation.zip
-HADOOP_USER_NAME=admin hadoop fs -mkdir -p /temp/admin/data
-HADOOP_USER_NAME=admin hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
+HADOOP_USER_NAME=admin sudo sudo -u admin hadoop fs -mkdir -p /temp/admin/data
+HADOOP_USER_NAME=admin sudo sudo -u hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
 
 
 ## Trucking demo tables
