@@ -2,7 +2,7 @@
 
 ## Hadoop security: in non-secured mode (the default)
 
-#### By default Hadoop relies on system users.
+### By default Hadoop relies on system users.
 
 For example:
 
@@ -16,7 +16,7 @@ $ hadoop fs -ls -d /tmp/student-dir
 drwxr-xr-x   - student hdfs          0 2015-07-14 17:32 /tmp/student-dir
 ```
 
-## There is no authentication
+### There is no authentication
 
 > By default Hadoop runs in non-secure mode in which no actual authentication is required. -- *Apache Hadoop Documentation*
 
@@ -64,7 +64,7 @@ $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS
 }
 ```
 
-## Super users (aka proxyuser)
+### Super users (aka proxyuser)
 
 > a superuser can submit jobs or access hdfs on behalf of another user.
 
