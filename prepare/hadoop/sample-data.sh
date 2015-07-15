@@ -33,7 +33,7 @@ unset HADOOP_USER_NAME
 ####
 ## populate data
 
-HADOOP_USER_NAME=admin hadoop fs -mkdir -p /temp/admin/data2
+HADOOP_USER_NAME=admin hadoop fs -mkdir -p /temp/admin/data
 
 ## Sandbox data sets
 curl -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
@@ -120,8 +120,5 @@ events bigint,
 totmiles bigint, 
 riskfactor float) 
 STORED AS ORC;"
-
-
-
 
 cd

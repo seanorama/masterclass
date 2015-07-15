@@ -7,7 +7,7 @@ Todo: translate to ansible for easier management
 #### 0. Set variables
 
 ```
-export PDSH_SSH_ARGS_APPEND="-o ConnectTimeout=5 -o CheckHostIP=no -o StrictHostKeyChecking=no -o RequestTTY=force"
+export PDSH_SSH_ARGS_APPEND="-l student -i ${HOME}/.ssh/student.pri.key -o ConnectTimeout=5 -o CheckHostIP=no -o StrictHostKeyChecking=no -o RequestTTY=force"
 domain="europe-west1-b.siq-haas"
 labs=$(echo {10..15})
 ```
@@ -19,6 +19,7 @@ cd ~/src/masterclass/prepare/google
 for i in $labs; do lab=$i ./create-lab.sh & sleep 5; done
 ```
 
+```
 #### 2. Build inventory
 gcloud compute config-ssh
 type="hdp" hosts_hdp=$(for i in ${labs}; do printf "p-lab${i}-${type}.${domain},"; done)
@@ -26,7 +27,7 @@ type="ipa" hosts_ipa=$(for i in ${labs}; do printf "p-lab${i}-${type}.${domain},
 hosts_all=${hosts_hdp}${hosts_ipa}
 
 #### 3. check all hosts
-command="echo pong"
+command="whoami"
 pdsh -w ${hosts_all} "${command}"
 
 #### 4. all hosts: set passwords, install shellinaboxd, grow root partition & reboot
@@ -35,24 +36,32 @@ pdsh -w ${hosts_all} "${command}"
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
 pdsh -w ${hosts_all} "${command}"
 
-#### 5a) deploy HDP (a few minutes after above to account for the reboot)
+#### 3. check all hosts
+command="echo pong"
+pdsh -w ${hosts_all} "${command}"
+
+
+#### 5) deploy IPA (can be run in parallel with 5a)
+command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-ipa.sh | bash ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
+pdsh -w ${hosts_ipa} "${command}" &
+#### 5) deploy HDP (a few minutes after above to account for the reboot)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
+##### prepare environment
+#command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
+#pdsh -w ${hosts_ipa} "${command}" 
 
-#### 5b) deploy IPA (can be run in parallel with 5a)
-command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-ipa.sh | bash"
-pdsh -w ${hosts_ipa} "${command}"
 #### 6) deploy IPA to HDP node (after above completes)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp-ipa.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
 
-#### prepare environment
-command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
-pdsh -w ${hosts_ipa} "${command}"
-
 #### prepare hadoop
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/hadoop/sample-data.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
+
+
+
+```
 
 #### ...) Delete lab
 

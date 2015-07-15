@@ -14,7 +14,7 @@ ipa config-mod --defaultshell=/bin/bash
 ##
 
 groups="marketing legal hr sales finance users"
-users="gooduser baduser superuser ali paul legal1 legal2 legal3 hr1 hr2 hr3"
+users="gooduser baduser superuser ali paul sean legal1 legal2 legal3 hr1 hr2 hr3"
 userpass=${userpass:-hortonworks}
 
 ## Add groups
