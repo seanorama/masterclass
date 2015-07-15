@@ -40,3 +40,4 @@ ipa group-add-member hr --users=hr1
 ipa group-add-member hr --users=hr2
 ipa group-add-member hr --users=hr3
 ipa group-add-member admins --users=superuser
+ipa group-add-member users --users=admin
