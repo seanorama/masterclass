@@ -14,14 +14,12 @@ Each user environment has 2 servers:
 
 ## Your HDP Cluster & system familiarity
 
-#### Ambari: Web UI for management & use of HDP
+### Ambari: Web UI for management & use of HDP
 
 * Ambari: p-labNN-hdp:8080
 	* Credentials: admin/admin
-* Knox:   p-labNN-hdp:8443
-* Ranger: :6800
 
-#### SSH: Remote shell
+### SSH: Remote shell
 
 * Credentials:
 	* user: student
@@ -31,14 +29,14 @@ Each user environment has 2 servers:
 	* Windows: putty, openssh, ...
 	* Web: http://hostname:4200 with password provided separately
 
-#### Linux
+### Linux
 
 * Get your internal hostname: `hostname -f`
 * Get your public ip: `curl icanhazip.com`
 * Run as root: `sudo ls /usr/hdp/current`
 * Become another user: `sudo su - hdfs`
 
-#### Hadoop
+### Hadoop
 
 * Hadoop Commands:
 	* list a directory: `hadoop fs -ls /directoryname`
@@ -51,11 +49,20 @@ beeline -n admin -u jdbc:hive2://localhost:10000/default`
 > !connect jdbc:hive2://localhost:10000/default
 	```
 	
+* Ambari Views
+	* Hive
+	* Files
+	* Pig
+	* Capacity Scheduler
+
+-------- 
 
 ## Introduction Lab 01: Linux, Ambari & Hadoop
 
 1. Open and login to Ambari
 1. Restart services if required
+1. Put "Ambari Metrics" in maintenance mode and stop (to save on RAM)
+1. Try the Ambari Views
 1. SSH to your HDP server
 1. Note the internal hostname of the server
 1. Make the HDFS directory /tmp/lab01

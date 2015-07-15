@@ -147,44 +147,6 @@ uid=584200008(gooduser) gid=584200008(gooduser) groups=584200008(gooduser),39(vi
 
 --------
 
-## Ambari 
-
-
-
---------
-
-## Knox for perimeter security
-
-> The Apache Knox Gateway is a REST API Gateway for interacting with Hadoop clusters.
-
-Provides kerberos based authentication even when a cluster is in non-secure mode.
-
-https://knox.apache.org/
-
-## Knox Usage
-
-#### WebHDFS
-
-```
-curl -skL -u gooduser https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS`
-```
-
-#### Hive with Beeline
-
-```
-beeline
-
-## this will fail since we have a self-signed certificate
-> !connect jdbc:hive2://localhost:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive
-
-## to workaround the self-signed certificate, you provide the keystore details:
-> !connect jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/var/lib/knox/data/security/keystores/gateway.jks;trustStorePassword=hadoop;transportMode=http;httpPath=gateway/default/hive
-```
-
-## Lab: Configuring Knox
-
-* https://github.com/abajwa-hw/security-workshops/blob/master/Setup-knox-23.md
-
 ## Hadoop in "Secure Mode"
 
 > By configuring Hadoop runs in secure mode, each user and service needs to be authenticated by Kerberos in order to use Hadoop services. -- *Apache Hadoop Documentation on 
@@ -225,7 +187,7 @@ kinit
 kinit someuser
 ```
 
-#### 3. Now you can use the cluster
+#### 2. Now you can use the cluster
 
 ```
 $ hadoop fs -ls /
