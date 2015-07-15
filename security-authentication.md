@@ -6,7 +6,7 @@
 
 For example:
 
-	```shell
+```shell
 $ whoami
 student
 
@@ -14,7 +14,7 @@ $ hadoop fs -mkdir /tmp/student-dir
 
 $ hadoop fs -ls -d /tmp/student-dir
 drwxr-xr-x   - student hdfs          0 2015-07-14 17:32 /tmp/student-dir
-	```
+```
 
 ## There is no authentication
 
@@ -22,31 +22,31 @@ drwxr-xr-x   - student hdfs          0 2015-07-14 17:32 /tmp/student-dir
 
 Here we are as the user 'baduser'
 
-	```shell
+```shell
 $ hadoop fs -ls /tmp
-Found 4 items
+Found 2 items
 drwx-wx-wx   - ambari-qa hdfs          0 2015-07-14 18:38 /tmp/hive
 drwx------   - hdfs      hdfs          0 2015-07-14 20:33 /tmp/secure
 
 $ hadoop fs -ls /tmp/secure
 ls: Permission denied: user=baduser, access=READ_EXECUTE, inode="/tmp/secure":hdfs:hdfs:drwx------
-	```
+```
 	
 Good right?
 
 Look again:
 
-	```shell
+```shell
 $ HADOOP_USER_NAME=hdfs hadoop fs -ls /tmp/secure
 Found 1 items
 drwxr-xr-x   - hdfs hdfs          0 2015-07-14 20:35 /tmp/secure/blah
-	```
+```
 	
 Oh my!
 
 That also applies to WebHDFS by using '&user.name=':
 
-	```
+```
 $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS" | jq '.'
 {
   "RemoteException": {
@@ -55,13 +55,14 @@ $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS
     "exception": "AccessControlException"
   }
 }
+
 $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS&user.name=hdfs" | jq '.'
 {
   "FileStatuses": {
     "FileStatus": []
   }
 }
-	```
+```
 
 ## Super users (aka proxyuser)
 
@@ -135,7 +136,7 @@ We are using FreeIPA for this workshop.
 
 * Check if a user comes from local or ldap:
 
-	```shell
+```shell
 ## normal user:
 $ id student
 uid=1002(student) gid=1002(student) groups=1002(student),4(adm),39(video),40(dip)
@@ -143,7 +144,7 @@ uid=1002(student) gid=1002(student) groups=1002(student),4(adm),39(video),40(dip
 ## ldap & user:
 $ id gooduser
 uid=584200008(gooduser) gid=584200008(gooduser) groups=584200008(gooduser),39(video),584200007(users)
-	```
+```
 
 *Note that the user has their LDAP & local system groups*
 
@@ -160,7 +161,11 @@ uid=584200008(gooduser) gid=584200008(gooduser) groups=584200008(gooduser),39(vi
 
 --------
 
-## Knox for perimeter security & authentication
+## Ambari 
+
+--------
+
+## Knox for perimeter security
 
 > The Apache Knox Gateway is a REST API Gateway for interacting with Hadoop clusters.
 
@@ -182,8 +187,7 @@ curl -skL -u gooduser https://localhost:8443/gateway/default/webhdfs/v1/?op=LIST
 beeline
 
 ## this will fail since we have a self-signed certificate
-> !connect
-beeline -u gooduser "jdbc:hive2://localhost:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive"
+> !connect jdbc:hive2://localhost:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive
 
 ## to workaround the self-signed certificate, you provide the keystore details:
 > !connect jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/var/lib/knox/data/security/keystores/gateway.jks;trustStorePassword=hadoop;transportMode=http;httpPath=gateway/default/hive
@@ -226,13 +230,14 @@ $ curl -u someuser -skL "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTA
 
 ```
 ## for the current user
+sudo su - gooduser
 kinit
 
 ## for any other user
 kinit someuser
 ```
 
-#### 3. Try again
+#### 3. Now you can use the cluster
 
 ```
 $ hadoop fs -ls /
@@ -245,32 +250,7 @@ Found 8 items
 curl -skL --negotiate -u : "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ```
 
-#### Use the platform before enabling Kerberos
-
-- hadoop fs:
-
-- WebHDFS:
-  - https://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-hdfs/WebHDFS.html#Authentication
-
-	```
-directory list: curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/?op=LISTSTATUS" | jq '.'
 ```
-
-Hive:
-
-```
-```
-
-
-
-#### Lab: Enable Kerberos
-
-https://github.com/abajwa-hw/security-workshops/blob/master/Setup-kerberos-IPA-23.md#enable-kerberos-using-wizard
-
-#### Use the platform after enabling Kerberos
-
-```
-sudo su - sean
-kinit
-curl -k --negotiate -u : "http://$(hostname -f):50070/webhdfs/v1/tmp/?op=LISTSTATUS"
+## note the update to use HTTP and the need to provide the kerberos principal.
+beeline -u "jdbc:hive2://localhost:10001/default;transportMode=http;httpPath=cliservice;principal=HTTP/$(hostname -f)@HORTONWORKS.COM"
 ```

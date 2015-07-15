@@ -43,6 +43,13 @@ Each user environment has 2 servers:
 * Hadoop Commands:
 	* make a directory: `hadoop fs -mkdir -p /dir/in/hadoop`
 	* Put local file(s) into HDFS: `hadoop fs -put file1.csv file2.csv /dir/in/hadoop/`
+	* Connect to Hive with beeline:
+
+	```
+beeline -n admin -u jdbc:hive2://localhost:10000/default`
+> !connect jdbc:hive2://localhost:10000/default
+	```
+	
 
 ## Introduction Lab 01: Linux, Ambari & Hadoop
 
