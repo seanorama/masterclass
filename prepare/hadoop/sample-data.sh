@@ -33,18 +33,40 @@ unset HADOOP_USER_NAME
 ####
 ## populate data
 
+HADOOP_USER_NAME=admin hadoop fs -mkdir -p /temp/admin/data2
+
 ## Sandbox data sets
 curl -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
 curl -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
-#curl -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample-populate.sql
-curl -O https://raw.githubusercontent.com/seanorama/security-workshops/patch-13/data/sample-populate.sql
+HADOOP_USER_NAME=admin hadoop fs -put sample_07.csv sample_08.csv /temp/admin/data/
+
+cat > sample-populate.sql <<-'EOF'
+CREATE TABLE `sample_07` (
+`code` string ,
+`description` string ,
+`total_emp` int ,
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+load data inpath '/temp/admin/data/sample_07.csv' into table sample_07;
+grant SELECT on table sample_07 to user hue;
+
+CREATE TABLE `sample_08` (
+`code` string ,
+`description` string ,
+`total_emp` int ,
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+load data  inpath '/temp/admin/data/sample_08.csv' into table sample_08;
+grant SELECT on table sample_08 to user hue;
+EOF
+
 beeline -n admin -u jdbc:hive2://$(hostname -f):10000/default -f sample-populate.sql
+
 
 ## Trucking demo data sets
 curl -O https://raw.githubusercontent.com/seanorama/masterclass/master/data/Geolocation.zip
 unzip Geolocation.zip
-HADOOP_USER_NAME=admin sudo sudo -u admin hadoop fs -mkdir -p /temp/admin/data
-HADOOP_USER_NAME=admin sudo sudo -u admin hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
+HADOOP_USER_NAME=admin hadoop fs -put geolocation.csv trucks.csv /temp/admin/data/
 
 
 ## Trucking demo tables
