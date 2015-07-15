@@ -54,6 +54,8 @@ $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS
 
 > a superuser can submit jobs or access hdfs on behalf of another user.
 
+https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html
+
 * Critical to the use of many services in Hadoop.
 	* Ambari Views
 	* Knox
@@ -67,48 +69,46 @@ $ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/data/secure/?op=LISTSTATUS
 * Can be used with WebHDFS (`&doas=`) and most other services:
 	`curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS&user.name=knox&doas=sean"`
 
-* Documentation:
-	* site:hadoop.apache.org/docs/stable/ superusers
-	* https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html
-
 --------
 
-## What is Kerberos?
+## Kerberos
+
+### What is Kerberos?
 
 * See slides
 
-## Kerberos options
+### Kerberos options
 
 * Active Directory
 * FreeIPA
 * MIT KDC
 * ...
 
-#### Kerberos Environment
+### Kerberos Environment
 
-We are using FreeIPA for this workshop.
+In this workshop we are using FreeIPA to provide Kerberos & LDAP.
 
 > FreeIPA is an integrated security information management solution combining Linux (Fedora), 389 Directory Server, MIT Kerberos, NTP, DNS, Dogtag (Certificate System). It consists of a web interface and command-line administration tools.
 
 * Kerberos Realm: HORTONWORKS.COM
 * LDAP Domain: hortonworks.com
 * Management User: admin
-
 * Hostname: p-labNN-ipa
 * SSH the same as your HDP node
+
 
 * (optional) WebUI: https://youripahost/ipa/ui/
 	* Requires updating your local 'hosts' file'. Execute this on the IPA server to get the line you need:
 	* `echo "$(curl -s icanhazip.com) $(hostname -f) $(hostname -s)"`
 
-#### Kerberos Commands
+### Kerberos Commands
 
 * Get a ticket: `kinit`
 * Get a ticket for another "principal": `kinit admin`
 * List tickets: `klist`
 * Destroy tickets: `kdestroy` 
 
-#### Managing Kerberos & LDAP with FreeIPA
+### Managing Kerberos & LDAP with FreeIPA
 
 * Authenticate as KDC admin: `kinit admin`
 * Add group: `ipa group-add mygroup --desc mygroup`
@@ -118,7 +118,7 @@ We are using FreeIPA for this workshop.
 
 * If admin user gets locked out: `LDAPTLS_CACERT=/etc/ipa/ca.crt ldappasswd -h localhost -ZZ -D 'cn=directory manager' -W -S uid=admin,cn=users,cn=accounts,dc=hortonworks,dc=com`
 
-#### LDAP
+### LDAP
 
 * Check if a user comes from local or ldap:
 
@@ -136,7 +136,7 @@ uid=584200008(gooduser) gid=584200008(gooduser) groups=584200008(gooduser),39(vi
 
 --------
 
-## Lab: Kerberos basics
+### Lab: Kerberos basics
 
 1. SSH to your IPA host
 1. Add a new user from IPA (give it your name)
@@ -148,6 +148,8 @@ uid=584200008(gooduser) gid=584200008(gooduser) groups=584200008(gooduser),39(vi
 --------
 
 ## Ambari 
+
+
 
 --------
 
