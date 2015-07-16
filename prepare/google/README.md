@@ -10,21 +10,19 @@ Todo: translate to ansible for easier management
 export PDSH_SSH_ARGS_APPEND="-l student -i ${HOME}/.ssh/student.pri.key -o ConnectTimeout=5 -o CheckHostIP=no -o StrictHostKeyChecking=no -o RequestTTY=force"
 domain="europe-west1-b.siq-haas"
 labs=$(echo {10..15})
-```
 
-#### 1. Create instances
-
-```
-cd ~/src/masterclass/prepare/google
-for i in $labs; do lab=$i ./create-lab.sh & sleep 5; done
-```
-
-```
-#### 2. Build inventory
-gcloud compute config-ssh
 type="hdp" hosts_hdp=$(for i in ${labs}; do printf "p-lab${i}-${type}.${domain},"; done)
 type="ipa" hosts_ipa=$(for i in ${labs}; do printf "p-lab${i}-${type}.${domain},"; done)
 hosts_all=${hosts_hdp}${hosts_ipa}
+
+#### 1. Create instances
+
+cd ~/src/masterclass/prepare/google
+for i in $labs; do lab=$i ./create-lab.sh & sleep 5; done
+sleep 45
+gcloud compute config-ssh
+
+#### 2. Build inventory
 
 #### 3. check all hosts
 command="whoami"
@@ -35,21 +33,19 @@ command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/pre
 pdsh -w ${hosts_all} "${command}"
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
 pdsh -w ${hosts_all} "${command}"
-
+sleep 60
 #### 3. check all hosts
-command="echo pong"
+command="uptime"
 pdsh -w ${hosts_all} "${command}"
 
 
-#### 5) deploy IPA (can be run in parallel with 5a)
-command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-ipa.sh | bash ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
-pdsh -w ${hosts_ipa} "${command}" &
 #### 5) deploy HDP (a few minutes after above to account for the reboot)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp.sh | bash"
-pdsh -w ${hosts_hdp} "${command}"
-##### prepare environment
-#command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
-#pdsh -w ${hosts_ipa} "${command}" 
+pdsh -w ${hosts_hdp} "${command}" &
+#### 5) deploy IPA (can be run in parallel with 5a)
+command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-ipa.sh | bash ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
+pdsh -w ${hosts_ipa} "${command}"
+
 
 #### 6) deploy IPA to HDP node (after above completes)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp-ipa.sh | bash"
@@ -59,6 +55,10 @@ pdsh -w ${hosts_hdp} "${command}"
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/hadoop/sample-data.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
 
+
+# temp fix public host names
+command="sudo chmod +x /etc/ambari-agent/conf/public-hostname-gcloud.sh; sudo service ambari-agent restart"
+pdsh -w ${hosts_hdp} "${command}"
 
 
 ```
