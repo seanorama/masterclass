@@ -28,6 +28,8 @@ sudo chmod +x /etc/ambari-agent/conf/public-hostname-gcloud.sh
 sudo sed -i.bak "/\[agent\]/ a public_hostname_script=\/etc\/ambari-agent\/conf\/public-hostname-gcloud.sh" /etc/ambari-agent/conf/ambari-agent.ini
 sudo service ambari-agent restart
 
+sudo yum -y install pdcp
+
 # For Ranger
 sudo yum -y install mysql-connector-java
 sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar

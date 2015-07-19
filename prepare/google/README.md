@@ -29,10 +29,11 @@ command="whoami"
 pdsh -w ${hosts_all} "${command}"
 
 #### 4. all hosts: set passwords, install shellinaboxd, grow root partition & reboot
-command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-all.sh | bash"
+command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-all.sh | bash \
+    ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
 pdsh -w ${hosts_all} "${command}"
-command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
-pdsh -w ${hosts_all} "${command}"
+#command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
+#pdsh -w ${hosts_all} "${command}"
 sleep 60
 #### 3. check all hosts
 command="uptime"
@@ -41,16 +42,15 @@ pdsh -w ${hosts_all} "${command}"
 
 #### 5) deploy HDP (a few minutes after above to account for the reboot)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp.sh | bash"
-pdsh -w ${hosts_hdp} "${command}" &
+time pdsh -w ${hosts_hdp} "${command}" &
 #### 5) deploy IPA (can be run in parallel with 5a)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-ipa.sh | bash ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/ipa/sample-data.sh | bash"
 pdsh -w ${hosts_ipa} "${command}"
 
-
+sleep 800
 #### 6) deploy IPA to HDP node (after above completes)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp-ipa.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
-
 #### prepare hadoop
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/hadoop/sample-data.sh | bash"
 pdsh -w ${hosts_hdp} "${command}"
