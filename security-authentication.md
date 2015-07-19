@@ -4,7 +4,7 @@
 
 ### There is no authentication
 
-> By default Hadoop runs in non-secure mode in which no actual authentication is required. -- *Apache Hadoop Documentation*
+> By default Hadoop runs in non-secure mode in which **no actual authentication is required**. -- *[Hadoop Documentation: Hadoop in Secure Mode](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SecureMode.html)*
 
 Here we are as the user 'baduser'
 
