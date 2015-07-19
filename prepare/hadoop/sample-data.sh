@@ -30,7 +30,7 @@ for user in ${users}; do
   dfs_cmd="sudo sudo -u hdfs hadoop fs"
   if ! ${dfs_cmd} -stat /user/${user}; then
     ${dfs_cmd} -mkdir -p "/user/${user}"
-    ${dfs_cmd} -chown "${user}" "/user/${user}"
+    ${dfs_cmd} -chown "${user}" "/user/${user}" &
   fi
 done
 unset HADOOP_USER_NAME
