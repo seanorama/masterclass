@@ -32,7 +32,7 @@ VrC68Zc=
 EOF
 
 sudo update-ca-trust enable; sudo update-ca-trust extract; sudo update-ca-trust check
-sudo keytool -keystore cacerts -importcert -alias activedirectory -file /etc/pki/ca-trust/source/anchors/activedirectory.pem
+sudo keytool -keystore cacerts -importcert -noprompt -storepass changeit -alias activedirectory -file /etc/pki/ca-trust/source/anchors/activedirectory.pem
 
 #ldapsearch -W -H ldaps://activedirectory.hortonworks.com -D sandboxadmin@hortonworks.com -b "ou=sandbox,ou=hdp,dc=hortonworks,dc=com"
 sudo tee /etc/openldap/ldap.conf > /dev/null <<-'EOF'
