@@ -12,9 +12,12 @@ case ${el_version} in
 esac
 
 sudo yum makecache
-sudo yum -y install git python-argparse epel-release
-sudo yum -y install jq
+sudo yum -y install git epel-release ntpd
+sudo yum -y install jq python-argparse
 sudo service ntpd restart
+sudo chkconfig ntpd on
+
+
 
 git clone -b centos-7 https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
@@ -24,6 +27,11 @@ sudo curl -sSL -o /etc/ambari-agent/conf/public-hostname-gcloud.sh https://raw.g
 sudo chmod +x /etc/ambari-agent/conf/public-hostname-gcloud.sh
 sudo sed -i.bak "/\[agent\]/ a public_hostname_script=\/etc\/ambari-agent\/conf\/public-hostname-gcloud.sh" /etc/ambari-agent/conf/ambari-agent.ini
 sudo service ambari-agent restart
+
+# For Ranger
+sudo yum -y install mysql-connector-java
+sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+
 
 sleep 60
 
@@ -42,6 +50,7 @@ cat > /tmp/post-data.json <<-'EOF'
 EOF
 
 curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat6/repositories/HDP-2.3 -T /tmp/post-data.json
+
 
 cd ~/ambari-bootstrap/deploy
 export ambari_services="AMBARI_METRICS KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
