@@ -35,9 +35,19 @@ sudo update-ca-trust enable; sudo update-ca-trust extract; sudo update-ca-trust 
 sudo keytool -keystore cacerts -importcert -noprompt \
   -storepass changeit -alias activedirectory -file /etc/pki/ca-trust/source/anchors/activedirectory.pem
 sudo mkdir /etc/ambari-server/keys
-sudo keytool -import -trustcacerts -alias root -noprompt -storepass changeit \
+sudo keytool -import -trustcacerts -alias root -noprompt -storepass BadPass#1 \
+  -file /etc/pki/ca-trust/source/anchors/activedirectory.pem -keystore /etc/ambari-server/keys/ldapskeystore.jks
+sudo keytool -import -trustcacerts -alias activedirectory -noprompt -storepass BadPass#1 \
   -file /etc/pki/ca-trust/source/anchors/activedirectory.pem -keystore /etc/ambari-server/keys/ldapskeystore.jks
 
+## for active directory only since we won't be syncing users
+users=$(ldapsearch -w ${ldap_pass} -D ${ldap_user} "(UnixHomeDirectory=/home/*)" sAMAccountName | awk '/^sAMAccountName: / {print $2}')
+for user in ${users}; do
+  if ! id -u ${user}; then
+    sudo useradd -G users ${user}
+    printf "BadPass#1\nBadPass#1" | sudo passwd admin
+  fi
+done
 
 #ldapsearch -W -H ldaps://activedirectory.hortonworks.com -D sandboxadmin@hortonworks.com -b "ou=sandbox,ou=hdp,dc=hortonworks,dc=com"
 sudo tee /etc/openldap/ldap.conf > /dev/null <<-'EOF'

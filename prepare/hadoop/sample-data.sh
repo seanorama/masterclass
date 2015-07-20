@@ -38,7 +38,8 @@ ldap_user=ldap-connect@hortonworks.com
 ldap_pass="BadPass#1"
 users=$(ldapsearch -w ${ldap_pass} -D ${ldap_user} "(homeDirectory=/home/*)" uid | awk '/^uid: / {print $2}')
 users+=$(ldapsearch -w ${ldap_pass} -D ${ldap_user} "(UnixHomeDirectory=/home/*)" sAMAccountName | awk '/^sAMAccountName: / {print $2}')
-users+=" $(getent passwd | grep '/home' | cut -d ':' -f 1)"
+#users+=" $(getent passwd | grep '/home' | cut -d ':' -f 1)"
+users+=" $(getent passwd|awk -F: '$3>1000{print $1}')"
 users=$(echo ${users} | xargs -n1 | sort -u | xargs)
 export HADOOP_USER_NAME=hdfs
 for user in ${users}; do
