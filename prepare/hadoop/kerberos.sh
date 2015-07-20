@@ -31,6 +31,6 @@ ${config_set} core-site hadoop.proxyuser.knox.groups "users, hadoop-users"
 ${config_set} core-site hadoop.proxyuser.HTTP.groups "users, hadoop-users"
 
 #${config_set} hive-site hive.server2.enable.impersonation true
-${config_set} hive-site hive.server2.enable.doAs false
-${config_set} hive-site hive.security.authorization.enabled true
-${config_set} hiveserver2-site hive.security.authorization.enabled true
+#${config_set} hive-site hive.server2.enable.doAs false
+#${config_set} hive-site hive.security.authorization.enabled true
+#${config_set} hiveserver2-site hive.security.authorization.enabled true

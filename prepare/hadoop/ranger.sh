@@ -33,7 +33,7 @@ ${config_set} ranger-ugsync-site ranger.usersync.ldap.ldapbindpassword "BadPass#
 ${config_set} ranger-ugsync-site ranger.usersync.ldap.searchBase "dc=hortonworks,dc=com"
 ${config_set} ranger-ugsync-site ranger.usersync.source.impl.class ldap
 ${config_set} ranger-ugsync-site ranger.usersync.ldap.binddn "CN=Ranger Admin,OU=sandbox,OU=hdp,DC=hortonworks,DC=com"
-${config_set} ranger-ugsync-site ranger.usersync.ldap.url "ldaps://activedirectory.hortonworks.com"
+${config_set} ranger-ugsync-site ranger.usersync.ldap.url "ldap://activedirectory.hortonworks.com"
 ${config_set} ranger-ugsync-site ranger.usersync.ldap.user.nameattribute "sAMAccountName"
 ${config_set} ranger-ugsync-site ranger.usersync.ldap.user.searchbase "dc=hortonworks,dc=com"
 ${config_set} ranger-ugsync-site ranger.usersync.group.searchbase "dc=hortonworks,dc=com"

@@ -48,6 +48,8 @@ TLS_CACERTDIR /etc/pki/tls/certs
 TLS_CACERT /etc/pki/tls/certs/ca-bundle.crt
 EOF
 
+exit
+
 sudo tee /etc/samba/smb.conf > /dev/null <<-EOF
 [Global]
   netbios name = $(hostname -s)
@@ -86,8 +88,6 @@ sudo tee /etc/samba/smb.conf > /dev/null <<-EOF
   debug level = 3
   use sendfile = no
 EOF
-
-exit
 
 ## 
 sudo yum -y install sssd
