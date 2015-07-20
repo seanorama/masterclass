@@ -10,6 +10,21 @@ cd masterclass/prepare/ambari/views
 bash create-views.sh
 cd
 
+ambari_user=admin
+ambari_pass=admin
+ambari_host=localhost
+ambari_api=http://${ambari_host}:8080/api/v1
+ambari_curl="curl -ksu ${ambari_user}:${ambari_pass} ${ambari_api}"
+ambari_cluster=$(${ambari_curl}/clusters \
+      | python -c 'import sys,json; \
+                print json.load(sys.stdin)["items"][0]["Clusters"]["cluster_name"]')
+configssh="/var/lib/ambari-server/resources/scripts/configs.sh \
+    -u ${ambari_user} -p ${ambari_pass}"
+config_set="${configssh} set ${ambari_host} ${ambari_cluster}"
+config_get="${configssh} get ${ambari_host} ${ambari_cluster}"
+#${config_set} hadoop-env proxyuser_group "users, hadoop-users"
+
+
 mkdir ~/hadoop-sample-data/
 cd ~/hadoop-sample-data
 
