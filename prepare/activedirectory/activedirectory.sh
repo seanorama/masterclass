@@ -35,7 +35,7 @@ sudo update-ca-trust enable; sudo update-ca-trust extract; sudo update-ca-trust 
 sudo keytool -keystore cacerts -importcert -noprompt \
   -storepass changeit -alias activedirectory -file /etc/pki/ca-trust/source/anchors/activedirectory.pem
 sudo mkdir /etc/ambari-server/keys
-sudo keytool -import -trustcacerts -alias root -noprompt -storepass BadPass#1 \
+sudo keytool -import -trustcacerts -alias root -noprompt -storepass changeit \
   -file /etc/pki/ca-trust/source/anchors/activedirectory.pem -keystore /etc/ambari-server/keys/ldapskeystore.jks
 
 

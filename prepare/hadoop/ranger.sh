@@ -20,6 +20,7 @@ config_get="${configssh} get ${ambari_host} ${ambari_cluster}"
 #sudo yum -y install mysql-connector-java
 #sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 
+
 ## Ranger KMS
 #${config_set} kms-properties db_root_user rangerroot
 #${config_set} ranger-kms-audit xasecure.audit.destination.hdfs.dir "hdfs://$(hostname -f):8020/ranger/audit"
