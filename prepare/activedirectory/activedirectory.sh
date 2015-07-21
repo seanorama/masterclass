@@ -41,11 +41,13 @@ sudo keytool -import -trustcacerts -alias activedirectory -noprompt -storepass B
   -file /etc/pki/ca-trust/source/anchors/activedirectory.pem -keystore /etc/ambari-server/keys/ldapskeystore.jks
 
 ## for active directory only since we won't be syncing users
+ldap_user=ldap-connect@hortonworks.com
+ldap_pass="BadPass#1"
 users=$(ldapsearch -w ${ldap_pass} -D ${ldap_user} "(UnixHomeDirectory=/home/*)" sAMAccountName | awk '/^sAMAccountName: / {print $2}')
 for user in ${users}; do
   if ! id -u ${user}; then
     sudo useradd -G users ${user}
-    printf "BadPass#1\nBadPass#1" | sudo passwd admin
+    printf "BadPass#1\nBadPass#1" | sudo passwd ${user}
   fi
 done
 
