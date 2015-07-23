@@ -29,7 +29,7 @@ sudo service ambari-agent restart
 # For Ranger
 sudo yum -y install mysql-connector-java
 sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-sudo yum -y install mysql-connector-java
+sudo yum -y install postgresql-jdbc
 sudo ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
 
 
