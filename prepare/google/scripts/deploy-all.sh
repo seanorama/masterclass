@@ -7,7 +7,7 @@
 sudo yum makecache
 sudo yum -y install epel-release screen
 
-sudo yum -y install shellinabox mosh tmux
+sudo yum -y install shellinabox mosh tmux pdcp ack
 sudo chkconfig shellinaboxd on
 #sudo sed -i.bak 's/^\(OPTS=.*\):LOGIN/\1:SSH/' /etc/sysconfig/shellinaboxd
 sudo service shellinaboxd restart

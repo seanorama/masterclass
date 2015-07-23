@@ -17,8 +17,6 @@ sudo yum -y install jq python-argparse
 sudo service ntpd restart
 sudo chkconfig ntpd on
 
-
-
 git clone -b centos-7 https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
 sudo install_ambari_server=true ./ambari-bootstrap.sh
@@ -28,30 +26,30 @@ sudo sed -i.bak "/\[agent\]/ a public_hostname_script=\/etc\/ambari-agent\/conf\
 sudo chmod +x /etc/ambari-agent/conf/public-hostname-gcloud.sh
 sudo service ambari-agent restart
 
-sudo yum -y install pdcp
-
 # For Ranger
 sudo yum -y install mysql-connector-java
 sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+sudo yum -y install mysql-connector-java
+sudo ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
 
 
 sleep 60
 
-cat > /tmp/post-data.json <<-'EOF'
-{ "Repositories" : {
-    "base_url" : "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Dal-Preview/2.3.0.0-7/centos7",
-    "mirrors_list" : null } }
-EOF
+#cat > /tmp/post-data.json <<-'EOF'
+#{ "Repositories" : {
+    #"base_url" : "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Dal-Preview/2.3.0.0-7/centos7",
+    #"mirrors_list" : null } }
+#EOF
 
-curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat7/repositories/HDP-2.3 -T /tmp/post-data.json
+#curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat7/repositories/HDP-2.3 -T /tmp/post-data.json
 
-cat > /tmp/post-data.json <<-'EOF'
-{ "Repositories" : {
-    "base_url" : "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Dal-Preview/2.3.0.0-7/centos6",
-    "mirrors_list" : null } }
-EOF
+#cat > /tmp/post-data.json <<-'EOF'
+#{ "Repositories" : {
+    #"base_url" : "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Dal-Preview/2.3.0.0-7/centos6",
+    #"mirrors_list" : null } }
+#EOF
 
-curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat6/repositories/HDP-2.3 -T /tmp/post-data.json
+#curl -vSu admin:admin -H x-requested-by:sean http://localhost:8080/api/v1/stacks/HDP/versions/2.3/operating_systems/redhat6/repositories/HDP-2.3 -T /tmp/post-data.json
 
 
 cd ~/ambari-bootstrap/deploy
