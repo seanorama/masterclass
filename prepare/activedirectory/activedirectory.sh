@@ -7,7 +7,7 @@ ad_host_ip=$(ping -w 1 ${ad_host} | awk 'NR==1 {print $3}' | sed 's/[()]//g')
 echo "${ad_host_ip} activedirectory.hortonworks.com ${ad_host} activedirectory" | sudo tee -a /etc/hosts
 
 ad_cert=/etc/pki/ca-trust/source/anchors/activedirectory.pem
-sudo tee ${ad_cer} > /dev/null <<-'EOF'
+sudo tee ${ad_cert} > /dev/null <<-'EOF'
 -----BEGIN CERTIFICATE-----
 MIIDrTCCApWgAwIBAgIQFNSgEcmw1r9OP9AicCaGdDANBgkqhkiG9w0BAQUFADBd
 MRMwEQYKCZImiZPyLGQBGRYDY29tMRswGQYKCZImiZPyLGQBGRYLaG9ydG9ud29y
@@ -43,12 +43,13 @@ sudo keytool -import -trustcacerts -noprompt -storepass changeit \
 
 sudo tee /etc/openldap/ldap.conf > /dev/null <<-EOF
 SASL_NOCANON    on
-URI ldap://activedirectory.hortonworks.com
+URI ldaps://activedirectory.hortonworks.com
 BASE dc=hortonworks,dc=com
 TLS_CACERTDIR /etc/pki/tls/certs
 TLS_CACERT /etc/pki/tls/certs/ca-bundle.crt
 EOF
-#ldapsearch -W -H ldaps://activedirectory.hortonworks.com -D admin@hortonworks.com -b "ou=users,ou=hdp,dc=hortonworks,dc=com"
+## can test with:
+#ldapsearch -W -D user@domain.com
 
 exit
 
