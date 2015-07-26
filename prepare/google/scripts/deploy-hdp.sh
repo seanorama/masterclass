@@ -29,8 +29,9 @@ sleep 60
 
 cd ~/ambari-bootstrap/deploy
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
-#export ambari_services="AMBARI_METRICS KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
 export cluster_name=$(hostname -s)
 export host_count=skip
 ./deploy-recommended-cluster.bash
 
+sudo useradd -G users admin
+sudo useradd -r -G users ambari
