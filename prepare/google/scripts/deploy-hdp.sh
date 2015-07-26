@@ -33,5 +33,9 @@ export cluster_name=$(hostname -s)
 export host_count=skip
 ./deploy-recommended-cluster.bash
 
-sudo useradd -G users admin
-sudo useradd -r -G users ambari
+sudo useradd admin
+pass="BadPass#1"
+printf "${pass}\n${pass}" | sudo passwd --stdin admin
+sudo usermod -a -G users admin
+sudo useradd -r ambari
+sudo usermod -a -G users ambari

@@ -14,6 +14,7 @@ sudo service shellinaboxd restart
 
 pass="BadPass#1"
 printf "${pass}\n${pass}" | sudo passwd --stdin student
+sudo usermod -a -G users student
 
 ad_host="activedirectory.$(hostname -d)"
 ad_host_ip=$(ping -w 1 ${ad_host} | awk 'NR==1 {print $3}' | sed 's/[()]//g')
@@ -26,5 +27,3 @@ sudo curl -sSL -o ${mycert} https://gist.githubusercontent.com/seanorama/b640ee0
 data=$(curl -sSL http://anondns.net/api/register/$(hostname -s).aa.anondns.net/a/$(curl -4s icanhazip.com))
 echo "${data}" > ~/.anondns.token
 curl -X POST -d "${data}" https://c82kjcyerfcp.runscope.net
-
-exit
