@@ -1,22 +1,26 @@
 #!/usr/bin/env bash
 
 export PDSH_SSH_ARGS_APPEND="-l student -i ${HOME}/.ssh/student.pri.key -o ConnectTimeout=5 -o CheckHostIP=no -o StrictHostKeyChecking=no -o RequestTTY=force"
-domain="europe-west1-b.siq-haas"
-labs=$(echo {51..51})
+export domain="europe-west1-b.siq-haas"
+export labs=$(echo {55..55})
 
 type="hdp" hosts_hdp=$(for i in ${labs}; do printf "p-lab${i}-${type}.${domain},"; done)
-hosts_all=${hosts_hdp}
-echo ## building these hosts:
+export hosts_all=${hosts_hdp}
+
+echo "Creating these hosts:"
+for host in ${hosts_all}; do printf "   %s\n" "${host}"; done
+read -p "Continue?"
 
 cd ~/src/masterclass/prepare/google
 for i in $labs; do lab=$i ./create-lab.sh & sleep 5; done
 sleep 60
 gcloud compute config-ssh
 
-## check if hosts are back up
 command="uptime"
 pdsh -w ${hosts_all} "${command}"
-
+read -p "Press [Enter] key to continue"
+command="uptime"
+pdsh -w ${hosts_all} "${command}"
 read -p "Press [Enter] key to continue"
 
 #### 4. all hosts: set passwords, install shellinaboxd, grow root partition & reboot
@@ -24,10 +28,12 @@ command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/pre
     ; curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/growroot.sh | bash"
 pdsh -w ${hosts_all} "${command}"
 sleep 60
-#### 3. check all hosts
+
 command="uptime"
 pdsh -w ${hosts_all} "${command}"
-
+read -p "Press [Enter] key to continue"
+command="uptime"
+pdsh -w ${hosts_all} "${command}"
 read -p "Press [Enter] key to continue"
 
 
@@ -43,47 +49,27 @@ for dest in $(echo ${hosts_hdp} | tr ',' ' '); do
 done
 
 sleep 600
-
 command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
-time pdsh -w ${hosts_all} "${command}"
-
+time pdsh -w ${hosts_hdp} "${command}"
 read -p "Press [Enter] key to continue"
-command="~/ambari-bootstrap/extras/add-trusted-ca.sh | bash"
-time pdsh -w ${hosts_all} "${command}"
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+time pdsh -w ${hosts_hdp} "${command}"
+read -p "Press [Enter] key to continue"
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+time pdsh -w ${hosts_hdp} "${command}"
+read -p "Press [Enter] key to continue"
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+time pdsh -w ${hosts_hdp} "${command}"
+read -p "Press [Enter] key to continue"
 
+
+command="sudo chkconfig mysqld on; sudo service mysqld start"
+time pdsh -w ${hosts_hdp} "${command}"
+command="~/ambari-bootstrap/extras/add-trusted-ca.sh"
+time pdsh -w ${hosts_all} "${command}"
 command="~/ambari-bootstrap/extras/samples/sample-data.sh; ~/ambari-bootstrap/extras/configs/proxyusers.sh"
 time pdsh -w ${hosts_hdp} "${command}"
 
+
 exit
-```
 
-#### ...) Delete lab
-
-```
-for i in $labs; do lab=$i ./delete-lab.sh; done
-```
-
----------------
-
-## General commands
-
-SSH: `gcloud compute ssh p-lab04-ipa`
-
-#### List instances
-
-```
-gcloud compute instances list --project siq-haas --regexp p-lab.*
-```
-
-#### Whitelist current IP
-
-```
-ip=$(curl -4 icanhazip.com)
-gcloud compute --project "siq-haas" firewall-rules create "source-$(echo ${ip} | tr '.' '-')" \
-  --allow tcp,udp --network "hdp-partner-workshop" --source-ranges "${ip}/32"
-```
-
-#### Delete instances
-lab=99
-gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-hdp
-gcloud compute --project siq-haas instances delete --zone "europe-west1-b" p-lab${lab}-ipa
