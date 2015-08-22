@@ -11,7 +11,7 @@ sudo yum -y install git epel-release screen ntpd
 sudo chkconfig ntpd on
 sudo service ntpd restart
 
-sudo yum -y install shellinabox mosh tmux ack jq
+sudo yum -y install shellinabox mosh tmux ack jq python-argparse
 sudo chkconfig shellinaboxd on
 #sudo sed -i.bak 's/^\(OPTS=.*\):LOGIN/\1:SSH/' /etc/sysconfig/shellinaboxd
 sudo service shellinaboxd restart

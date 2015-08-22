@@ -28,7 +28,7 @@ sudo service ambari-agent restart
 sleep 60
 
 cd ~/ambari-bootstrap/deploy
-export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS"
+export ambari_services=${ambari_services:-KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS}
 export cluster_name=$(hostname -s)
 export host_count=skip
 ./deploy-recommended-cluster.bash
@@ -37,13 +37,11 @@ sudo useradd admin
 sudo useradd rangeradmin
 sudo useradd keyadmin
 sudo useradd -r ambari
-pass="BadPass#1"
-printf "${pass}\n${pass}" | sudo passwd --stdin admin
-printf "${pass}\n${pass}" | sudo passwd --stdin rangeradmin
-printf "${pass}\n${pass}" | sudo passwd --stdin keyadmin
-sudo usermod -a -G users admin
-sudo usermod -a -G users rangeradmin
-sudo usermod -a -G users keyadmin
-sudo usermod -a -G users ambari
+mypass="BadPass#1"
+printf "${mypass}\n${mypass}" | sudo passwd --stdin admin
+printf "${mypass}\n${mypass}" | sudo passwd --stdin rangeradmin
+printf "${mypass}\n${mypass}" | sudo passwd --stdin keyadmin
+users="$(getent passwd|awk -F: '$3>999{print $1}')"
+for user in ${users}; do sudo usermod -a -G users ${user}; done
 
 exit
