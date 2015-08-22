@@ -1,20 +1,24 @@
 #!/usr/bin/env bash
 
+mypass="BadPass#1"
+
 ## re-enable password auth
 #sudo sed -i.bak 's/^\(PasswordAuthentication\) no/\1 yes/' /etc/ssh/sshd_config
 #sudo service sshd restart
 
 sudo yum makecache
-sudo yum -y install epel-release screen
+sudo yum -y install git epel-release screen ntpd
+sudo chkconfig ntpd on
+sudo service ntpd restart
 
-sudo yum -y install shellinabox mosh tmux pdcp ack
+sudo yum -y install shellinabox mosh tmux ack jq
 sudo chkconfig shellinaboxd on
 #sudo sed -i.bak 's/^\(OPTS=.*\):LOGIN/\1:SSH/' /etc/sysconfig/shellinaboxd
 sudo service shellinaboxd restart
 
-pass="BadPass#1"
-printf "${pass}\n${pass}" | sudo passwd --stdin student
-sudo usermod -a -G users student
+printf "${mypass}\n${mypass}" | sudo passwd --stdin student
+users="$(getent passwd|awk -F: '$3>999{print $1}')"
+for user in ${users}; do sudo usermod -a -G users ${user}; done
 
 ad_host="activedirectory.$(hostname -d)"
 ad_host_ip=$(ping -w 1 ${ad_host} | awk 'NR==1 {print $3}' | sed 's/[()]//g')
