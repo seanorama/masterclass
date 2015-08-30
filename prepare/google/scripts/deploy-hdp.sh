@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this
+__file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
+__base="$(basename ${__file} .sh)"
+
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
   "6")
@@ -21,6 +26,8 @@ sudo chmod -R g+rw /opt/ambari-bootstrap
 sudo chgrp -R users /opt/ambari-bootstrap
 
 cd /opt/ambari-bootstrap
+source /opt/ambari-bootstrap/extras/ambari_functions.sh
+ambari-configs
 sudo install_ambari_server=true ./ambari-bootstrap.sh
 
 sudo curl -ksSL -o /etc/ambari-agent/conf/public-hostname-gcloud.sh https://raw.githubusercontent.com/GoogleCloudPlatform/bdutil/master/platforms/hdp/resources/public-hostname-gcloud.sh
@@ -47,6 +54,9 @@ export cluster_name=$(hostname -s)
 export host_count=skip
 ./deploy-recommended-cluster.bash
 
+sleep 60
+source /opt/ambari-bootstrap/extras/ambari_functions.sh
+ambari-configs
 ambari_wait_requests_completed
 
 #source /opt/ambari-bootstrap/extras/ambari_functions.sh
