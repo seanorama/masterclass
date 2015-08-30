@@ -16,8 +16,11 @@ sudo yum -y install jq python-argparse
 sudo service ntpd restart
 sudo chkconfig ntpd on
 
-git clone https://github.com/seanorama/ambari-bootstrap
-cd ambari-bootstrap
+sudo git clone https://github.com/seanorama/ambari-bootstrap /opt/ambari-bootstrap
+sudo chmod -R g+rw /opt/ambari-bootstrap
+sudo chgrp -R users /opt/ambari-bootstrap
+
+cd /opt/ambari-bootstrap
 sudo install_ambari_server=true ./ambari-bootstrap.sh
 
 sudo curl -ksSL -o /etc/ambari-agent/conf/public-hostname-gcloud.sh https://raw.githubusercontent.com/GoogleCloudPlatform/bdutil/master/platforms/hdp/resources/public-hostname-gcloud.sh
@@ -27,21 +30,32 @@ sudo service ambari-agent restart
 
 sleep 60
 
-cd ~/ambari-bootstrap/deploy
-export ambari_services=${ambari_services:-KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS}
+cd /opt/ambari-bootstrap/deploy
+
+cat > configuration-custom.json <-'EOF'
+{
+  "configurations" : {
+      "hdfs-site": {
+        "dfs.replication": "1"
+      }
+  }
+}
+EOF
+
+export ambari_services=${ambari_services:-KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS OOZIE FLUME SQOOP FALCON ATLAS}
 export cluster_name=$(hostname -s)
 export host_count=skip
 ./deploy-recommended-cluster.bash
 
-sudo useradd admin
-sudo useradd rangeradmin
-sudo useradd keyadmin
-sudo useradd -r ambari
-mypass="BadPass#1"
-printf "${mypass}\n${mypass}" | sudo passwd --stdin admin
-printf "${mypass}\n${mypass}" | sudo passwd --stdin rangeradmin
-printf "${mypass}\n${mypass}" | sudo passwd --stdin keyadmin
-users="$(getent passwd|awk -F: '$3>999{print $1}')"
-for user in ${users}; do sudo usermod -a -G users ${user}; done
+ambari_wait_requests_completed
+
+#source /opt/ambari-bootstrap/extras/ambari_functions.sh
+#ambari-configs
+#${ambari_config_set} hdfs-site dfs.replication 1
+
+sudo chkconfig mysqld on; sudo service mysqld start"
+/opt/ambari-bootstrap/extras/add-trusted-ca.sh"
+/opt/ambari-bootstrap/extras/samples/sample-data.sh
+/opt/ambari-bootstrap/extras/configs/proxyusers.sh
 
 exit
