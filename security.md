@@ -9,7 +9,9 @@ This tutorial requires RedHat/CentOS 6 or 7.
 ```
 cd ~/src/masterclass/prepare/google
 
-lab_first=10 lab_count=10 lab_prefix=mc-lab
+export lab_first=10
+export lab_count=10
+export lab_prefix=mc-lab
 
 create=true ./create-lab.sh
 
@@ -51,6 +53,8 @@ sudo chkconfig mysqld on; sudo service mysqld start
 /opt/ambari-bootstrap/extras/add-trusted-ca.sh
 /opt/ambari-bootstrap/extras/samples/sample-data.sh
 /opt/ambari-bootstrap/extras/configs/proxyusers.sh
+source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
+echo export ambari_pass=BadPass#1 > ~/.ambari.conf; chmod 600 ~/.ambari.conf
 EOF
 
 pdsh -w ${hosts_all} "${command}"
