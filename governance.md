@@ -59,30 +59,65 @@ falcon entity -list -type process
 hadoop fs -ls /apps/falcon/primaryCluster
 hadoop fs -ls /apps/falcon/mirrorCluster
 
-clusterName=primaryCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh`
-clusterName=mirrorCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh`
+clusterName=primaryCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
+clusterName=mirrorCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 
 hadoop fs -ls /apps/falcon/primaryCluster
 hadoop fs -ls /apps/falcon/mirrorCluster
 ```
 
-1. Create cluster entity for `primaryCluster`:
+1. Create cluster entity for **primaryCluster**:
     - From command-line:
+
         ```
 sed -i.bak "s/localhost/$(hostname -f)/" ~/ambari-bootstrap/extras/falcon/primaryCluster.xml
-sudo sudo -u admin falcon entity -submit -type cluster -file /ambari-bootstrap/extras/falcon/primaryCluster.xml
+
+cat ~/ambari-bootstrap/extras/falcon/primaryCluster.xml
+
+sudo sudo -u admin falcon entity -submit -type cluster -file /opt/ambari-bootstrap/extras/falcon/primaryCluster.xml
+
+falcon entity -definition -type cluster -name primaryCluster
         ```
 
-1. Create cluster entity for `mirrorCluster`:
+1. Create cluster entity for **mirrorCluster**:
     - From Falcon UI:
-        - [ ] TODO: Screenshot here
+        - Fields:
+            - Name: mirrorCluster
+            - Interfaces:
+                - [ ] replace sandbox.hortonworks.com with 'mc-mirror.c.siq-haas.internal'
+                - [ ] add 'registry' interface:
+                    - Endpoint: thrift://mc-mirror.c.siq-haas.internal:9083
+                    - Version: 0.11.0
+        - Screenshot ![Falcon UI](http://i.imgur.com/CWPVtFV.png)
 
 1. On source cluster, create a folder to replicate and put file(s) into it.
     - Ambari Files View makes this easy
+    - For the example I create and put files in '/user/admin/mirror'
 
-1. Create mirror entity:
+1. Create mirror entity
+    - Choose primaryCluster as the source
+    - Choose mirrorCluster as the target
+    - Set the path source you made in the step above
+    - Set the path target to wherever you want (e.g. /user/admin/mirrorTarget )
+    - Set the start/end time to cover all of today
+    - Save
 
-1. Schedule mirror entity:
+1. Schedule mirror entity
+    - Go back to Falcon UI
+    - Search for *
+    - Tick the box next to your mirror job
+    - Click 'Schedule'
+    - Click on the mirror to see the planned schedule
+
+1. Inspect the mirror from the command-line:
+
+    ```
+falcon entity -list -type process
+
+falcon entity -definition -type process -name myMirror
+
+falcon instance -type process -name myMirror -list
+    ```
 
 1. Wait ~5 minutes, then check that replication has occured to the other cluster.
 
@@ -90,6 +125,7 @@ sudo sudo -u admin falcon entity -submit -type cluster -file /ambari-bootstrap/e
 
 ### Lab: Falcon
 
+### Lab: 
 
 ## Deployment notes
 
