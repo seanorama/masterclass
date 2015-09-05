@@ -2,7 +2,7 @@
 
 ## for prepping a 1-node cluster for the governance masterclass
 
-sudo yum -y -q git
+sudo yum -y -q install git
 cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 source ~/ambari-bootstrap/extras/ambari_functions.sh
