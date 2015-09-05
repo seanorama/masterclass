@@ -31,7 +31,6 @@ echo "${mirror_host_ip} mirror.hortonworks.com ${mirror_host} mirror" | sudo tee
 
 sudo mkdir -p /app; sudo chown ${USER}:users /app; sudo chmod g+wx /app
 
-curl -sSL http://amstore.cloudapp.net/amstore/install_store.sh | sudo bash
 ${__dir}/add-trusted-ca.sh
 ${__dir}/onboarding.sh
 #exclude this one #${__dir}/samples/sample-data.sh
