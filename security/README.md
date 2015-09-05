@@ -419,7 +419,7 @@ ______________________________________________________
 
 ### Lab: Use TDE from the command-line
 
-	```
+```
 ## Create and list keys
 hadoop key create mytestkey -size 128
 hadoop key list -metadata
@@ -443,7 +443,7 @@ sudo sudo -u hdfs hadoop fs -setfattr -n security.hdfs.unreadable.by.superuser /
 
 ## Attempt to view the file again
 sudo sudo -u hdfs hadoop fs -cat /.reserved/raw/user/student/secured/myfile.txt
-	```
+```
 
 ### Lab: Another version of the TDE command-line lab
 
