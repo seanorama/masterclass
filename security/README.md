@@ -488,23 +488,10 @@ cat /data1/hadoop/hdfs/data/current/BP-398503398-10.0.0.31-1438235507347/current
 hdfs dfs -cat /secure/hosts
 ```
 
+______________________________________________________
 
+______________________________________________________
 
-
-
-
-
-
-## after ranger is implemented
-```
-sudo service mysqld start
-cat << EOF | sudo mysql
-GRANT ALL PRIVILEGES ON *.* to 'root'@'$(hostname -f)' WITH GRANT OPTION;
-SET PASSWORD FOR 'root'@'$(hostname -f)' = PASSWORD('BadPass#1');
-FLUSH PRIVILEGES;
-exit
-EOF
-```
 
 ## Deployment notes
 
