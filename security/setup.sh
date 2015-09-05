@@ -35,9 +35,3 @@ ${__dir}/ranger/prep-mysql.sh
 exit
 
 
-~/ambari-bootstrap/extras/sssd-kerberos-ad.sh
-~/ambari-bootstrap/extras/ambari-kerberos-jaas.sh
-~/ambari-bootstrap/extras/ambari-non-root.sh
-sudo service ambari-server stop
-sudo service ambari-server start
-sudo service ambari-agent restart

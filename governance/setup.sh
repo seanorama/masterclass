@@ -40,6 +40,7 @@ ${__dir}/onboarding.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/atlas/atlas-hive-enable.sh
 proxyusers="falcon" ${__dir}/oozie/proxyusers.sh
+${__dir}/ranger/prep-mysql.sh
 
 ## restart services
 myhost=$(hostname -f)
