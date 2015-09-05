@@ -285,7 +285,11 @@ ______________________________________________________
 
 You now have Ranger installed but it's not doing anything.
 
-Let's install some plugins, and while we are at it sync LDAP users and authenticate off of Active Directory.
+Let's install some plugins, and while we are at it:
+
+- sync LDAP users
+- authenticate to Active Directory
+- install Solr & configure Ranger for Solr
 
 ```
 ~/ambari-bootstrap/extras/ranger/ranger-ldap.sh
@@ -295,12 +299,201 @@ Let's install some plugins, and while we are at it sync LDAP users and authentic
 ~/ambari-bootstrap/extras/ranger/ranger-plugin-hive.sh
 ~/ambari-bootstrap/extras/ranger/ranger-plugin-yarn.sh
 ~/ambari-bootstrap/extras/ranger/ranger-kms.sh
+~/ambari-bootstrap/extras/ranger/solr-dashboard.sh publicip; sleep 20
+~/ambari-bootstrap/extras/ranger/ranger-solr-audit.sh
 ```
 
 - Go back to Ambari and note that a lot of services need restarting.
 - Easiest way is to go to your Host in Ambari and click the orange button to restart affected services.
 
 ______________________________________________________
+
+### Lab: Ranger use Examples & Tips
+
+#### HDFS ACLs
+  ```
+hadoop fs -ls /public/secured
+sudo sudo -u hdfs hadoop fs -chmod 0000 /public/secured
+hadoop fs -ls /public/secured
+  ```
+  
+#### Ranger policies
+
+- Add a policy granting access to /public/secured for group 'users'
+- Wait a few seconds, and then check the dir again:
+  ```
+hadoop fs -ls /public/secured
+  ```
+  
+#### Hive best practice:
+- Remove global access to /apps/hive/warehouse
+  1. Ranger -> HDFS: Give user 'hive' all rights to /apps/hive
+  1. Remove HDFS permissions: `sudo sudo -u hdfs hadoop fs -chmod -R 0000 /apps/hive/warehouse`
+
+<!--
+## Update default security for Hive
+- Fix default policies by adding user 'hive' to both
+- Allow Hive to audit to HDFS:
+  1. Make the dir: `HADOOP_USER_NAME=hdfs hadoop fs -mkdir /ranger/audit/hiveServer2`
+  1. Ranger -> HDFS: Give user 'hive' all rights to /ranger/audit/hiveServer2
+
+
+## Update security for YARN
+- Allow Hive to audit to HDFS:
+  1. Make the dir: `HADOOP_USER_NAME=hdfs hadoop fs -mkdir /ranger/audit/yarn`
+  1. Ranger -> HDFS: Give user 'yarn' all rights to /ranger/audit/yarn
+-->
+
+## Ranger HBase plugin
+- Other policies to add/update:
+  1. Add HDFS policy: /apps/hbase for user hbase
+  1. Add HDFS policy: /ranger/audit/hbaseMaster for user hbase
+    - and make the dir `sudo sudo -u hdfs hadoop fs -mkdir -p /ranger/audit/hbaseMaster`
+  1. Add HDFS policy: /ranger/audit/hbaseRegional for user hbase
+    - and make the dir `sudo sudo -u hdfs hadoop fs -mkdir -p /ranger/audit/hbaseRegional`
+
+______________________________________________________
+
+### Lab: Knox
+
+- Ambari -> Knox -> Configs
+- Advanced Topology
+- PREPARE YOURSELF FOR EDITING XML
+- Note: We are only editing the 1st `<provider>` block
+- Update the value for each of these parameters
+  - main.ldapRealm: org.apache.shiro.realm.ldap.JndiLdapRealm
+  - main.ldapRealm.userDnTemplate: cn={0},ou=users,ou=hdp,dc=hortonworks,dc=com
+  - main.ldapRealm.contextFactory.url: ldap://activedirectory.hortonworks.com:389
+
+- It should look like this in the end.
+- You could copy this over the current block if you find that easier.
+
+```xml
+<provider>
+  <role>authentication</role>
+  <name>ShiroProvider</name>
+  <enabled>true</enabled>
+  <param>
+    <name>sessionTimeout</name>
+    <value>30</value>
+  </param>
+  <param><name>main.ldapRealm</name>
+    <value>org.apache.shiro.realm.ldap.JndiLdapRealm</value>
+  </param>
+  <param><name>main.ldapRealm.userDnTemplate</name>
+    <value>cn={0},ou=users,ou=hdp,dc=hortonworks,dc=com</value>
+  </param>
+  <param>
+    <name>main.ldapRealm.contextFactory.url</name>
+    <value>ldap://activedirectory.hortonworks.com:389</value>
+  </param>
+  <param>
+    <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
+    <value>simple</value>
+  </param>
+  <param><name>urls./**</name>
+    <value>authcBasic</value>
+  </param>
+</provider>
+```
+
+- Restart Knox
+
+## Use Knox
+
+- Before with WebHDFS:
+  ```
+curl -ks -u student http://$(hostname -f):50070/webhdfs/v1/user/student/?op=LISTSTATUS | jq '.'
+  ```
+
+- Now through Knox:
+  ```
+curl -ksu student https://localhost:8443/gateway/default/webhdfs/v1/user/student/?op=LISTSTATUS | jq '.'
+  ```
+______________________________________________________
+
+### Lab: TDE
+- Ambari -> Add Service -> Ranger KMS
+  - On "customize services" screen:
+    - All Passwords *(only the empty fields, they will be in red)*: BadPass#1
+
+### Lab: Use TDE from the command-line
+
+	```
+## Create and list keys
+hadoop key create mytestkey -size 128
+hadoop key list -metadata
+
+## Populate some data
+hadoop fs -mkdir /user/student/secured
+hadoop fs -chmod 700 /user/student/secured
+echo "Hello TDE World" > myfile.txt
+hadoop fs -put myfile.txt /user/student/secured/
+
+## Create the encryption zone
+sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-$(hostname -s)
+sudo sudo -u hdfs hdfs crypto -createZone -keyName mytestkey -path /user/student/secured
+sudo sudo -u hdfs hdfs crypto -listZones
+
+## View the raw encrypted file as root
+sudo sudo -u hdfs hadoop fs -cat /.reserved/raw/user/student/secured/myfile.txt
+
+## Take away rights from root. This cannot be undone.
+sudo sudo -u hdfs hadoop fs -setfattr -n security.hdfs.unreadable.by.superuser /user/student/secured/myfile.txt
+
+## Attempt to view the file again
+sudo sudo -u hdfs hadoop fs -cat /.reserved/raw/user/student/secured/myfile.txt
+	```
+
+### Lab: Another version of the TDE command-line lab
+
+1. MAKE KEYS
+```
+sudo su - hdfs
+hadoop key create demoKey256  -size 256
+hadoop key list -metadata
+```
+
+2. MAKE A ZONE
+```
+hdfs dfs -mkdir /secure
+hdfs crypto -createZone -keyName DemoKey256 -path /secure
+hdfs crypto -listZones
+```
+
+## Proof
+
+3. Show Local UNENCRYPTED Blocks on Linux OS
+```
+hdfs fsck /unsecure -blocks -files
+0. BP-398503398-10.0.0.31-1438235507347:blk_1073742550_1732 len=44 repl=3
+
+find /data1/hadoop/hdfs/data -name blk_1073742550*
+
+cat /data1/hadoop/hdfs/data/current/BP-398503398-10.0.0.31-1438235507347/current/finalized/subdir0/subdir2/blk_1073742550
+```
+
+4. SHOW ENCRYPTED DATA ON OS
+
+```
+hdfs fsck /secure -blocks -files
+0. BP-398503398-10.0.0.31-1438235507347:blk_1073742903_2089 len=44 repl=3
+
+find /data1/hadoop/hdfs/data -name blk_1073742903*
+cat /data1/hadoop/hdfs/data/current/BP-398503398-10.0.0.31-1438235507347/current/finalized/subdir0/subdir4/blk_1073742903
+```
+
+5. CAT from HDFS Encrypted File as SHOOTON
+```
+hdfs dfs -cat /secure/hosts
+```
+
+
+
+
+
+
+
 
 ## after ranger is implemented
 ```
