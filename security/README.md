@@ -1,108 +1,51 @@
-# Security masterclass notes & script
+# Notes for our Hadoop Masterclasses
 
-## Deploy nodes
+These notes are meant to accompany our Hadoop Security Masterclass which covers:
+- Apache Falcon for data lifecycle
+- Apache Atlas for metadata
+- Apache Ranger for policy enforcement and access audits
 
-This tutorial requires RedHat/CentOS 6 or 7.
+## Requirements
 
-### Google Cloud
+Tested with:
 
-```
-### update these!
-export lab_count=10 # number of clusters to create
-export lab_prefix=mc-lab # prefix in hostname
-export lab_first=10 # number to start on for the hostname
+    - Ambari 2.1.1
+    - HDP 2.3.0
+    - OpenJDK 8
 
-cd ~/src/masterclass/prepare/google
-source ./create-lab.sh
-create=true ./create-lab.sh
-```
+More details on the deployment process at the end of this document.
 
-## Prepare nodes
+Many manual steps are automated using scripts from my [Ambari Bootstrap scripts](https://seanorama/ambari-bootstrap). Clone them to your server with:
+`cd ~; git clone https://seanorama/ambari-bootstrap`
 
-### On all providers
+## References
 
-```
-## TODO: extract from google compute things that are generic
-```
+- Ambari
+- Kerberos
+- Ranger
 
-### Google Compute specific
+## Labs
 
-```
-read -r -d '' command <<EOF
-curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
-sudo /opt/ambari-bootstrap/extras/deploy/prep-hosts.sh
-sudo /opt/ambari-bootstrap/providers/growroot.sh
-sudo reboot
-EOF
-pdsh -w ${hosts_all} "${command}"
-```
-
-### Check if hosts are back up
-```
-command="uptime"
-pdsh -w ${hosts_all} "${command}"
-```
-
-### Deploy HDP
-
-```
-read -r -d '' command <<EOF
-export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
-export ambari_services="YARN ZOOKEEPER TEZ OOZIE FLUME PIG SLIDER MAPREDUCE2 HIVE HDFS FALCON ATLAS SQOOP"
-/opt/ambari-bootstrap/extras/deploy/deploy-hdp.sh
-EOF
-pdsh -w ${hosts_all} "${command}"
-```
-
-```
-read -r -d '' command <<EOF
-sudo chkconfig mysqld on; sudo service mysqld start
-
-/opt/ambari-bootstrap/extras/add-trusted-ca.sh
-/opt/ambari-bootstrap/extras/samples/sample-data.sh
-/opt/ambari-bootstrap/extras/configs/proxyusers.sh
-source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
-echo export ambari_pass=BadPass#1 > ~/.ambari.conf; chmod 600 ~/.ambari.conf
-EOF
-
-pdsh -w ${hosts_all} "${command}"
-```
-
-### Set Ambari Password
-```
-read -r -d '' command <<EOF
-source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
-echo export ambari_pass=BadPass#1 > ~/.ambari.conf; chmod 600 ~/.ambari.conf
-EOF
-pdsh -w ${hosts_all} "${command}"
-```
-
-## For users to do
-
+### Lab 1
 #### Ambari LDAP
-
 ## After kerberos is implemented
-
 #### Integrate OS with Active Directory
 ```
 ~/ambari-bootstrap/extras/sssd-kerberos-ad.sh
 ```
-
 #### Ambari non-root
 ```
 ~/ambari-bootstrap/extras/ambari-non-root.sh
 sudo service ambari-server stop
 sudo service ambari-server start
 ```
-
 #### Ambari Kerberos JAAS
 ```
 ~/ambari-bootstrap/extras/ambari-kerberos-jaas.sh
 sudo service ambari-server restart
 ```
-
-
 #### Ambari: Recreate views
+
 ```
 ~/ambari-bootstrap/extras/ambari-views/create-views.sh
 ```
@@ -118,24 +61,43 @@ exit
 EOF
 ```
 
+## Deployment notes
 
-## Notes or fixing issues
+### Deploy your host(s)
 
-#### Update ambari-bootstrap
+Requirements:
+
+  - CentOS 7 (Should also work with CentOS & RedHat 6)
+
+#### Notes for my Google Cloud environment
+
+I was deploying a large number of hosts for each class. I did so with a messy set of bash & pdsh commands.
+
 ```
-export PDSH_SSH_ARGS_APPEND="-l student -i ${HOME}/.ssh/student.pri.key -o ConnectTimeout=5 -o CheckHostIP=no -o StrictHostKeyChecking=no -o RequestTTY=force"
+export lab_count=1
+export lab_first=904
+export lab_prefix=mc-lab
+git clone https://github.com/seanorama/ambari-bootstrap /tmp/ambari-bootstrap
+source "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
+create=true "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
+```
 
-command="cd /opt/ambari-bootstrap; git pull"
+```
+command="echo OK"; pdsh -w ${hosts_all} "${command}"
+```
+
+### Configure customer for the masterclass
+
+This should be done on 1 node clusters
+
+- For a single cluster simply execute this command from the cluster
+curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security/setup.sh | bash
+
+- If using PDSH:
+
+    ```
+read -r -d '' command <<EOF
+curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security/setup.sh | bash
+EOF
 pdsh -w ${hosts_all} "${command}"
-```
-
-#### Check hosts
-```
-command="uptime"
-pdsh -w ${hosts_all} "${command}"
-```
-
-```
-ip=$(curl -4 icanhazip.com)
-gcloud compute --project "siq-haas" firewall-rules create "source-$(echo ${ip} | tr '.' '-')"   --allow tcp,udp --network "hdp-partner-workshop" --source-ranges "${ip}/32"
-```
+    ```

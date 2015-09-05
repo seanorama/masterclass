@@ -97,7 +97,7 @@ falcon entity -definition -type cluster -name primaryCluster
         - Screenshot ![Falcon UI](http://i.imgur.com/ZYb7hWl.png)
         - Alternatively from command-line:
 
-          ```
+    ```
 mycluster="mirrorCluster"
 myhost="mirror"
 sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > /tmp/${mycluster}.xml
@@ -105,7 +105,7 @@ sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap
 sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
 
 falcon entity -list -type cluster
-          ```
+    ```
 
 1. On source cluster, create a folder to replicate and put file(s) into it.
     - Ambari Files View makes this easy
