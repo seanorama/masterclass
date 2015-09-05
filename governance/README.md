@@ -56,26 +56,32 @@ falcon entity -list -type process
 1. Setup directories:
 
 ```
-hadoop fs -ls /apps/falcon/primaryCluster
-hadoop fs -ls /apps/falcon/mirrorCluster
+hadoop fs -ls -R /apps/falcon/
 
 clusterName=primaryCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 clusterName=mirrorCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 
-hadoop fs -ls /apps/falcon/primaryCluster
-hadoop fs -ls /apps/falcon/mirrorCluster
+hadoop fs -ls -R /apps/falcon/
 ```
 
 1. Create cluster entity for **primaryCluster**:
     - From command-line:
 
         ```
-sed -i.bak "s/localhost/$(hostname -f)/" ~/ambari-bootstrap/extras/falcon/primaryCluster.xml
+## list clusters
+falcon entity -list -type cluster
+
+## create cluster template
+mycluster="primaryCluster"
+myhost="$(hostname -f)"
+sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > "/tmp/${mycluster}.xml"
 
 cat ~/ambari-bootstrap/extras/falcon/primaryCluster.xml
 
-sudo sudo -u admin falcon entity -submit -type cluster -file /opt/ambari-bootstrap/extras/falcon/primaryCluster.xml
+## create cluster entity
+sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
 
+## see cluster details
 falcon entity -definition -type cluster -name primaryCluster
         ```
 
@@ -84,11 +90,22 @@ falcon entity -definition -type cluster -name primaryCluster
         - Fields:
             - Name: mirrorCluster
             - Interfaces:
-                - [ ] replace sandbox.hortonworks.com with 'mc-mirror.c.siq-haas.internal'
+                - [ ] replace sandbox.hortonworks.com with the hostname of your mirror. For this example, I've updated /etc/hosts with a host named `mirror`:
                 - [ ] add 'registry' interface:
-                    - Endpoint: thrift://mc-mirror.c.siq-haas.internal:9083
+                    - Endpoint: Change host to 'mirror'
                     - Version: 0.11.0
-        - Screenshot ![Falcon UI](http://i.imgur.com/CWPVtFV.png)
+        - Screenshot ![Falcon UI](http://i.imgur.com/ZYb7hWl.png)
+        - Alternatively from command-line:
+
+            ```
+mycluster="mirrorCluster"
+myhost="mirror"
+sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > /tmp/${mycluster}.xml
+
+sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
+
+falcon entity -list -type cluster
+            ```
 
 1. On source cluster, create a folder to replicate and put file(s) into it.
     - Ambari Files View makes this easy
@@ -155,8 +172,7 @@ command="echo OK"; pdsh -w ${hosts_all} "${command}"
 
 ```
 read -r -d '' command <<EOF
-curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
-/opt/ambari-bootstrap/extras/workshops/governance.sh
+curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/governance/setup.sh | bash
 EOF
 pdsh -w ${hosts_all} "${command}"
 ```

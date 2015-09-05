@@ -7,15 +7,14 @@ This tutorial requires RedHat/CentOS 6 or 7.
 ### Google Cloud
 
 ```
+### update these!
+export lab_count=10 # number of clusters to create
+export lab_prefix=mc-lab # prefix in hostname
+export lab_first=10 # number to start on for the hostname
+
 cd ~/src/masterclass/prepare/google
-
-export lab_first=10
-export lab_count=10
-export lab_prefix=mc-lab
-
-create=true ./create-lab.sh
-
 source ./create-lab.sh
+create=true ./create-lab.sh
 ```
 
 ## Prepare nodes
@@ -48,8 +47,17 @@ pdsh -w ${hosts_all} "${command}"
 
 ```
 read -r -d '' command <<EOF
+export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE"
+export ambari_services="YARN ZOOKEEPER TEZ OOZIE FLUME PIG SLIDER MAPREDUCE2 HIVE HDFS FALCON ATLAS SQOOP"
 /opt/ambari-bootstrap/extras/deploy/deploy-hdp.sh
+EOF
+pdsh -w ${hosts_all} "${command}"
+```
+
+```
+read -r -d '' command <<EOF
 sudo chkconfig mysqld on; sudo service mysqld start
+
 /opt/ambari-bootstrap/extras/add-trusted-ca.sh
 /opt/ambari-bootstrap/extras/samples/sample-data.sh
 /opt/ambari-bootstrap/extras/configs/proxyusers.sh
@@ -93,6 +101,7 @@ sudo service ambari-server start
 sudo service ambari-server restart
 ```
 
+
 #### Ambari: Recreate views
 ```
 ~/ambari-bootstrap/extras/ambari-views/create-views.sh
@@ -100,7 +109,13 @@ sudo service ambari-server restart
 
 ## after ranger is implemented
 ```
-
+sudo service mysqld start
+cat << EOF | sudo mysql
+GRANT ALL PRIVILEGES ON *.* to 'root'@'$(hostname -f)' WITH GRANT OPTION;
+SET PASSWORD FOR 'root'@'$(hostname -f)' = PASSWORD('BadPass#1');
+FLUSH PRIVILEGES;
+exit
+EOF
 ```
 
 
@@ -115,3 +130,12 @@ pdsh -w ${hosts_all} "${command}"
 ```
 
 #### Check hosts
+```
+command="uptime"
+pdsh -w ${hosts_all} "${command}"
+```
+
+```
+ip=$(curl -4 icanhazip.com)
+gcloud compute --project "siq-haas" firewall-rules create "source-$(echo ${ip} | tr '.' '-')"   --allow tcp,udp --network "hdp-partner-workshop" --source-ranges "${ip}/32"
+```
