@@ -170,3 +170,30 @@ curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/governa
 EOF
 pdsh -w ${hosts_all} "${command}"
     ```
+
+### Configure mirror server
+
+Deploy a server just like the lab systems but add:
+
+- Install Ranger from Ambari
+- Setup Ranger Plugins & Solr Dashboard
+
+  ```
+~/ambari-bootstrap/extras/ranger/ranger-plugin-hdfs.sh
+~/ambari-bootstrap/extras/ranger/ranger-plugin-hbase.sh
+~/ambari-bootstrap/extras/ranger/ranger-plugin-hive.sh
+~/ambari-bootstrap/extras/ranger/ranger-plugin-yarn.sh
+~/ambari-bootstrap/extras/ranger/solr-dashboard.sh publicip
+~/ambari-bootstrap/extras/ranger/ranger-solr-audit.sh
+  ```
+
+- Add mirrorCluster to the host
+
+  ```
+mycluster="mirrorCluster"
+myhost="$(hostname -f)"
+
+clusterName=${mycluster} ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
+sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > /tmp/${mycluster}.xml
+sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
+  ```
