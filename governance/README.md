@@ -15,8 +15,8 @@ Tested with:
 
 More details on the deployment process at the end of this document.
 
-Many manual steps are automated using scripts from my [Ambari Bootstrap scripts](https://seanorama/ambari-bootstrap). Clone them to your server with:
-`cd ~; git clone https://seanorama/ambari-bootstrap`
+Many manual steps are automated using scripts from my [Ambari Bootstrap scripts](https://seanorama/ambari-bootstrap).
+- Clone them to your server with: `cd ~; git clone https://seanorama/ambari-bootstrap`
 
 ## References
 
@@ -67,7 +67,7 @@ hadoop fs -ls -R /apps/falcon/
 1. Create cluster entity for **primaryCluster**:
     - From command-line:
 
-        ```
+      ```
 ## list clusters
 falcon entity -list -type cluster
 
@@ -83,7 +83,7 @@ sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.
 
 ## see cluster details
 falcon entity -definition -type cluster -name primaryCluster
-        ```
+      ```
 
 1. Create cluster entity for **mirrorCluster**:
     - From Falcon UI:
@@ -97,7 +97,7 @@ falcon entity -definition -type cluster -name primaryCluster
         - Screenshot ![Falcon UI](http://i.imgur.com/ZYb7hWl.png)
         - Alternatively from command-line:
 
-            ```
+          ```
 mycluster="mirrorCluster"
 myhost="mirror"
 sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > /tmp/${mycluster}.xml
@@ -105,7 +105,7 @@ sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap
 sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
 
 falcon entity -list -type cluster
-            ```
+          ```
 
 1. On source cluster, create a folder to replicate and put file(s) into it.
     - Ambari Files View makes this easy
