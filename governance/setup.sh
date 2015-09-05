@@ -35,7 +35,7 @@ ${__dir}/add-trusted-ca.sh
 ${__dir}/onboarding.sh
 #exclude this one #${__dir}/samples/sample-data.sh
 #${__dir}/configs/proxyusers.sh
-#proxyusers="oozie falcon" ${__dir}/configs/proxyusers.sh
+proxyusers="oozie falcon" ${__dir}/configs/proxyusers.sh
 #${__dir}/oozie/replace-mysql-connector.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/atlas/atlas-hive-enable.sh
