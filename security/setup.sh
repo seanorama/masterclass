@@ -27,11 +27,8 @@ sudo mkdir -p /app; sudo chown ${USER}:users /app; sudo chmod g+wx /app
 ${__dir}/add-trusted-ca.sh
 ${__dir}/onboarding.sh
 ${__dir}/ambari-views/create-views.sh
+#config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/samples/sample-data.sh
 ${__dir}/configs/proxyusers.sh
 ${__dir}/ranger/prep-mysql.sh
-#config_proxyuser=true ${__dir}/ambari-views/create-views.sh
-
-exit
-
 

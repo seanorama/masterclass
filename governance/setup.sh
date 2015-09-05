@@ -21,11 +21,8 @@ echo export ambari_pass=BadPass#1 > ~/ambari-bootstrap/extras/.ambari.conf; chmo
 source ${__dir}/ambari_functions.sh
 ambari-configs
 
-#${ambari_config_set} webhcat-site webhcat.proxyuser.oozie.groups "*"
-#${ambari_config_set} webhcat-site webhcat.proxyuser.oozie.hosts "*"
-#${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
 
-mirror_host="${mirror_host:-mc-lab904.$(hostname -d)}"
+mirror_host="${mirror_host:-mc-teacher1.$(hostname -d)}"
 mirror_host_ip=$(ping -w 1 ${mirror_host} | awk 'NR==1 {print $3}' | sed 's/[()]//g')
 echo "${mirror_host_ip} mirror.hortonworks.com ${mirror_host} mirror" | sudo tee -a /etc/hosts
 
@@ -33,14 +30,17 @@ sudo mkdir -p /app; sudo chown ${USER}:users /app; sudo chmod g+wx /app
 
 ${__dir}/add-trusted-ca.sh
 ${__dir}/onboarding.sh
-#exclude this one #${__dir}/samples/sample-data.sh
+#${__dir}/ambari-views/create-views.sh
+config_proxyuser=true ${__dir}/ambari-views/create-views.sh
+#${__dir}/samples/sample-data.sh
 #${__dir}/configs/proxyusers.sh
+${__dir}/ranger/prep-mysql.sh
 proxyusers="oozie falcon" ${__dir}/configs/proxyusers.sh
 #${__dir}/oozie/replace-mysql-connector.sh
-config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/atlas/atlas-hive-enable.sh
 proxyusers="falcon" ${__dir}/oozie/proxyusers.sh
-${__dir}/ranger/prep-mysql.sh
+
+#${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
 
 ## restart services
 myhost=$(hostname -f)
