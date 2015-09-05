@@ -151,28 +151,22 @@ falcon instance -type process -name myMirror -list
 Requirements:
 
   - CentOS 7 (Should also work with CentOS & RedHat 6)
+  - Single node without HDP deployed.
+    - Look at the setup script if you want to configure on an existing HDP cluster.
+  - full sudoers access
 
-#### Notes for my Google Cloud environment
+### Configure cluster for the masterclass
 
-I was deploying a large number of hosts for each class. I did so with a messy set of bash & pdsh commands.
+This should be done on 1 node clusters
 
-```
-export lab_count=1
-export lab_first=904
-export lab_prefix=mc-lab
-git clone https://github.com/seanorama/ambari-bootstrap /tmp/ambari-bootstrap
-source "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
-create=true "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
-```
+- For a single cluster clone this repository and then execute [./setup.sh](./setup.sh)
 
-### Check all of your hosts are up
-```
-command="echo OK"; pdsh -w ${hosts_all} "${command}"
-```
+- If using PDSH or similar commands, you can use curl to execute the script as seen below with PDSH.
+    - (make sure to set the hosts_all variable to your host list, or update the command to use a file)
 
-```
+    ```
 read -r -d '' command <<EOF
 curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/governance/setup.sh | bash
 EOF
 pdsh -w ${hosts_all} "${command}"
-```
+    ```

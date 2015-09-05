@@ -68,32 +68,18 @@ EOF
 Requirements:
 
   - CentOS 7 (Should also work with CentOS & RedHat 6)
+  - Single node without HDP deployed.
+    - Look at the setup script if you want to configure on an existing HDP cluster.
+  - full sudoers access
 
-#### Notes for my Google Cloud environment
-
-I was deploying a large number of hosts for each class. I did so with a messy set of bash & pdsh commands.
-
-```
-export lab_count=1
-export lab_first=904
-export lab_prefix=mc-lab
-git clone https://github.com/seanorama/ambari-bootstrap /tmp/ambari-bootstrap
-source "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
-create=true "/tmp/ambari-bootstrap/providers/google/create-google-hosts.sh"
-```
-
-```
-command="echo OK"; pdsh -w ${hosts_all} "${command}"
-```
-
-### Configure customer for the masterclass
+### Configure cluster for the masterclass
 
 This should be done on 1 node clusters
 
-- For a single cluster simply execute this command from the cluster
-curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security/setup.sh | bash
+- For a single cluster clone this repository and then execute [./setup.sh](./setup.sh)
 
-- If using PDSH:
+- If using PDSH or similar commands, you can use curl to execute the script as seen below with PDSH.
+    - (make sure to set the hosts_all variable to your host list, or update the command to use a file)
 
     ```
 read -r -d '' command <<EOF
