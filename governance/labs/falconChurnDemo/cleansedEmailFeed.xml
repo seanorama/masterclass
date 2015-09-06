@@ -9,7 +9,7 @@
     <groups>churnAnalysisDataPipeline</groups>
 
     <frequency>hours(1)</frequency>
-    <timezone>GMT+00:00</timezone>
+    <timezone>UTC</timezone>
     <clusters>
         <cluster name="primaryCluster" type="source">
             <validity start="2014-02-28T00:00Z" end="2016-03-31T00:00Z"/>
@@ -27,7 +27,7 @@
 
             <locations>
                 <location type="data"
-                path="/falcon/demo/bcp/processed/enron/${YEAR}-${MONTH}-${DAY}-${HOUR}"/>
+                path="/shared/falcon/demo/bcp/processed/enron/${YEAR}-${MONTH}-${DAY}-${HOUR}"/>
             </locations>
         </cluster>
 
