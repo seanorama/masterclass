@@ -140,7 +140,74 @@ falcon instance -type process -name myMirror -list
 
 1. Add or alter files and then wait ~5 minutes to see the mirrored.
 
-### Lab: Falcon
+
+________________________________________
+
+### Lab: Falcon Data Pipeline
+
+```
+sudo su - hdfs -c "hadoop fs -mkdir /shared; hadoop fs -chmod 777 /shared"
+
+mkdir /tmp/falcon-churn; cd /tmp/falcon-churn
+curl -sSL -O http://hortonassets.s3.amazonaws.com/tutorial/falcon/falcon.zip
+unzip falcon.zip
+sudo sudo -u admin hadoop fs -mkdir -p /shared/falcon
+sudo sudo -u admin hadoop fs -copyFromLocal demo /shared/falcon/
+sudo sudo -u admin hadoop fs -chmod -R g+w /shared/falcon
+sudo sudo -u hdfs hadoop fs -chgrp -R hadoop /shared/falcon
+```
+
+
+
+- Load the demo files and create entities from the command line
+
+```
+sudo mkdir /app; chown student:users /app; chmod 775 /app; cd /app
+git clone https://github.com/seanorama/hadoop-data-pipeline/
+cd hadoop-data-pipeline/scripts/
+sudo ./setupAppOnHDFS.sh
+sudo ./changeValidityForFeed.sh
+sudo ./changeValidityForProcess.sh
+sudo ./submitEntities.sh
+```
+
+- Go to Falcon UI & schedule the Demo Feed & Process
+
+- View the status of the process
+
+- But Flume hasn't loaded any data. So lets give Flume some data:
+
+```
+sudo cp /app/hadoop-data-pipeline/input_data/SV-sample-1.xml /root/data_pipeline_demo/input
+```
+
+sudo cp /app/hadoop-data-pipeline/input_data/SV-sample-2.xml /root/data_pipeline_demo/input
+
+- Now we will wait for the next process run.
+
+
+
+
+
+
+Now lets load our Feed & Process from the UI
+
+1. Create Feed Entity from UI:
+    - Open this URL in your browser and copy the contents: https://raw.githubusercontent.com/seanorama/hadoop-data-pipeline/master/falcon/feeds/inputFeed.xml
+    - Open your Falcon UI
+    - Create a new Feed Entity
+        - Paste the XML contents from the URL above
+        - Update the Timezone to GMT (on "2 properties" page)
+        - Update the Cluster to your Cluster (on "4 properties" page)
+        - Update the Validity start to this morning (08:00am) and end to a date in the future
+        - Save
+
+2. Create Process Entity from UI:
+    - Repeat similar steps to above but with this XML: https://raw.githubusercontent.com/seanorama/hadoop-data-pipeline/master/falcon/process/processData.xml
+
+3. Schedule the Entities: Feed then process
+
+https://github.com/seanorama/hadoop-data-pipeline/blob/master/falcon/process/processData.xml
 
 ### Lab: 
 

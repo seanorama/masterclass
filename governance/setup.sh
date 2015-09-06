@@ -39,8 +39,26 @@ proxyusers="oozie falcon" ${__dir}/configs/proxyusers.sh
 #${__dir}/oozie/replace-mysql-connector.sh
 ${__dir}/atlas/atlas-hive-enable.sh
 proxyusers="falcon" ${__dir}/oozie/proxyusers.sh
+${__dir}/falcon/bugfix_oozie-site_elexpression.sh
 
-#${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
+### temporary, for Falcon in HDP 2.3.0-2557
+#hdp_version="$(hdp-select status falcon-server | awk '{print $3}')"
+#if [[ ${hdp_version} == '2.3.0.0-2557' ]]; then
+    #cd /usr/hdp/current/falcon-server/webapp/
+    #backup_dir="backup_$(date +%F-%T)"
+    #falcon_run="sudo sudo -u falcon HADOOP_HOME=/usr/hdp/current/hadoop-client"
+    #${falcon_run} ../bin/falcon-stop
+    #${falcon_run} mkdir ${backup_dir}
+    #${falcon_run} mv falcon falcon.war "${backup_dir}"
+    #${falcon_run} curl -sSL -o falcon.war "https://www.dropbox.com/s/962jw6ja03j1tpy/falcon-dal-m10-preview.war?dl=1"
+    #${falcon_run} ../bin/falcon-start -port 15000
+    #sleep 20
+    #cd
+#fi
+## 
+
+
+${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
 
 ## restart services
 myhost=$(hostname -f)
