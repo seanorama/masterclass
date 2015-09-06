@@ -53,6 +53,7 @@ ______________________________________________________
 
 1. Run this script to save us some time in typing the settings in.
   - Feel free to check the script to see what you would have typed in.
+
   ```
 ~/ambari-bootstrap/extras/ambari-ldap-ad.sh
   ```
@@ -60,16 +61,19 @@ ______________________________________________________
 2. Now let's setup LDAP
   - You should be able to press enter to the defaults
   - EXCEPT for the password. Which I'll share separately.
+
   ```
 sudo ambari-server setup-ldap
   ```
 
 - Restart Ambari services
+
   ```
 sudo ambari-server restart; sudo ambari-agent restart
   ```
 
 - Sync ldap
+
 	```
 sudo ambari-server sync-ldap --all
 	```
@@ -77,6 +81,7 @@ sudo ambari-server sync-ldap --all
 - Provide the username 'admin' and password we are using for the day
 
 - It should look something like this:
+
   ```
 Syncing with LDAP...
 Enter Ambari Admin login: admin
@@ -153,10 +158,12 @@ In Ambari:
 - Click "Add Property"
 - Click the icon on the right to use "Bulk property add mode"
 - Add these properties:
+
   ```
 hadoop.proxyuser.root.groups=users,hadoop-users
 hadoop.proxyuser.root.hosts=*
   ```
+
 ______________________________________________________
 
 ### Lab: Enable Kerberos for HDP using Ambari
@@ -218,16 +225,19 @@ To fix them we will:
 - Configure Ambari to use Kerberos
 
 - Configure non-root:
+
 ```
 ~/ambari-bootstrap/extras/ambari-non-root.sh
 ```
 
 - Configure Kerberos JAAS:
+
 ```
 ~/ambari-bootstrap/extras/ambari-kerberos-jaas.sh
 ```
 
 - Restart services:
+
 ```
 sudo service ambari-server stop; sudo service ambari-server start; sudo ambari-agent restart
 ```
@@ -239,7 +249,6 @@ sudo service ambari-server stop; sudo service ambari-server start; sudo ambari-a
 ```
 
 - You'll then need to update the Hadoop proxyuser settings for the user 'ambari'. Or execute the script to do it for you:
-
 
 ```
 config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
