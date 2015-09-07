@@ -265,7 +265,7 @@ These directories are required for many operations, such as certain YARN & Hive 
 I've written a simple script that takes input of user names and creates their respective directories:
 
 ```
-export users=$(ldapsearch -Q "(memberOf=CN=hadoop-users,OU=users,OU=hdp,DC=hortonworks,DC=com)" sAMAccountName | awk '/^sAMAccountName: / {print $2}')
+export users=$(ldapsearch -Q -H ldap://activedirectory.hortonworks.com -b ou=hdp,dc=hortonworks,dc=com sAMAccountName | awk '/^sAMAccountName: / {print $2}')
 ~/ambari-bootstrap/extras/onboarding.sh
 ```
 

@@ -9,7 +9,7 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 
 ${__dir}/deploy/prep-hosts.sh
 
-export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME"
+export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE"
 "${__dir}/deploy/deploy-hdp.sh"
 sleep 30
 
