@@ -14,6 +14,7 @@ export ambari_services="YARN ZOOKEEPER TEZ OOZIE FLUME PIG SLIDER MAPREDUCE2 HIV
 
 source ${__dir}/ambari_functions.sh
 ambari-configs
+ambari_wait_request_complete 1
 sudo chkconfig mysqld on; sudo service mysqld start
 source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
 echo export ambari_pass=BadPass#1 > ~/.ambari.conf; chmod 600 ~/.ambari.conf
