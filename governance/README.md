@@ -58,13 +58,14 @@ falcon entity -list -type process
 ```
 hadoop fs -ls -R /apps/falcon/
 
-clusterName=primaryCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
+mycluster=$(hostname -s)
+clusterName=${mycluster} ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 clusterName=mirrorCluster ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 
 hadoop fs -ls -R /apps/falcon/
 ```
 
-1. Create cluster entity for **primaryCluster**:
+1. Create cluster entity for your cluster:
     - From command-line:
 
       ```
@@ -72,17 +73,17 @@ hadoop fs -ls -R /apps/falcon/
 falcon entity -list -type cluster
 
 ## create cluster template
-mycluster="primaryCluster"
+mycluster="$(hostname -s)"
 myhost="$(hostname -f)"
 sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > "/tmp/${mycluster}.xml"
 
-cat ~/ambari-bootstrap/extras/falcon/primaryCluster.xml
+cat /tmp/${mycluster}.xml
 
 ## create cluster entity
 sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
 
 ## see cluster details
-falcon entity -definition -type cluster -name primaryCluster
+falcon entity -definition -type cluster -name ${mycluster}
       ```
 
 1. Create cluster entity for **mirrorCluster**:
@@ -112,7 +113,7 @@ falcon entity -list -type cluster
     - For the example I create and put files in '/user/admin/mirror'
 
 1. Create mirror entity
-    - Choose primaryCluster as the source
+    - Choose Your Cluster as the source
     - Choose mirrorCluster as the target
     - Set the path source you made in the step above
     - Set the path target to wherever you want (e.g. /user/admin/mirrorTarget )
@@ -145,71 +146,174 @@ ________________________________________
 
 ### Lab: Falcon Data Pipeline
 
-```
-sudo su - hdfs -c "hadoop fs -mkdir /shared; hadoop fs -chmod 777 /shared"
+- Prep the environment
 
+```
+sudo su - hdfs -c "hadoop fs -mkdir -p /shared/falcon/demo/primary/processed/enron; hadoop fs -chmod -R 777 /shared"
 mkdir /tmp/falcon-churn; cd /tmp/falcon-churn
 curl -sSL -O http://hortonassets.s3.amazonaws.com/tutorial/falcon/falcon.zip
 unzip falcon.zip
-sudo sudo -u admin hadoop fs -mkdir -p /shared/falcon
 sudo sudo -u admin hadoop fs -copyFromLocal demo /shared/falcon/
-sudo sudo -u admin hadoop fs -chmod -R g+w /shared/falcon
-sudo sudo -u hdfs hadoop fs -chgrp -R hadoop /shared/falcon
+sudo sudo -u hdfs hadoop fs -chown -R admin:hadoop /shared/falcon
+sudo sudo -u hdfs hadoop fs -chmod -R g+w /shared/falcon
 ```
 
+Create Feeds & Processes from the Falcon UI using the XML below.
+
+For each one, from the form:
+
+  - Update the name to be unique (adding your cluster number to it)
+  - Update the validity time start to this morning and end to tomorrow
+  - Update the source cluster to be your cluster
+  - Set the appropriate feeds
+  - Then schedule before adding the next
+
+Entities:
+
+- https://raw.githubusercontent.com/seanorama/masterclass/master/governance/labs/falconChurnDemo/rawEmailFeed.xml
+- https://raw.githubusercontent.com/seanorama/masterclass/master/governance/labs/falconChurnDemo/cleansedEmailFeed.xml
+- https://raw.githubusercontent.com/seanorama/masterclass/master/governance/labs/falconChurnDemo/emailIngestProcess.xml
+- https://raw.githubusercontent.com/seanorama/masterclass/master/governance/labs/falconChurnDemo/cleanseEmailProcess.xml
 
 
-- Load the demo files and create entities from the command line
+
+
+
+
+
+### Lab: Introduction to Atlas
+
+- Atlas UI: Ambari -> Quick Links -> Atlas UI
+
+- Let's load some types:
+
+  ```
+sudo /usr/hdp/current/atlas-server/bin/quick_start.py
+  ```
+
+- API:
+
+  ```
+## Verify if the server is up and running
+  http http://localhost:21000/api/atlas/admin/version
+
+## List the types in the repository
+  http http://localhost:21000/api/atlas/types
+
+## List the instances for a given type
+  http "http://localhost:21000/api/atlas/entities?type=hive_table"
+  http http://localhost:21000/api/atlas/entities/list/hive_db
+
+## Search for entities (instances) in the repository
+  http "http://localhost:21000/api/atlas/discovery/search/dsl?query=from hive_table"
+```
+
+### Lab: Atlas CLI (unofficial)
 
 ```
-sudo mkdir /app; chown student:users /app; chmod 775 /app; cd /app
+## Help
+atlas-client --help
+
+## Create a New DataSet Type
+atlas-client --c=createDataSetType --type=Tims_Fict_Table
+
+## Create new Traits and a Subtrait
+
+atlas-client -c=createtrait --traitnames=SuperPM
+
+atlas-client -c=createtrait --traittype=PM --parenttrait=SuperPM
+
+3) Create the entity with the Subtrait
+
+atlas-client --c=createDataSetEntity --type=Tims_Fict_Table --name=Andrew_Demo --traitnames=PM
+
+4) Create a Data Set Search
+
+atlas-client --c=search --type=Table --name=MYSQL_DRIVERS55
+
+5) Cretae a lineage
+
+atlas-client --c=createProcessEntity --inptype=Tims_Fict_Table --outtype=Table --inpvalue=Andrew_Demo --outvalue=MYSQL_DRIVERS99 --traitnames=SuperPM --type=Jamies_Lineage --name=Lineage12
+
+
+
+mysql_host=${mysql_host:-localhost}
+hdp_host=${hdp_host:-localhost}
+
+## Load the tables
+sqoop import --connect jdbc:mysql://${mysql_host}/test --username trucker1 --password trucker --table DRIVERS -m 1 --target-dir demo$1 --hive-import --hive-table DRIVERS$1
+sqoop import --connect jdbc:mysql://${mysql_host}/test --username trucker1 --password trucker --table TIMESHEET -m 1 --target-dir demo$1 --hive-import --hive-table TIMESHEET$1
+
+
+### Lab: Atlas: Manual loading of metadata
+
+atlas-client --c=importmysql --mysqlhost=localhost --password=trucker \
+    --username=trucker1 --db=test -createHiveTables -genLineage \
+    --ambariClusterName=$(hostname -s) --suppress
+
+sudo ${__root}/bin/atlas-client --c=importmysql --mysqlhost=${mysql_host} \
+  --password=trucker --username=trucker1 --db=test
+  -createHiveTables -genLineage --ambariClusterName=${ambari_cluster} --suppress
+
+
+________________________________________
+
+### Data Pipeline
+
+#### Prepare the environment & load files to HDFS
+
+```
+sudo mkdir /app; chown student:users /app; chmod 777 /app; cd /app
 git clone https://github.com/seanorama/hadoop-data-pipeline/
 cd hadoop-data-pipeline/scripts/
 sudo ./setupAppOnHDFS.sh
+```
+
+#### Update feed and inspect:
+
+```
 sudo ./changeValidityForFeed.sh
+cat ../falcon/feeds/inputFeed.xml
+```
+
+#### Update process and inspect:
+
+```
 sudo ./changeValidityForProcess.sh
+cat ../falcon/process/processData.xml
+```
+
+#### Inspect Workflow
+
+```
+cat ../falcon/workflow/workflow.xml
+```
+
+#### Submit Entities
+
+```
 sudo ./submitEntities.sh
 ```
 
-- Go to Falcon UI & schedule the Demo Feed & Process
+#### Open Falcon to view Entities
 
-- View the status of the process
-
-- But Flume hasn't loaded any data. So lets give Flume some data:
+#### Schedule Entities from Command Line or from UI
 
 ```
-sudo cp /app/hadoop-data-pipeline/input_data/SV-sample-1.xml /root/data_pipeline_demo/input
+sudo ./scheduleEntities.sh
 ```
 
-sudo cp /app/hadoop-data-pipeline/input_data/SV-sample-2.xml /root/data_pipeline_demo/input
+#### Land data in Flume
 
-- Now we will wait for the next process run.
+```
+cp -a /app/hadoop-data-pipeline/input_data/SV-sample-1.xml /tmp/data_pipeline_demo/input/
+```
+
+#### Wait
 
 
+________________________________________
 
-
-
-
-Now lets load our Feed & Process from the UI
-
-1. Create Feed Entity from UI:
-    - Open this URL in your browser and copy the contents: https://raw.githubusercontent.com/seanorama/hadoop-data-pipeline/master/falcon/feeds/inputFeed.xml
-    - Open your Falcon UI
-    - Create a new Feed Entity
-        - Paste the XML contents from the URL above
-        - Update the Timezone to GMT (on "2 properties" page)
-        - Update the Cluster to your Cluster (on "4 properties" page)
-        - Update the Validity start to this morning (08:00am) and end to a date in the future
-        - Save
-
-2. Create Process Entity from UI:
-    - Repeat similar steps to above but with this XML: https://raw.githubusercontent.com/seanorama/hadoop-data-pipeline/master/falcon/process/processData.xml
-
-3. Schedule the Entities: Feed then process
-
-https://github.com/seanorama/hadoop-data-pipeline/blob/master/falcon/process/processData.xml
-
-### Lab: 
 
 ## Deployment notes
 
@@ -263,4 +367,5 @@ myhost="$(hostname -f)"
 clusterName=${mycluster} ~/ambari-bootstrap/extras/falcon/create-cluster-dirs.sh
 sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap/extras/falcon/myCluster.xml > /tmp/${mycluster}.xml
 sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
+sudo su - hdfs -c "hadoop fs -mkdir -p /shared/falcon/demo/bcp/processed/enron; hadoop fs -chown -R admin:hadoop /shared; hadoop fs -chmod -R 777 /shared"
   ```

@@ -524,7 +524,10 @@ This should be done on 1 node clusters
 
     ```
 read -r -d '' command <<EOF
-curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security/setup.sh | bash
+sudo yum -y -q install screen
+curl -sSL -O https://raw.githubusercontent.com/seanorama/masterclass/master/security/setup.sh
+chmod +x setup.sh
+screen -S myscreen /home/student/setup.sh
 EOF
 pdsh -w ${hosts_all} "${command}"
     ```
