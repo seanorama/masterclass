@@ -176,9 +176,7 @@ Entities:
 - https://raw.githubusercontent.com/seanorama/masterclass/master/governance/labs/falconChurnDemo/cleanseEmailProcess.xml
 
 
-
-
-
+________________________________________
 
 
 ### Lab: Introduction to Atlas
@@ -190,6 +188,7 @@ Entities:
   ```
 sudo /usr/hdp/current/atlas-server/bin/quick_start.py
   ```
+
 
 - API:
 
@@ -215,6 +214,7 @@ sudo /usr/hdp/current/atlas-server/bin/quick_start.py
 atlas-client --help
 
 ## Create a New DataSet Type
+
 atlas-client --c=createDataSetType --type=Tims_Fict_Table
 
 ## Create new Traits and a Subtrait
@@ -223,30 +223,31 @@ atlas-client -c=createtrait --traitnames=SuperPM
 
 atlas-client -c=createtrait --traittype=PM --parenttrait=SuperPM
 
-3) Create the entity with the Subtrait
+## Create the entity with the Subtrait
 
 atlas-client --c=createDataSetEntity --type=Tims_Fict_Table --name=Andrew_Demo --traitnames=PM
 
-4) Create a Data Set Search
+## Create a Data Set Search
 
 atlas-client --c=search --type=Table --name=MYSQL_DRIVERS55
 
-5) Cretae a lineage
+## Create a lineage
 
 atlas-client --c=createProcessEntity --inptype=Tims_Fict_Table --outtype=Table --inpvalue=Andrew_Demo --outvalue=MYSQL_DRIVERS99 --traitnames=SuperPM --type=Jamies_Lineage --name=Lineage12
 
 
+### Lab: Atlas Trucking data
 
-mysql_host=${mysql_host:-localhost}
-hdp_host=${hdp_host:-localhost}
+1. Load tables from ERP (using Sqoop)
 
-## Load the tables
-sqoop import --connect jdbc:mysql://${mysql_host}/test --username trucker1 --password trucker --table DRIVERS -m 1 --target-dir demo$1 --hive-import --hive-table DRIVERS$1
-sqoop import --connect jdbc:mysql://${mysql_host}/test --username trucker1 --password trucker --table TIMESHEET -m 1 --target-dir demo$1 --hive-import --hive-table TIMESHEET$1
+```
+sqoop import --connect jdbc:mysql://localhost/test --username trucker1 --password trucker --table DRIVERS -m 1 --target-dir demo$1 --hive-import --hive-table DRIVERS$1
+sqoop import --connect jdbc:mysql://localhost/test --username trucker1 --password trucker --table TIMESHEET -m 1 --target-dir demo$1 --hive-import --hive-table TIMESHEET$1
+```
 
+2. Manual loading of metadata
 
-### Lab: Atlas: Manual loading of metadata
-
+```
 atlas-client --c=importmysql --mysqlhost=localhost --password=trucker \
     --username=trucker1 --db=test -createHiveTables -genLineage \
     --ambariClusterName=$(hostname -s) --suppress
@@ -254,6 +255,26 @@ atlas-client --c=importmysql --mysqlhost=localhost --password=trucker \
 sudo ${__root}/bin/atlas-client --c=importmysql --mysqlhost=${mysql_host} \
   --password=trucker --username=trucker1 --db=test
   -createHiveTables -genLineage --ambariClusterName=${ambari_cluster} --suppress
+```
+
+3.  Inspect tables in Hive:
+
+```
+select * from drivers;
+select * from timesheet;
+```
+
+4. In Atlas UI:
+
+```
+Table where name=”DRIVERS”
+```
+
+5. Determine bad drivers from Hive View:
+
+```
+create table bad_drivers AS select d.driver_name  , count(d.driver_name)  from DRIVERS d, TIMESHEET t where d.driver_id = t.driver_id and  t.hours_logged > 60 group by d.driver_name;
+```
 
 
 ________________________________________
@@ -311,9 +332,7 @@ cp -a /app/hadoop-data-pipeline/input_data/SV-sample-1.xml /tmp/data_pipeline_de
 
 #### Wait
 
-
 ________________________________________
-
 
 ## Deployment notes
 

@@ -65,6 +65,7 @@ sudo ln -sf /opt/atlas-client/bin/atlas-client /usr/local/bin/
 sudo touch /application.log /audit.log; sudo chown ${USER} /application.log /audit.log
 
 ## setup source DRIVERS & TIMESHEET database in MySQL
+cd
 git clone https://github.com/seanorama/atlas
 cd atlas/tutorial
 mysql -u root < MySQLSourceSystem.sql
@@ -116,7 +117,9 @@ ambari_wait_request_complete ${request_id}
 
 hdp_version="$(hdp-select status falcon-server | awk '{print $3}')"
 if [[ ${hdp_version} == '2.3.0.0-2557' ]]; then
+    cd /tmp
     falcon_dir=/usr/hdp/current/falcon-server/
+    cd ${falcon_dir}
     backup_dir="backup_$(date +%F-%T)"
     falcon_run="sudo sudo -u falcon HADOOP_HOME=/usr/hdp/current/hadoop-client"
     ${falcon_run} ${falcon_dir}/bin/falcon-stop
@@ -127,4 +130,5 @@ if [[ ${hdp_version} == '2.3.0.0-2557' ]]; then
     cd falcon
     ${falcon_run} tar -xf ../falcon-ui.tar.gz
     ${falcon_run} ${falcon_dir}/bin/falcon-start -port 15000
+    cd
 fi
