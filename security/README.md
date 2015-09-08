@@ -56,6 +56,7 @@ ______________________________________________________
 
   ```
 ~/ambari-bootstrap/extras/ambari-ldap-ad.sh
+
   ```
 
 2. Now let's setup LDAP
@@ -64,18 +65,21 @@ ______________________________________________________
 
   ```
 sudo ambari-server setup-ldap
+
   ```
 
 - Restart Ambari services
 
   ```
 sudo ambari-server restart; sudo ambari-agent restart
+
   ```
 
 - Sync ldap
 
 	```
 sudo ambari-server sync-ldap --all
+
 	```
 
 - Provide the username 'admin' and password we are using for the day
@@ -103,6 +107,7 @@ Summary:
     created = 53
 
 Ambari Server 'sync-ldap' completed successfully.
+
   ```
 
 Try it out:
