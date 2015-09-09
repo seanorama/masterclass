@@ -56,6 +56,7 @@ ______________________________________________________
 
   ```
 ~/ambari-bootstrap/extras/ambari-ldap-ad.sh
+
   ```
 
 2. Now let's setup LDAP
@@ -64,18 +65,21 @@ ______________________________________________________
 
   ```
 sudo ambari-server setup-ldap
+
   ```
 
 - Restart Ambari services
 
   ```
 sudo ambari-server restart; sudo ambari-agent restart
+
   ```
 
 - Sync ldap
 
 	```
 sudo ambari-server sync-ldap --all
+
 	```
 
 - Provide the username 'admin' and password we are using for the day
@@ -103,6 +107,7 @@ Summary:
     created = 53
 
 Ambari Server 'sync-ldap' completed successfully.
+
   ```
 
 Try it out:
@@ -242,17 +247,14 @@ To fix them we will:
 sudo service ambari-server stop; sudo service ambari-server start; sudo ambari-agent restart
 ```
 
-- The script will recreate the views to work with Kerberos:
-
-```
-~/ambari-bootstrap/extras/ambari-views/create-views.sh
-```
-
-- You'll then need to update the Hadoop proxyuser settings for the user 'ambari'. Or execute the script to do it for you:
+- You'll then need to update the Hadoop proxyuser settings for the user 'ambari' & recreate the views:
 
 ```
 config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
+
 ```
+
+- One last step will be to restart HDFS
 
 ______________________________________________________
 
