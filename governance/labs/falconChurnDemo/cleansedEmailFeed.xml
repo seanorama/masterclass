@@ -12,7 +12,7 @@
     <timezone>UTC</timezone>
     <clusters>
         <cluster name="primaryCluster" type="source">
-            <validity start="2014-02-28T00:00Z" end="2016-03-31T00:00Z"/>
+            <validity start="2015-09-09T03:00Z" end="2016-03-31T00:00Z"/>
             <retention limit="days(90)" action="delete"/>
 
             <locations>
@@ -22,7 +22,7 @@
         </cluster>
 
         <cluster name="mirrorCluster" type="target">
-            <validity start="2014-02-28T00:00Z" end="2016-03-31T00:00Z"/>
+            <validity start="2015-09-09T03:00Z" end="2016-03-31T00:00Z"/>
             <retention limit="months(36)" action="delete"/>
 
             <locations>
