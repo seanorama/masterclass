@@ -32,18 +32,11 @@ ${__dir}/ranger/prep-mysql.sh
 proxyusers="oozie" ${__dir}/configs/proxyusers.sh
 ## centos6 only #${__dir}/oozie/replace-mysql-connector.sh
 
+sudo mkdir -p /app; sudo chown ${USER}:users /app; sudo chmod g+wx /app
+
 mirror_host="${mirror_host:-mc-teacher1.$(hostname -d)}"
 mirror_host_ip=$(ping -w 1 ${mirror_host} | awk 'NR==1 {print $3}' | sed 's/[()]//g')
 echo "${mirror_host_ip} mirror.hortonworks.com ${mirror_host} mirror admin admin.hortonworks.com" | sudo tee -a /etc/hosts
-
-## Governance specific setup
-sudo usermod -a -G hadoop admin
-sudo mkdir -p /app; sudo chown ${USER}:users /app; sudo chmod g+wx /app
-${__dir}/atlas/atlas-hive-enable.sh
-proxyusers="falcon flume" ${__dir}/configs/proxyusers.sh
-proxyusers="falcon flume" ${__dir}/oozie/proxyusers.sh
-${__dir}/falcon/bugfix_oozie-site_elexpression.sh
-${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
 
 ${ambari_config_set} capacity-scheduler yarn.scheduler.capacity.root.default.maximum-am-resource-percent 0.5
 ${ambari_config_set} capacity-scheduler yarn.scheduler.capacity.maximum-am-resource-percent 0.5
@@ -54,6 +47,14 @@ ${ambari_config_set} yarn-site "yarn.resourcemanager.webapp.proxyuser.hcat.hosts
 ${ambari_config_set} yarn-site "yarn.resourcemanager.webapp.proxyuser.oozie.groups" "*"
 ${ambari_config_set} yarn-site "yarn.resourcemanager.webapp.proxyuser.oozie.hosts" "*"
 ${ambari_config_set} yarn-site yarn.scheduler.minimum-allocation-vcores 1
+
+## Governance specific setup
+sudo usermod -a -G hadoop admin
+${__dir}/atlas/atlas-hive-enable.sh
+proxyusers="falcon flume" ${__dir}/configs/proxyusers.sh
+proxyusers="falcon flume" ${__dir}/oozie/proxyusers.sh
+${__dir}/falcon/bugfix_oozie-site_elexpression.sh
+${ambari_config_set} oozie-site   oozie.service.AuthorizationService.security.enabled "false"
 
 ##### atlas client tutorial
 ## install atlas client
@@ -72,8 +73,6 @@ mysql -u root < MySQLSourceSystem.sql
 ####
 
 
-
-
 ## setup falcon churn demo
 
 mkdir /tmp/falcon-churn; cd /tmp/falcon-churn
@@ -83,8 +82,6 @@ sudo su - hdfs -c "hadoop fs -mkdir -p /shared/falcon/demo/primary/processed/enr
 sudo sudo -u admin hadoop fs -copyFromLocal demo /shared/falcon/
 sudo sudo -u hdfs hadoop fs -chown -R admin:hadoop /shared/falcon
 sudo sudo -u hdfs hadoop fs -chmod -R g+w /shared/falcon
-
-
 
 ### temporary, for Falcon in HDP 2.3.0-2557
 #hdp_version="$(hdp-select status falcon-server | awk '{print $3}')"
