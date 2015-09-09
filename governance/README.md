@@ -234,7 +234,7 @@ atlas-client --c=search --type=Table --name=MYSQL_DRIVERS55
 ## Create a lineage
 
 atlas-client --c=createProcessEntity --inptype=Tims_Fict_Table --outtype=Table --inpvalue=Andrew_Demo --outvalue=MYSQL_DRIVERS99 --traitnames=SuperPM --type=Jamies_Lineage --name=Lineage12
-
+```
 
 ### Lab: Atlas Trucking data
 
@@ -252,9 +252,6 @@ atlas-client --c=importmysql --mysqlhost=localhost --password=trucker \
     --username=trucker1 --db=test -createHiveTables -genLineage \
     --ambariClusterName=$(hostname -s) --suppress
 
-sudo ${__root}/bin/atlas-client --c=importmysql --mysqlhost=${mysql_host} \
-  --password=trucker --username=trucker1 --db=test
-  -createHiveTables -genLineage --ambariClusterName=${ambari_cluster} --suppress
 ```
 
 3.  Inspect tables in Hive:
@@ -276,7 +273,19 @@ Table where name=”DRIVERS”
 create table bad_drivers AS select d.driver_name  , count(d.driver_name)  from DRIVERS d, TIMESHEET t where d.driver_id = t.driver_id and  t.hours_logged > 60 group by d.driver_name;
 ```
 
+6. Loading business metadata
 
+Inspect it:
+
+```
+cat /opt/atlas-client/resources/SensitivityHierarchy.json
+```
+
+```
+cd /opt/atlas-client
+sed -i.bak "s/Sandbox/$(hostname -s)/" resources/SensitivityHierarchy.json
+atlas-client --c=loadtraithierarchy --jsonfilepath=./resources/SensitivityHierarchy.json
+```
 ________________________________________
 
 ### Data Pipeline
@@ -332,6 +341,11 @@ cp -a /app/hadoop-data-pipeline/input_data/SV-sample-1.xml /tmp/data_pipeline_de
 
 #### Wait
 
+#### Debug
+
+```
+hadoop fs -ls -R /user/admin/data_pipeline_demo/data
+```
 ________________________________________
 
 ## Deployment notes
