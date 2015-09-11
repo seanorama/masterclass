@@ -333,7 +333,6 @@ Let's install some plugins, and while we are at it:
 
 - sync LDAP users
 - authenticate to Active Directory
-- install Solr & configure Ranger for Solr
 
 ```
 ~/ambari-bootstrap/extras/ranger/ranger-ldap.sh
@@ -343,12 +342,18 @@ Let's install some plugins, and while we are at it:
 ~/ambari-bootstrap/extras/ranger/ranger-plugin-hive.sh
 ~/ambari-bootstrap/extras/ranger/ranger-plugin-yarn.sh
 ~/ambari-bootstrap/extras/ranger/ranger-kms.sh
-~/ambari-bootstrap/extras/ranger/solr-dashboard.sh publicip; sleep 20
-~/ambari-bootstrap/extras/ranger/ranger-solr-audit.sh
 ```
 
 - Go back to Ambari and note that a lot of services need restarting.
 - Easiest way is to go to your Host in Ambari and click the orange button to restart affected services.
+
+- (optional) install Solr & configure Ranger to store audits in Solr
+  - Note this is not a production or secure installation of Solr
+
+```
+~/ambari-bootstrap/extras/ranger/solr-dashboard.sh publicip; sleep 20
+~/ambari-bootstrap/extras/ranger/ranger-solr-audit.sh
+```
 
 ______________________________________________________
 
