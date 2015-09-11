@@ -248,6 +248,7 @@ sqoop import --connect jdbc:mysql://localhost/test --username trucker1 --passwor
 2. Manual loading of metadata
 
 ```
+cd /opt/atlas-client
 atlas-client --c=importmysql --mysqlhost=localhost --password=trucker \
     --username=trucker1 --db=test -createHiveTables -genLineage \
     --ambariClusterName=$(hostname -s) --suppress
