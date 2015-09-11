@@ -192,6 +192,39 @@ ______________________________________________________
 
 ______________________________________________________
 
+
+### Lab: Using Kerberos
+
+Note: TODO. This needs more material.
+
+1. Authenticate to kerberos & then use the cluster as usual:
+
+```
+## auth to kerberos
+kinit
+
+## this your token
+klist
+
+## use hadoop as usual
+hadoop fs -ls /
+
+## destroy your token if needed
+kdestroy
+```
+
+1. Use the HDFS user:
+
+```
+## get kerberos token:
+sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-$(hostname -s)
+
+## run commands as usual:
+sudo sudo -u hdfs hadoop fs -ls /
+```
+
+______________________________________________________
+
 ### Lab: Integrate kerberos with the OS
 
 HDP is integrated with Kerberos, but you also need your AD/LDAP groups to be synced with the NameNode & ResourceManagers.
