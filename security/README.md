@@ -49,6 +49,25 @@ ______________________________________________________
 
 ______________________________________________________
 
+### Lab: Hadoop proxyuser/superusers & Ambari Views
+
+1. Open the Files Ambari View
+2. Notice an error regarding impersonation
+
+In Ambari:
+- HDFS -> Configs -> Advanced
+- Scroll down to "Custom core-site"
+- Click "Add Property"
+- Click the icon on the right to use "Bulk property add mode"
+- Add these properties:
+
+  ```
+hadoop.proxyuser.root.groups=users,hadoop-users
+hadoop.proxyuser.root.hosts=*
+  ```
+
+______________________________________________________
+
 ### Lab: Configure Ambari for LDAP
 
 1. Run this script to save us some time in typing the settings in.
@@ -149,25 +168,6 @@ Saving...done
 Ambari Server 'setup-ldap' completed successfully.
   ```
 -->
-
-______________________________________________________
-
-### Lab: Hadoop proxyuser/superusers & Ambari Views
-
-1. Open the Files Ambari View
-2. Notice an error regarding impersonation
-
-In Ambari:
-- HDFS -> Configs -> Advanced
-- Scroll down to "Custom core-site"
-- Click "Add Property"
-- Click the icon on the right to use "Bulk property add mode"
-- Add these properties:
-
-  ```
-hadoop.proxyuser.root.groups=users,hadoop-users
-hadoop.proxyuser.root.hosts=*
-  ```
 
 ______________________________________________________
 
