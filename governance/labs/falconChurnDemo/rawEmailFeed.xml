@@ -8,7 +8,7 @@
     <tags>externalSystem=USWestEmailServers,classification=secure</tags>
     <groups>churnAnalysisDataPipeline</groups>
     <frequency>hours(1)</frequency>
-    <timezone>UTC</timezone>
+    <timezone>GMT+01:00</timezone>
     <late-arrival cut-off="hours(1)"/>
     <clusters>
         <cluster name="primaryCluster" type="source">
