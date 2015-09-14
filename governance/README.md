@@ -50,6 +50,40 @@ falcon entity -list -type process
 - Ranger:
     - Install, Enable HDFS & Hive plugins, Install Solr & Solr dashboard
 
+### Lab: HCatalog
+
+1. Create table in Hive, and thus HCatalog
+    - Open the Ambari View for Hive
+    - Execute this:
+
+    ```
+CREATE TABLE `sample_07` (
+`code` string ,
+`description` string ,
+`total_emp` int ,
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+LOAD DATA LOCAL INPATH '/opt/hadoop/samples/sample_07.csv' INTO TABLE sample_07;
+    ```
+
+
+1. Execute Pig Script
+    - Open the Ambari View for Pig
+    - Create a new script (with any name you like)
+    - Add this argument (at the bottom): `-useHcatalog`
+    - Provide this for the script:
+
+    ```
+-- Load table 'sample_07'
+sample_07 = LOAD 'sample_07' USING org.apache.hive.hcatalog.pig.HCatLoader();
+-- Compute the average salary of the table
+salaries = GROUP sample_07 ALL;
+out = FOREACH salaries GENERATE AVG(sample_07.salary);
+DUMP out;
+    ```
+
+    - Execute the script
 
 ### Lab: Falcon HDFS mirroring
 

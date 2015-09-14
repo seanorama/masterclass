@@ -100,6 +100,25 @@ sudo sudo -u hdfs hadoop fs -chmod -R g+w /shared/falcon
 ## 
 
 
+(
+sudo mkdir -p /opt/hadoop/samples
+sudo chmod 777 /opt/hadoop/samples
+cd /opt/hadoop/samples
+
+dfs_cmd="sudo sudo -u hdfs hadoop fs"
+dfs_cmd_admin="sudo sudo -u admin hadoop fs"
+
+${dfs_cmd} -mkdir /public
+${dfs_cmd} -mkdir -p /public/samples /public/secured/dir1
+${dfs_cmd} -chmod -R 777 /public
+
+## Sandbox data sets
+curl -sSL -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
+curl -sSL -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+${dfs_cmd_admin} -put sample_07.csv sample_08.csv /public/samples
+)
+
+
 
 ## restart services
 myhost=$(hostname -f)
