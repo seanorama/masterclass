@@ -403,3 +403,14 @@ sed -e "s/myCluster/${mycluster}/g" -e "s/myHost/${myhost}/g" ~/ambari-bootstrap
 sudo sudo -u admin falcon entity -submit -type cluster -file "/tmp/${mycluster}.xml"
 sudo su - hdfs -c "hadoop fs -mkdir -p /shared/falcon/demo/bcp/processed/enron; hadoop fs -chown -R admin:hadoop /shared; hadoop fs -chmod -R 777 /shared"
   ```
+
+- Cleanup Oozie on mirrorHost
+
+```
+oozie jobs -oozie http://$(hostname -f):11000/oozie|grep -E "(Feed|Process)" | awk '{print $1}' \
+    | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
+oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype coordinator |grep -E "(Feed|Process)" | awk '{print $1}' \
+    | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
+oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype bundle |grep -E "(Feed|Process)" | awk '{print $1}' \
+    | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
+```
