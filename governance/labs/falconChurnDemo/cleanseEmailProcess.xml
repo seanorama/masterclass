@@ -9,7 +9,7 @@
 
     <clusters>
         <cluster name="primaryCluster">
-            <validity start="2015-09-09T12:00Z" end="2016-03-31T00:00Z"/>
+            <validity start="2015-09-15T13:00Z" end="2016-03-31T00:00Z"/>
         </cluster>
     </clusters>
 
