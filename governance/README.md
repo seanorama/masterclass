@@ -443,8 +443,8 @@ sudo su - hdfs -c "hadoop fs -mkdir -p /shared/falcon/demo/bcp/processed/enron; 
 ```
 oozie jobs -oozie http://$(hostname -f):11000/oozie|grep -E "(Feed|Process)" | awk '{print $1}' \
     | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
-oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype coordinator |grep -E "(Feed|Process)" | awk '{print $1}' \
+oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype coordinator |grep -E "(Feed|Process|PROCESS)" | awk '{print $1}' \
     | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
-oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype bundle |grep -E "(Feed|Process)" | awk '{print $1}' \
+oozie jobs -oozie http://$(hostname -f):11000/oozie  -jobtype bundle |grep -E "(Feed|Process|PROCESS)" | awk '{print $1}' \
     | xargs -i{} sudo sudo -u oozie oozie job  -oozie http://$(hostname -f):11000/oozie -kill {}
 ```

@@ -1,0 +1,26 @@
+export lab_count=40
+export lab_first=100
+export lab_prefix=par
+source ~/src/ambari-bootstrap/providers/google/create-google-hosts.sh
+create=true ~/src/ambari-bootstrap/providers/google/create-google-hosts.sh
+
+exit
+
+command="echo OK"; pdsh -w ${hosts_all} "${command}"
+pdsh -w ${hosts_all} "${command}"
+
+exit
+
+read -r -d '' command <<EOF
+sudo yum -y -q install screen
+curl -sSL -O https://raw.githubusercontent.com/seanorama/masterclass/master/governance/setup.sh
+chmod +x setup.sh
+screen -S myscreen /home/student/setup.sh
+EOF
+pdsh -w ${hosts_all} "${command}"
+
+exit
+
+for lab in ${labs}; do echo "${lab_prefix}${lab} "; done \
+    | xargs echo gcloud compute instances delete
+
