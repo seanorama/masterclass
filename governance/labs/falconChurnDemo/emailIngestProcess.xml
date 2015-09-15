@@ -16,7 +16,7 @@
     <parallel>1</parallel>
     <order>FIFO</order>
     <frequency>hours(1)</frequency>
-    <timezone>GMT+01:00</timezone>
+    <timezone>GMT+02:00</timezone>
 
     <outputs>
         <output name="output" feed="rawEmailFeed" instance="now(0,0)" />

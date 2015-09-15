@@ -9,7 +9,7 @@
     <groups>churnAnalysisDataPipeline</groups>
 
     <frequency>hours(1)</frequency>
-    <timezone>GMT+01:00</timezone>
+    <timezone>GMT+02:00</timezone>
     <clusters>
         <cluster name="primaryCluster" type="source">
             <validity start="2015-09-15T11:15Z" end="2016-03-31T00:00Z"/>
