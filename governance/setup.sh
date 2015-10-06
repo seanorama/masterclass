@@ -83,23 +83,6 @@ sudo sudo -u admin hadoop fs -copyFromLocal demo /shared/falcon/
 sudo sudo -u hdfs hadoop fs -chown -R admin:hadoop /shared/falcon
 sudo sudo -u hdfs hadoop fs -chmod -R g+w /shared/falcon
 
-### temporary, for Falcon in HDP 2.3.0-2557
-#hdp_version="$(hdp-select status falcon-server | awk '{print $3}')"
-#if [[ ${hdp_version} == '2.3.0.0-2557' ]]; then
-    #cd /usr/hdp/current/falcon-server/webapp/
-    #backup_dir="backup_$(date +%F-%T)"
-    #falcon_run="sudo sudo -u falcon HADOOP_HOME=/usr/hdp/current/hadoop-client"
-    #${falcon_run} ../bin/falcon-stop
-    #${falcon_run} mkdir ${backup_dir}
-    #${falcon_run} mv falcon falcon.war "${backup_dir}"
-    #${falcon_run} curl -sSL -o falcon.war "https://www.dropbox.com/s/962jw6ja03j1tpy/falcon-dal-m10-preview.war?dl=1"
-    #${falcon_run} ../bin/falcon-start -port 15000
-    #sleep 20
-    #cd
-#fi
-## 
-
-
 (
 sudo mkdir -p /opt/hadoop/samples
 sudo chmod 777 /opt/hadoop/samples
@@ -118,33 +101,3 @@ curl -sSL -O https://raw.githubusercontent.com/abajwa-hw/security-workshops/mast
 ${dfs_cmd_admin} -put sample_07.csv sample_08.csv /public/samples
 )
 
-
-
-## restart services
-myhost=$(hostname -f)
-read -r -d '' body <<EOF
-{"RequestInfo":{"command":"RESTART","context":"Restart all components on ${myhost}","operation_level":{"level":"HOST","cluster_name":"${ambari_cluster}"}},"Requests/resource_filters":[{"service_name":"YARN","component_name":"APP_TIMELINE_SERVER","hosts":"${myhost}"},{"service_name":"ATLAS","component_name":"ATLAS_SERVER","hosts":"${myhost}"},{"service_name":"HDFS","component_name":"DATANODE","hosts":"${myhost}"},{"service_name":"FALCON","component_name":"FALCON_CLIENT","hosts":"${myhost}"},{"service_name":"FALCON","component_name":"FALCON_SERVER","hosts":"${myhost}"},{"service_name":"FLUME","component_name":"FLUME_HANDLER","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"HCAT","hosts":"${myhost}"},{"service_name":"HDFS","component_name":"HDFS_CLIENT","hosts":"${myhost}"},{"service_name":"MAPREDUCE2","component_name":"HISTORYSERVER","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"HIVE_CLIENT","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"HIVE_METASTORE","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"HIVE_SERVER","hosts":"${myhost}"},{"service_name":"HDFS","component_name":"JOURNALNODE","hosts":"${myhost}"},{"service_name":"MAPREDUCE2","component_name":"MAPREDUCE2_CLIENT","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"MYSQL_SERVER","hosts":"${myhost}"},{"service_name":"HDFS","component_name":"NAMENODE","hosts":"${myhost}"},{"service_name":"YARN","component_name":"NODEMANAGER","hosts":"${myhost}"},{"service_name":"OOZIE","component_name":"OOZIE_CLIENT","hosts":"${myhost}"},{"service_name":"OOZIE","component_name":"OOZIE_SERVER","hosts":"${myhost}"},{"service_name":"PIG","component_name":"PIG","hosts":"${myhost}"},{"service_name":"YARN","component_name":"RESOURCEMANAGER","hosts":"${myhost}"},{"service_name":"HDFS","component_name":"SECONDARY_NAMENODE","hosts":"${myhost}"},{"service_name":"SLIDER","component_name":"SLIDER","hosts":"${myhost}"},{"service_name":"SQOOP","component_name":"SQOOP","hosts":"${myhost}"},{"service_name":"TEZ","component_name":"TEZ_CLIENT","hosts":"${myhost}"},{"service_name":"HIVE","component_name":"WEBHCAT_SERVER","hosts":"${myhost}"},{"service_name":"YARN","component_name":"YARN_CLIENT","hosts":"${myhost}"},{"service_name":"ZOOKEEPER","component_name":"ZOOKEEPER_CLIENT","hosts":"${myhost}"},{"service_name":"ZOOKEEPER","component_name":"ZOOKEEPER_SERVER","hosts":"${myhost}"}]}
-EOF
-response=$(echo "${body}" | ${ambari_curl}/clusters/${ambari_cluster}/requests -X POST -d @-)
-request_id=$(echo ${response} | python -c 'import sys,json; print json.load(sys.stdin)["Requests"]["id"]')
-ambari_wait_request_complete ${request_id}
-
-
-
-hdp_version="$(hdp-select status falcon-server | awk '{print $3}')"
-if [[ ${hdp_version} == '2.3.0.0-2557' ]]; then
-    cd /tmp
-    falcon_dir=/usr/hdp/current/falcon-server/
-    cd ${falcon_dir}
-    backup_dir="backup_$(date +%F-%T)"
-    falcon_run="sudo sudo -u falcon HADOOP_HOME=/usr/hdp/current/hadoop-client"
-    ${falcon_run} ${falcon_dir}/bin/falcon-stop
-    cd ${falcon_dir}/webapp
-    ${falcon_run} mkdir ${backup_dir}
-    sudo cp -a falcon ${backup_dir}
-    ${falcon_run} curl -sSL -o falcon-ui.tar.gz "https://www.dropbox.com/s/zb1odoe4n1e1m8d/falcon-ui.tar.gz?dl=1"
-    cd falcon
-    ${falcon_run} tar -xf ../falcon-ui.tar.gz
-    ${falcon_run} ${falcon_dir}/bin/falcon-start -port 15000
-    cd
-fi
