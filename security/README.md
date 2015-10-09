@@ -1,9 +1,6 @@
 # Notes for our Hadoop Masterclasses
 
-These notes are meant to accompany our Hadoop Security Masterclass which covers:
-- Apache Falcon for data lifecycle
-- Apache Atlas for metadata
-- Apache Ranger for policy enforcement and access audits
+These notes are meant to accompany our Hadoop Security Masterclass.
 
 ## Requirements
 
