@@ -1,79 +1,92 @@
-#######################################################
-CLUSTER ASSIGNMENT
-#######################################################
+# Lab Notes for Operations Masterclass
 
-Output of report-clouds.sh
+## CLUSTER ASSIGNMENT
+---------------------
 
-#######################################################
-AMBARI INSTALLATION
-#######################################################
+Provide output of `report-clouds.sh` to students.
 
-ssh into the public address of your ambari server with:
+## AMBARI INSTALLATION
+----------------------
 
+* ssh into the public address of your ambari server with:
+  * user: masterclass
+  * password: masterclass
+
+```
 ssh masterclass@<ambari-server-public-name>
-password: masterclass
+```
 
+* Install Ambari Server
+
+```
 sudo yum install ambari-server -y
+```
+
+* Configure Ambari Server
+  * accept all the default options (just hit enter at each prompt)
+  * Make sure you get the following message before continuing:
+    * "Ambari Server 'setup' completed successfully."
+
+```
 sudo ambari-server setup
-accept all the default options (just hit enter at each prompt)
+```
 
-Make sure you get the following message before continuing:
-"Ambari Server 'setup' completed successfully."
+* Start Ambari Server
 
+```
 sudo ambari-server start
+```
 
-go to your web browser and enter:
-<ambari-server-public-name>:8080
+* Open Ambari in your web browser:
+  * <ambari-server-public-name>:8080
 
-#######################################################
-BASE CLUSTER INSTALLATION
-#######################################################
+## BASE CLUSTER INSTALLATION
+----------------------
 
-username: admin
-password: admin
+* Ambari Credentials:
+  * username: admin
+  * password: admin
 
-Launch the cluster wizard
+* Launch the "Install Wizard"
+* Name your cluster (nothing rude!)
+* Select the HDP 2.2 stack (this will allow us to upgrade as part of this masterclass) and click next
 
-Name your cluster (nothing rude!)
+* Click "Proceed Anyway" at the JDK warning.
+  * JDK 1.8 isn't supported by HDP 2.2, but it will work briefly while we upgrade to HDP 2.3
 
-Select the HDP 2.2 stack (this will allow us to upgrade as part of this masterclass) and click next
+* Paste the private names for all hosts including the ambari private name
 
-Click "Proceed Anyway" at the JDK warning.
+* Select the "perform manual registration"
+* Click ok to the warning that pops up about ssh, then click Register and Confirm
+* Click ok to the warning about ambari agents needing to be started first.
 
-Paste the private names for all hosts including the ambari private name
+* Wait for all nodes to report status "Success" and all host checks to pass (explore the check results to see what is done).
 
-Select the "perform manual registration"
-Click ok to the warning that pops up about ssh, then click Register and Confirm
-Click ok to the warning about ambari agents needing to be started first.
+* There is one warning for each host that is fine for the purposes of this demo workshop. Click Next and then OK at the popup that we are ignoring the warning.
 
-Wait for all nodes to report status "Success" and all host checks to pass (explore the check results to see what is done).
+* Now at the Choose Services step, delesect all services (tick box at very top)
 
-There is one warning for each host that is fine for the purposes of this demo workshop. Click Next and then OK at the popup that we are ignoring the warning.
+* Then only select the following services:
+  * HDFS, YARN + MapReduce2, Tez, Hive, Pig, Zookeeper
 
-Now at the Choose Services step, delesect all services (tick box at very top)
+* Then click Next
+  * You will get a "Limited Functionality Warning" this is fine, click Proceed Anyway.
 
-Then only select the following services:
+**IMPORTANT!**
 
-HDFS, YARN + MapReduce2, Tez, Hive, Pig, Zookeeper
+* Ensure all master services are on the master nodes
+* Lay out the services as follows:
 
-Then click Next
-
-You will get a "Limited Functionality Warning" this is fine, click Proceed Anyway.
-
-IMPORTANT!
-
-Ensure all master services are on the master nodes
-Lay out the services as follows:
-NameNode (first master)
-SNameNode (second master)
-History Server (third master)
-App Timeline Server (third master)
-Resource Manager (second master)
-HiveServer2 (first master)
-Hive Metastore (second master)
-Zookeeper Server (first master)
-Zookeeper Server (second master)
-Zookeeper Server (third master)
+    NameNode (first master)
+    SNameNode (second master)
+    History Server (third master)
+    Resource Manager (second master)
+    App Timeline Server (third master)
+    HiveServer2 (first master)
+    Hive Metastore (second master)
+    Zookeeper Server (first master)
+    Zookeeper Server (second master)
+    Zookeeper Server (third master)
 
 ALL YOUR MASTER SERVICES SHOULD BE ON THREE NODES AS SHOWN ON THE RIGHT HAND SIDE, GET YOUR PARTNER TO VERIFY THIS BEFORE CONTINUING.
 
@@ -83,7 +96,7 @@ Once you're really sure click the next button
 
 Assign Slaves and Clients stage.
 
-Ensure nothing is ticked on the master nodes.
+Ensure nothin is ticked on the master nodes.
 
 Ensure that client services are present on the ambari node
 
@@ -160,7 +173,10 @@ QUICK BENCHMARK
 ssh to your ambari node
 
 Now run the command below (all one line):
-sudo su hdfs -l -c 'hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB'
+
+```
+sudo sudo -u hdfs hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB
+```
 
 Re-run it several times (at least three), recording somewhere the numbers for the following parameters for each run:
 
@@ -203,7 +219,10 @@ Now let's see the improvement
 ssh to your ambari node
 
 Now run the command below (all one line):
-sudo su hdfs -l -c 'hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB'
+
+```
+sudo sudo -u hdfs hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB
+```
 
 Re-run it several times (at least three), recording somewhere the numbers for the following parameters for each run:
 
@@ -241,9 +260,7 @@ Scroll down, Accept default configurations including the deletion of the seconda
 From your ambari server ssh into the node that is mentioned in the message:
 ssh masterclass@<host name from message>
 
-Then run the commands as shown in the ambari screen (also shown below for convenience)
-sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter'
-sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'
+Then run the commands as shown in the ambari screen.
 
 Note ambari can detect when the changes have been made.
 
@@ -310,7 +327,7 @@ Leave the name selected as HDP 2.3 and enter "2.0" without the quotes in the tex
 
 Click the checkbox for redhat6 and enter the following repository information:
 
-2.3.2
+2.3.2.0
 HDP - http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.3.2.0
 HDP UTILS - http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6
 
@@ -402,8 +419,7 @@ AMBARI VIEWS
 #######################################################
 
 ssh masterclass@<ambari-server-public-name>
-sudo su -
-vi /var/lib/ambari-server/ambari-env.sh
+sudo vi /var/lib/ambari-server/ambari-env.sh
 replace one of the arguments "-Xmx2048m"
 with 
 "-Xmx4096m -XX:PermSize=128m -XX:MaxPermSize=128m" (no quotes)
@@ -417,13 +433,12 @@ Click HDFS on the left hand side, then the Configs tab at the top, then the Adva
 
 Click Add Property...
 
-key = hadoop.proxyuser.root.groups
-value = *
+Click the multi-add icon...
 
-Once that's done repeat the Click Add Property step for the next key/value.
+Paste the following:
 
-key = hadoop.proxyuser.root.hosts
-value = *
+hadoop.proxyuser.root.groups=*
+hadoop.proxyuser.root.hosts=*
 
 Then click the green Save button at the top.
 
