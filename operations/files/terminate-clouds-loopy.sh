@@ -9,6 +9,10 @@
 # full set of 35 fruits, use as many as necessary
 # apple apricot banana blackberry blackcurrant blueberry coconut cherry clementine cranberry damson elderberry fig gooseberry grape guava huckleberry lemon lime lychee mango melon nectarine orange passionfruit peach pear plum prune pineapple pomegranate raspberry satsuma strawberry tangerine
 
+#export clusters="apple apricot banana blackberry blackcurrant blueberry coconut cherry clementine cranberry damson elderberry fig gooseberry grape guava huckleberry lemon lime lychee mango melon nectarine orange passionfruit peach pear persimmon plum prune pineapple pomegranate raspberry satsuma strawberry tangerine"
+clusters=${clusters:-apple}
+
+
 # quick safety check to ensure termination is required
 while true; do
     read -p "Do you wish terminate all masterclass instances? (y/n) " yn
@@ -23,7 +27,7 @@ done
 batchcount=0
 
 # change the list of fruit to vary the number of clusters deleted
-for fruitycluster in tangerine
+for fruitycluster in ${clusters}
 do 
   ((batchcount++))
   aws cloudformation delete-stack --stack-name $fruitycluster
