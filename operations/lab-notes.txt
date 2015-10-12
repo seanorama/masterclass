@@ -1,0 +1,483 @@
+#######################################################
+CLUSTER ASSIGNMENT
+#######################################################
+
+Output of report-clouds.sh
+
+#######################################################
+AMBARI INSTALLATION
+#######################################################
+
+ssh into the public address of your ambari server with:
+
+ssh masterclass@<ambari-server-public-name>
+password: masterclass
+
+sudo yum install ambari-server -y
+sudo ambari-server setup
+accept all the default options (just hit enter at each prompt)
+
+Make sure you get the following message before continuing:
+"Ambari Server 'setup' completed successfully."
+
+sudo ambari-server start
+
+go to your web browser and enter:
+<ambari-server-public-name>:8080
+
+#######################################################
+BASE CLUSTER INSTALLATION
+#######################################################
+
+username: admin
+password: admin
+
+Launch the cluster wizard
+
+Name your cluster (nothing rude!)
+
+Select the HDP 2.2 stack (this will allow us to upgrade as part of this masterclass) and click next
+
+Click "Proceed Anyway" at the JDK warning.
+
+Paste the private names for all hosts including the ambari private name
+
+Select the "perform manual registration"
+Click ok to the warning that pops up about ssh, then click Register and Confirm
+Click ok to the warning about ambari agents needing to be started first.
+
+Wait for all nodes to report status "Success" and all host checks to pass (explore the check results to see what is done).
+
+There is one warning for each host that is fine for the purposes of this demo workshop. Click Next and then OK at the popup that we are ignoring the warning.
+
+Now at the Choose Services step, delesect all services (tick box at very top)
+
+Then only select the following services:
+
+HDFS, YARN + MapReduce2, Tez, Hive, Pig, Zookeeper
+
+Then click Next
+
+You will get a "Limited Functionality Warning" this is fine, click Proceed Anyway.
+
+IMPORTANT!
+
+Ensure all master services are on the master nodes
+Lay out the services as follows:
+NameNode (first master)
+SNameNode (second master)
+History Server (third master)
+App Timeline Server (third master)
+Resource Manager (second master)
+HiveServer2 (first master)
+Hive Metastore (second master)
+Zookeeper Server (first master)
+Zookeeper Server (second master)
+Zookeeper Server (third master)
+
+ALL YOUR MASTER SERVICES SHOULD BE ON THREE NODES AS SHOWN ON THE RIGHT HAND SIDE, GET YOUR PARTNER TO VERIFY THIS BEFORE CONTINUING.
+
+CHECK THE HOSTNAMES ARE THOSE OF YOUR MASTERS.
+
+Once you're really sure click the next button
+
+Assign Slaves and Clients stage.
+
+Ensure nothing is ticked on the master nodes.
+
+Ensure that client services are present on the ambari node
+
+Ensure that 3 of your 4 datanodes, have DataNode and NodeManager services.
+
+One slave server should have no services deployed on it.
+
+ALL YOUR DATANODE AND NODEMANAGER SERVICES SHOULD BE ON THREE DATANODES, CLIENT  SHOULD BE ON THE AMBARI SERVER, GET YOUR PARTNER TO VERIFY THIS BEFORE CONTINUING.
+
+CHECK THE HOSTNAMES ARE THOSE OF YOUR DATANODES.
+
+NOTE There will be a warning at the top which if clicked on tells you that one server is unused, this is fine. Click Next, on the popup which says your setup has issues, click Continue Anyway.
+
+Customise services just needs 2 things changed:
+
+HDFS - Data Node Directories
+Replace:
+/hadoop/hdfs/data
+With this:
+/mnt/dev/xvdb,/mnt/dev/xvdc,/mnt/dev/xvdd,/mnt/dev/xvde,/mnt/dev/xvdf,/mnt/dev/xvdg
+
+Hive
+Advanced Tab
+Database Password : password (and confirm it in the confirmation box)
+
+Scroll all the way to the bottom and click next (this may take a second or two to respond)
+
+At the Review stage, VERIFY YOU ARE INSTALLING HDP 2.2, then click Deploy and then watch the magic happen!
+
+#######################################################
+FAILURE DEBUGGING
+#######################################################
+
+The install will complete with warnings, and services will not start successfully, let's investigate how to fix this.
+
+Click Next post install, and then click Complete.
+
+Datanodes are down, let's see why.
+
+Click on the 0 ops to the top left of the Ambari Web UI.
+
+Click on the "Start Services" row
+
+Click on one of your datanodes
+
+Click on the failed DataNode start operation
+
+Review the stdout and stderr output. Looks like a permissions problem with the mount points.
+
+ssh from your ambari node to one of your datanodes
+
+username: masterclass
+password: masterclass
+
+Run the command:
+ls -al /mnt/dev/
+
+This shows that the user and group of the mountpoints is incorrect, fix this by running:
+
+sudo chown -R hdfs:hadoop /mnt/dev/xvd*
+
+ssh into each of your current datanodes and apply this change to all three of them.
+
+Now go back to ambari, click the Actions button on the left hand side and click "Start All Services".
+
+Over the next minute or so the alerts will resolve as the services stabilise.
+
+If there are still any problems at this point, please let someone know! Everything *should* be green at this stage.
+
+#######################################################
+QUICK BENCHMARK
+#######################################################
+
+ssh to your ambari node
+
+Now run the command below (all one line):
+sudo su hdfs -l -c 'hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB'
+
+Re-run it several times (at least three), recording somewhere the numbers for the following parameters for each run:
+
+e.g.
+Throughput mb/sec: 24.391289641800572
+Average IO rate mb/sec: 24.408130645751953
+IO rate std deviation: 0.6460756542372524
+fs.TestDFSIO:     Test exec time sec: 61.064
+
+#######################################################
+ADDING A DATANODE
+#######################################################
+
+Click the hosts tab in Ambari towards the top right of the ambari web ui.
+
+On the list of hosts, you should see one with "0 Components" next to it, let's fix that now.
+
+Click on the hostname part of it.
+
+On the Components click +Add and select DataNode from the dropdown, click Confirm Add when asked. Watch the install complete. When the install has completed, click OK.
+
+Again on Components click +add and select NodeManager from the dropdown, click Confirm Add when asked. Watch the install complete. When the install has completed, click OK.
+
+We will need to fix the mount points, so let's do that now.
+
+ssh to the datanode you are working on and run
+
+sudo chown -R hdfs:hadoop /mnt/dev/xvd*
+
+Now click Host Actions towards the top right and select "Start All Components", click OK to the confirmation.
+
+All services should now start cleanly, alert someone if there are any problems still. Alerts should resolve over the next few seconds.
+
+#######################################################
+ANOTHER QUICK BENCHMARK
+#######################################################
+
+Now let's see the improvement
+
+ssh to your ambari node
+
+Now run the command below (all one line):
+sudo su hdfs -l -c 'hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-client-jobclient-tests.jar TestDFSIO -read -write -nrFiles 5 -fileSize 1GB'
+
+Re-run it several times (at least three), recording somewhere the numbers for the following parameters for each run:
+
+e.g.
+Throughput mb/sec: 30.766272473800598
+Average IO rate mb/sec: 30.897708892822266
+IO rate std deviation: 2.080072681882026
+Test exec time sec: 49.658
+
+You should see the above numbers are better than before (shorter exec time, higher throughput)
+
+#######################################################
+NAMENODE HA
+#######################################################
+
+Click HDFS on the left hand side
+Click "Service Actions" on the right hand side and select "Enable namenode HA"
+Enter Nameservice ID as your cluster name
+Select hosts, ensure additional name node, and all journal nodes are on your master nodes
+
+Current Namenode (first master) * you can't change this
+Additional NameNode (second master)
+Journal Node (first master)
+Journal Node (second master)
+Journal Node (third master)
+
+Should have message on right hand side " 5 hosts not running master services" 
+
+VERIFY THE ABOVE BEFORE CLICKING NEXT.
+
+Once you're happy with that, click next.
+
+Scroll down, Accept default configurations including the deletion of the secondary NameNode and click next at the review screen.
+
+From your ambari server ssh into the node that is mentioned in the message:
+ssh masterclass@<host name from message>
+
+Then run the commands as shown in the ambari screen (also shown below for convenience)
+sudo su hdfs -l -c 'hdfs dfsadmin -safemode enter'
+sudo su hdfs -l -c 'hdfs dfsadmin -saveNamespace'
+
+Note ambari can detect when the changes have been made.
+
+After the configure components step is completed, click next
+
+Manual Steps Required: Initialize JournalNodes
+
+From your ambari server ssh into the node that is mentioned in the message:
+ssh masterclass@<host name from message>
+ Then run the command as shown in the ambari screen (also shown below for convenience)
+ sudo su hdfs -l -c 'hdfs namenode -initializeSharedEdits'
+ 
+ Once completed click next
+ 
+ Manual Steps Required: Initialize NameNode HA Metadata
+ 
+ From your ambari server ssh into the node that is mentioned in the message:
+ssh masterclass@<host name from message>
+ Then run the command as shown in the ambari screen (also shown below for convenience)
+sudo su hdfs -l -c 'hdfs zkfc -formatZK'
+
+Then log into the next machine listed on that message:
+ssh masterclass@<host name from message>
+ Then run the command as shown in the ambari screen (also shown below for convenience)
+ 
+ Once completed click next and confirm you have completed the manual steps.
+ 
+ The wizard will complete the remaining steps and at the end will return you to the Ambari home screen, there will be a number of alerts initially, but they will clear within a minute or so.
+
+#######################################################
+RESOURCE MANAGER HA
+#######################################################
+
+Click YARN on the left hand side
+Click "Service Actions" on the right hand side and select "Enable resourcemanager HA"
+Click next
+
+Ensure additional Resource Manager is placed on a master node.
+
+Should have message on right hand side " 5 hosts not running master services" 
+
+Verify above before clicking next.
+
+Accept the default configuration and click next.
+
+Then allow the RM HA Wizard to complete the remaining steps.
+
+
+#######################################################
+ROLLING UPGRADE
+#######################################################
+
+Click on Admin on the top right, select "stacks and versions" from the dropdown.
+
+Click on the versions tab, wait for a few seconds for this page to complete, if it does not just re-load/refresh the page.
+
+You should see the HDP 2.2.8 version listed.
+
+Click the blue "Manage Versions" button, and click the OK to the message about Ambari Administration.
+
+Click the blue "+Register Version" button on the top right
+
+Leave the name selected as HDP 2.3 and enter "2.0" without the quotes in the text box next to it.
+
+Click the checkbox for redhat6 and enter the following repository information:
+
+2.3.2
+HDP - http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.3.2.0
+HDP UTILS - http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6
+
+Click save once this is complete.
+
+Now click on your cluster name next to the green "Current: 8/8" text
+
+Click the Blue "Install Packages" button and click OK to the pop-up for this action.
+
+Installation should now begin.
+
+Once that is done, now click the blue "Perform Upgrade" button and click ok to the confirmation of a rolling upgrade.
+
+Requirements not met, so let's fix that.
+
+Dissmsis the error and click back on the ambari icon on the top left of the window
+
+Click YARN on the left hand side, and then configs tab towards the top
+
+Paste "yarn.timeline-service.recovery.enabled" into the filter box in the top
+
+Change the world "false" to "true" and then click the green save button towards the top right
+
+Give the change a comment, and click save
+
+Click ok to the message about configuration being applied.
+Note that several components require a restart to take account of the chnaged configuration
+
+Click the orange button towards the top right "Restart all affected" then click "Confirm restart all"
+
+Click ok when this is complete, and after a few seconds the restart request should vanish.
+
+Now let's go back to the upgrade.
+
+Top right of the window, Admin > Stacks and Versions (dropdown) > Versions (tab)
+
+Click on the blue "Perform upgrade" button again, click OK, and then proceed anyway.
+
+Click that you've performed the database backup (even though we have not!)
+
+At around 30% you'll be presented with a request to verify that things have been upgrades so far successfully, click ok to this and allow the wizard to continue.
+
+The same will happen again at around 45% this time notifying you about changes to HiveServer2
+
+One final check point at around 98% for finalise....
+
+Once complete click ok to head back to the main page, and notice just once component needs a final restart to pick up the updated configuration.
+
+Click the orange button towards the top right "restart all affected" then click "confirm restart all"
+
+#######################################################
+AMBARI METRICS
+#######################################################
+
+Let's fill the empty graph slots now... ambari metrics!
+
+On the left hand side of the main screen , click the Actions button
+
+Select the + Add Service button
+
+Select Ambari Metrics from the list and click Next.
+
+Ensure the Metrics Collector is on one of your master nodes
+
+Should have message on right hand side " 5 hosts not running master services" 
+
+Verify above before clicking next.
+
+You may see a brief alert for an HDFS config, but this resolves when checking the configuration, so click the Next button accepting the default configuration.
+
+Then at the review screen click deploy which should then begin the installation and configuration.
+
+Click ok when the process is completed, and note that several services will require a restart. 
+
+Select Hive on the left hand side.
+
+Click the orange button towards the top right "restart all affected" then click "confirm restart all".
+
+A few minutes later you can click OK to return to the screen, a few more services will require the same treatment.
+
+Complete until all "service restart" indicators are completed.
+
+A few alerts may appear, but should vanish within a minute.
+
+Now, behold, graphs!
+
+#######################################################
+AMBARI VIEWS
+#######################################################
+
+ssh masterclass@<ambari-server-public-name>
+sudo su -
+vi /var/lib/ambari-server/ambari-env.sh
+replace one of the arguments "-Xmx2048m"
+with 
+"-Xmx4096m -XX:PermSize=128m -XX:MaxPermSize=128m" (no quotes)
+then run ambari-server restart
+
+#######################################################
+ADDING HIVE AND FILES VIEW
+#######################################################
+
+Click HDFS on the left hand side, then the Configs tab at the top, then the Advanced tab lower down, then scroll to Custom core-site and click the small black triangle to expand the fields.
+
+Click Add Property...
+
+key = hadoop.proxyuser.root.groups
+value = *
+
+Once that's done repeat the Click Add Property step for the next key/value.
+
+key = hadoop.proxyuser.root.hosts
+value = *
+
+Then click the green Save button at the top.
+
+Note several services will need to be restarted to pick up the config changes. Alerts will go away once all services have been restarted.
+
+**STEPS TO ADD VIEWS FROM MANAGE AMBARI NEEDED**
+
+#######################################################
+SMARTSENSE
+#######################################################
+
+install the Smartsense RPM on the Ambari server.
+
+ssh masterclass@<ambari-server-public-name>
+
+sudo rpm -ivh /var/opt/smartsense-hst-1.1.0-67.x86_64.rpm
+
+sudo hst add-to-ambari
+
+enter /var/opt/smartsense-hst-1.1.0-67.x86_64.rpm as the distributable path
+press y to accept restarting ambari
+
+Refresh ambari web ui and log back in
+
+Then click actions on the left hand side and "Add Service"
+
+Tick the box to select SmartSense
+
+Ensure the collector runs on a master node
+
+You should see the message "5 hosts not running master services"
+
+Click next.
+
+Enter the following values for the smartsense account
+
+Account Name: HortonWorks Test
+SmartSense ID:  A-00000000-C-00000000
+Notification EMail: individual valid email address
+
+VERIFY YOU HAVE THE RIGHT ENTRIES IN THE RIGHT SECTIONS BEFORE CONTINUING...
+
+Then click next
+
+Click Deploy to set smartsense deploying.
+
+Once everything has completed successfully, click Next.
+
+Note several services will need to be restarted to pick up the config changes. Alerts will go away once all services have been restarted.
+
+Now click SmartSense on the left hand side, explore configs
+
+Now Click on Service Actions on the right hand side
+
+Now click the Views Cluster
+and click SmartSense
+
