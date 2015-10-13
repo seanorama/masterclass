@@ -496,3 +496,30 @@ Now Click on Service Actions on the right hand side
 Now click the Views Cluster
 and click SmartSense
 
+## YARN Queues
+--------------
+
+1. Open the Yarn Resource Manager UI
+  * Click “Scheduler”
+  * Notice your 2 Queues are empty.
+
+2. From the shell on your Ambari server:
+
+```
+sudo hadoop fs -mkdir /user/${USER}
+cd /usr/hdp/current/hadoop-mapreduce-client
+yarn jar hadoop-mapreduce-examples.jar pi 16 10000
+```
+
+3. In a separate shell on the same server:
+
+Wait until the default queue goes over capacity (orange).
+
+Then execute:
+
+```
+yarn jar hadoop-mapreduce-examples.jar pi -Dmapred.job.queue.name=marketing 32 10000
+```
+
+Watch the usage change as the jobs run
+
