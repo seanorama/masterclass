@@ -1,9 +1,13 @@
 # Lab Notes for Operations Masterclass
 
+#######################################################
+
 ## CLUSTER ASSIGNMENT
 ---------------------
 
 Provide output of `report-clouds.sh` to students.
+
+#######################################################
 
 ## AMBARI INSTALLATION
 ----------------------
@@ -23,13 +27,14 @@ sudo yum install ambari-server -y
 ```
 
 * Configure Ambari Server
-  * accept all the default options (just hit enter at each prompt)
-  * Make sure you get the following message before continuing:
-    * "Ambari Server 'setup' completed successfully."
 
 ```
 sudo ambari-server setup
 ```
+
+  * accept all the default options (just hit enter at each prompt)
+  * Make sure you get the following message before continuing:
+    * "Ambari Server 'setup' completed successfully."
 
 * Start Ambari Server
 
@@ -39,6 +44,8 @@ sudo ambari-server start
 
 * Open Ambari in your web browser:
   * <ambari-server-public-name>:8080
+
+#######################################################
 
 ## BASE CLUSTER INSTALLATION
 ----------------------
@@ -495,6 +502,8 @@ Now Click on Service Actions on the right hand side
 
 Now click the Views Cluster
 and click SmartSense
+
+#######################################################
 
 ## YARN Queues
 --------------
