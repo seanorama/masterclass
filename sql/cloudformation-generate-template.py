@@ -349,13 +349,13 @@ def my_bootstrap_script(resource,install_ambari_agent,install_ambari_server,amba
         "exec &> >(tee -a /root/cloudformation.log)\n"
         "set -o nounset\n",
         "set -o errexit\n",
-        "export postscript=", ref_postscript, ",\n",
         "export region='", ref_region, "'\n",
         "export stack='", ref_stack_name, "'\n",
         "export resource='", resource ,"'\n",
         "export ambari_server='", ambari_server ,"'\n",
         "export java_provider=", ref_java_provider ,"\n",
         "export java_version=", ref_java_version ,"\n",
+        "export postscript=", ref_postscript ,"\n",
         "export install_ambari_agent=", install_ambari_agent ,"\n",
         "export install_ambari_server=", install_ambari_server ,"\n",
     ]
