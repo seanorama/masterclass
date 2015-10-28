@@ -2,9 +2,9 @@
 
 ## for prepping a 1-node cluster for the security masterclass
 
-sudo yum makecache
-sudo yum -y -q install git epel-release ntpd
-sudo yum -y -q install jq python-argparse python-configobj
+yum makecache
+yum -y -q install git epel-release ntpd
+yum -y -q install jq python-argparse python-configobj
 
 ## get mysql community on el/centos7
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
@@ -13,7 +13,7 @@ case ${el_version} in
     true
   ;;
   "7")
-    sudo rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+    rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
   ;;
 esac
 
@@ -23,6 +23,7 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 
 #mypass=masterclass
 ${__dir}/deploy/prep-hosts.sh
+${__dir}/../ambari-bootstrap.sh
 
 cd ${__dir}/../deploy/
 
@@ -39,7 +40,6 @@ cat << EOF > configuration-custom.json
 EOF
 
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE SPARK"
-export cluster_name="${cluster_name:-$(hostname -s)}"
 export host_count=skip
 ./deploy-recommended-cluster.bash
 
@@ -52,10 +52,10 @@ source ${__dir}/ambari_functions.sh
 ambari-configs
 ambari_wait_request_complete 1
 
-sudo usermod -a -G users ${USER}
+usermod -a -G users ${USER}
 
 ## Generic setup
-sudo chkconfig mysqld on; sudo service mysqld start
+chkconfig mysqld on; service mysqld start
 ${__dir}/onboarding.sh
 ${__dir}/ambari-views/create-views.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
