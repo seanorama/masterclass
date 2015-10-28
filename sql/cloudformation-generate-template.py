@@ -331,10 +331,6 @@ wait
 
 printf 'Defaults !requiretty\n' > /etc/sudoers.d/888-dont-requiretty
 
-curl -sSL \
-    https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ambari-bootstrap.sh \
-    -o /root/ambari-bootstrap.sh
-sh /root/ambari-bootstrap.sh
 
 ## Deploy Cluster for SQL masterclass
 export cluster_name=${stack}
