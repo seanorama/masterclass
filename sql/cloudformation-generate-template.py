@@ -333,8 +333,11 @@ for drv in /dev/xvd[b-z]; do
   mkdir -p /mnt${drv}
   echo "${drv} /mnt${drv} ext4 defaults,noatime,nodiratime 0 0" >> /etc/fstab
   nohup mkfs.ext4 -m 0 -T largefile4 $drv &
+  mount ${drv}
 done
 wait
+
+printf 'Defaults !requiretty\n' > /etc/sudoers.d/888-dont-requiretty
 
 ## Deploy Cluster for SQL masterclass
 $postscript || true
@@ -353,9 +356,9 @@ def my_bootstrap_script(resource,install_ambari_agent,install_ambari_server,amba
         "export stack='", ref_stack_name, "'\n",
         "export resource='", resource ,"'\n",
         "export ambari_server='", ambari_server ,"'\n",
+        "export postscript='", ref_postscript ,"'\n",
         "export java_provider=", ref_java_provider ,"\n",
         "export java_version=", ref_java_version ,"\n",
-        "export postscript=", ref_postscript ,"\n",
         "export install_ambari_agent=", install_ambari_agent ,"\n",
         "export install_ambari_server=", install_ambari_server ,"\n",
     ]
