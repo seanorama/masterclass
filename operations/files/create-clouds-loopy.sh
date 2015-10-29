@@ -7,7 +7,7 @@
 ##############################################################################
 
 ####
-#export clusters="apple apricot banana blackberry blackcurrant blueberry coconut cherry clementine cranberry damson elderberry fig gooseberry grape guava huckleberry lemon lime lychee mango melon nectarine orange passionfruit peach pear persimmon plum prune pineapple pomegranate raspberry satsuma strawberry tangerine"
+#export clusters="apple apricot banana blackberry blackcurrant blueberry coconut cherry clementine cranberry elderberry fig gooseberry grape guava huckleberry lemon lime lychee mango melon nectarine orange passionfruit peach pear persimmon plum prune pineapple pomegranate raspberry satsuma strawberry tangerine"
 clusters=${clusters:-apple}
 
 # quick check to ensure pre-reqs are setup
@@ -37,7 +37,7 @@ do
   if [ $batchcount -eq 6 ]
   then
 # this is the sleep interval between batches of instances
-    sleep 850
+    sleep 600 
 # Don't change this, change the batchcount variable above
     batchcount=0
   fi
