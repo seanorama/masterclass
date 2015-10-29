@@ -30,11 +30,27 @@ cd ${__dir}/../deploy/
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
-      "hdfs-site": {
+    "hdfs-site": {
         "dfs.replication": "1",
         "dfs.datanode.data.dir" : "/mnt/dev/xvdb/dn,/mnt/dev/xvdc/dn",
         "dfs.namenode.name.dir" : "/mnt/dev/xvdb/nn,/mnt/dev/xvdc/nn"
-      }
+    },
+    "core-site": {
+        "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.HTTP.hosts" : "*",
+        "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hbase.hosts" : "*",
+        "hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hcat.hosts" : "*",
+        "hadoop.proxyuser.hive.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hive.hosts" : "*",
+        "hadoop.proxyuser.knox.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.knox.hosts" : "*",
+        "hadoop.proxyuser.oozie.groups" : "users",
+        "hadoop.proxyuser.oozie.hosts" : "*",
+        "hadoop.proxyuser.root.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.root.hosts" : "*"
+    }
   }
 }
 EOF
@@ -59,7 +75,11 @@ usermod -a -G users ${USER}
 ## Generic setup
 chkconfig mysqld on; service mysqld start
 ${__dir}/onboarding.sh
-${__dir}/ambari-views/create-views.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/configs/proxyusers.sh
+
+cd
+git clone https://github.com/seanorama/masterclass
+cd masterclass/sql
+./labs-setup.sh
 
