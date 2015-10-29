@@ -52,15 +52,10 @@ More details on the deployment process at the end of this document.
 __Goal:__ Get access to the system
 
 1. Console via SSH or Web
-    - SSH
-      - User: student
-      - Keys: I'll provide a link to them.
-        - SSH users: `ssh -i student.pri.key student@hostname`
-        - Putty users: configure the 'student.pri.ppk' here: http://i.imgur.com/Pxp8RGu.png
-    - If you cannot use SSH, there is a web console:
+    - User: student
+    - Pass: we will share separately
+    - If you do not have an SSH client, there is a web console:
       - http://hostname:4200
-      - User: student
-      - Pass: *the pass we are using throughout the day*
 
 2. Ambari: http://yourhost:8080
 
