@@ -60,13 +60,17 @@ If not using CloudFormation:
 ## Deploy, report & terminate clusters on AWS
 -------------------------
 
-1. Check the CloudFormation console
-    - Open the AWS website
-    - Ensure 'EU - Ireland' is the region
-    - Open the CloudFormation paged
-    - Ensure there are no conflicting stacks (those with same name of what you want to deploy)
+1. Check for conflicting/existing stacks (same name as what you plan to deploy):
+    - Open the CloudFormat Web UI
+        - Ensure 'EU - Ireland' is the region
+        - Open the CloudFormation paged
+    - Or with the command-line:
 
-2. Open a 'screen' so the commands continue if you lose connectivity:
+    ```
+./cloudformation-status.sh
+    ```
+
+1. Open a 'screen' so the commands continue if you lose connectivity:
 
     ```
 screen
@@ -75,7 +79,7 @@ screen
     ```
 
 
-3. Set variables for the number of labs & their naming
+1. Set variables for the number of labs & their naming
     - the following will deploy only 1 cluster.
     - update 'lab_count' to the number of clusters you want
 
@@ -85,28 +89,43 @@ export lab_first=1
 export lab_prefix="mc-sql"
     ```
 
-4. Provision your clusters
+1. Provision your clusters
 
     ```
 ./clusters-create.sh
     ```
 
-5. Get list of clusters for pasting into Etherpad
+1. Check the build status
+    - From the CloudFormation Web UI
+    - Or from the command-line:
+
+    ```
+./clusters-status.sh
+    ```
+
+1. Once your clusters are ready, get list of clusters for pasting into Etherpad
     - ensure the same variables are used from above
 
     ```
 ./clusters-report.sh
     ```
 
-6. Terminate clusters
+1. Terminate clusters
     - ensure the same variables are used from above
 
     ```
 ./clusters-terminate.sh
     ```
 
-7. Verify that all clusters are terminated
-    - From the AWS CloudFormation Web Console
+1. Verify that all clusters are terminated
+    - From the AWS CloudFormation Web UI
+    - Or from the CLI
+
+    ```
+./clusters-status.sh
+    ```
+
+########
 
 ## Running sessions
 
@@ -117,6 +136,7 @@ It's recommended to use an "etherpad" to share:
 
 You can create your own, or use a hosted version such as TitanPad. You should create this account in advance.
 
+########
 
 ## Debugging
 
