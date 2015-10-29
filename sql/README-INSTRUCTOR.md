@@ -83,23 +83,23 @@ export lab_prefix="mc-sql"
 
 4. Provision your clusters
 
-```
+    ```
 ./clusters-create.sh
-```
+    ```
 
 5. Get list of clusters for pasting into Etherpad
     - ensure the same variables are used from above
 
-```
+    ```
 ./clusters-report.sh
-```
+    ```
 
 6. Terminate clusters
     - ensure the same variables are used from above
 
-```
+    ```
 ./clusters-terminate.sh
-```
+    ```
 
 7. Verify that all clusters are terminated
     - From the AWS CloudFormation Web Console
