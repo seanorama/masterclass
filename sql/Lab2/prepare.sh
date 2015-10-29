@@ -4,7 +4,8 @@ sudo -u hdfs hdfs dfs -mkdir /masterclass/
 sudo -u hdfs hdfs dfs -mkdir /masterclass/lab2/
 sudo -u hdfs hdfs dfs -mkdir /masterclass/lab2/customers
 sudo -u hdfs hdfs dfs -chmod 777  /masterclass/lab2/customers
-sudo -u hdfs hdfs dfs -put ./customers.txt /masterclass/lab2/customers/data1.txt
+cp ./customers.txt /tmp
+sudo -u hdfs hdfs dfs -put /tmp/customers.txt /masterclass/lab2/customers/data1.txt
 sudo -u hdfs hdfs dfs -chmod 666 /masterclass/lab2/customers/data1.txt
 
 

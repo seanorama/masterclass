@@ -3,7 +3,8 @@ echo -e "\n==> Copy sample_twitter_data to HDFS\n"
 sudo -u hdfs hdfs dfs -mkdir /masterclass/lab4
 sudo -u hdfs hdfs dfs -mkdir /masterclass/lab4/twitter
 sudo -u hdfs hdfs dfs -chmod 777  /masterclass/lab4/twitter
-sudo -u hdfs hdfs dfs -put ./sample_twitter_data.txt /masterclass/lab4/twitter/
+cp ./sample_twitter_data.txt /tmp/sample_twitter_data.txt
+sudo -u hdfs hdfs dfs -put /tmp/sample_twitter_data.txt /masterclass/lab4/twitter/
 sudo -u hdfs hdfs dfs -chmod 666 /masterclass/lab4/twitter/sample_twitter_data.txt
 
 echo -e "\n==> Copy JSON serde to /var/lib/hive\n"

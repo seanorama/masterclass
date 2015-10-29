@@ -1,10 +1,12 @@
 # Create employees database
 
-echo -e "\n==> Install git\n"
+# echo -e "\n==> Install git\n"
 
-sudo yum install -y git
+# sudo yum install -y git
 
 echo -e "\n==> Clone sample database\n"
+
+cd /tmp
 
 git clone https://github.com/datacharmer/test_db
 
