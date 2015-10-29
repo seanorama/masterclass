@@ -4,7 +4,7 @@ EOF
 
 echo -e "\n==> Creating database employees in hive\n"
 
-beeline -u jdbc:hive2://localhost:10000/default -n hive -f /tmp/db.sql
+beeline -u jdbc:hive2://localhost:10000/default -n student -f /tmp/db.sql
 
 
 for table in departments dept_emp dept_manager employees salaries titles; do 
