@@ -129,7 +129,7 @@ You can create your own, or use a hosted version such as TitanPad. You should cr
 - Once you’ve done the VPC deletion you can also do an AWS CLI call instead:
     - `aws cloudformation delete-stack --stack-name <cluster-name>`
 
-##$$ AWS Website
+#### AWS Website
 
 If you suddenly notice that your instances/cloudformations/etc have vanished from the AWS control panel, you may have to re-login (from Okta if a Hortonworker)
 
