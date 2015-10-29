@@ -39,6 +39,8 @@ cat << EOF > configuration-custom.json
 }
 EOF
 
+sleep 30
+
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE SPARK"
 export host_count=skip
 ./deploy-recommended-cluster.bash
