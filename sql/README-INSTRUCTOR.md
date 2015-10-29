@@ -26,6 +26,8 @@
     - Login to EC2 from Okta (file a helpdesk with your manager on cc if it is not present)
     - Choose "EU (Ireland)" as the region (top right of page)
     - Create a User for yourself from the "IAM" page
+- Clone this repo
+  - `git clone https://github.com/seanorama/masterclass`
 
 ### If using our jump host:
 
