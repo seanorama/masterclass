@@ -66,11 +66,11 @@ If not using CloudFormation:
 
 2. Open a 'screen' so the commands continue if you lose connectivity:
 
-```
+    ```
 screen
 
 ## Note: If you get disconnected, SSH back to the host and execute: `screen -x`
-```
+    ```
 
 
 3. Set variables for the number of labs & their naming
