@@ -16,6 +16,7 @@ do
   echo "This is the $fruitycluster cluster Ambari Node"
   echo "public name:"
   aws ec2 describe-instances --query 'Reservations[*].Instances[*].[PublicDnsName]' --filters Name=instance-state-name,Values=running Name=tag:aws:cloudformation:stack-name,Values=$fruitycluster Name=tag:aws:cloudformation:logical-id,Values=AmbariNode --output text
+  echo ""
   echo "private name:"
   aws ec2 describe-instances --query 'Reservations[*].Instances[*].[PrivateDnsName]' --filters Name=instance-state-name,Values=running Name=tag:aws:cloudformation:stack-name,Values=$fruitycluster Name=tag:aws:cloudformation:logical-id,Values=AmbariNode --output text
   echo ""

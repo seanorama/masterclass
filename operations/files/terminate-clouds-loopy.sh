@@ -11,6 +11,7 @@
 
 #export clusters="apple apricot banana blackberry blackcurrant blueberry coconut cherry clementine cranberry damson elderberry fig gooseberry grape guava huckleberry lemon lime lychee mango melon nectarine orange passionfruit peach pear persimmon plum prune pineapple pomegranate raspberry satsuma strawberry tangerine"
 clusters=${clusters:-apple}
+echo ${clusters}
 
 
 # quick safety check to ensure termination is required
@@ -33,14 +34,14 @@ do
   aws cloudformation delete-stack --stack-name $fruitycluster
   echo Initiated deletion of $fruitycluster cluster
 # this is the sleep interval between instances
-  sleep 10
+  sleep 5 
 ########################################################
 # change the value below to increase/decrease batch size
 ########################################################
   if [ $batchcount -eq 7 ]
   then
 # this is the sleep interval between batches of instances
-    sleep 130
+    sleep 20
 # Don't change this, change the batchcount variable above
     batchcount=0
   fi
