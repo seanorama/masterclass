@@ -74,6 +74,8 @@ screen
 
 
 3. Set variables for the number of labs & their naming
+    - the following will deploy only 1 cluster.
+    - update 'lab_count' to the number of clusters you want
 
     ```
 export lab_count=1
