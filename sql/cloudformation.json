@@ -111,7 +111,7 @@
 },
 "AmbariInstanceType": {
 "ConstraintDescription": "Must be a valid EC2 instance type.",
-"Default": "m3.2xlarge",
+"Default": "r3.2xlarge",
 "Description": "Instance type for Ambari node",
 "Type": "String"
 },

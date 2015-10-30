@@ -38,7 +38,7 @@ CloudFormation template to Deploy Hortonworks Data Platform on VPC with a public
 
 AmbariInstanceType = t.add_parameter(Parameter(
     "AmbariInstanceType",
-    Default="r3.2xlarge",
+    Default="m3.2xlarge",
     ConstraintDescription="Must be a valid EC2 instance type.",
     Type="String",
     Description="Instance type for Ambari node",

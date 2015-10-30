@@ -32,8 +32,33 @@ cat << EOF > configuration-custom.json
   "configurations" : {
     "hdfs-site": {
         "dfs.replication": "1",
-        "dfs.datanode.data.dir" : "/mnt/dev/xvdb/dn,/mnt/dev/xvdc/dn",
-        "dfs.namenode.name.dir" : "/mnt/dev/xvdb/nn,/mnt/dev/xvdc/nn"
+        "dfs.datanode.data.dir" : "/mnt/dev/xvdb/dn",
+        "dfs.namenode.name.dir" : "/mnt/dev/xvdb/nn"
+    },
+    "yarn-site": {
+        "yarn.scheduler.minimum-allocation-vcores": "1",
+        "yarn.scheduler.maximum-allocation-vcores": "1",
+        "yarn.scheduler.minimum-allocation-mb": "512",
+        "yarn.scheduler.maximum-allocation-mb": "2048",
+        "yarn.nodemanager.resource.memory-mb": "32768"
+    },
+    "capacity-scheduler": {
+        "yarn.scheduler.capacity.maximum-am-resource-percent": "0.25"
+    },
+    "mapred-site": {
+        "mapreduce.map.memory.mb": "2048",
+        "mapreduce.reduce.memory.mb": "2048",
+        "mapreduce.reduce.java.opts": "-Xmx1228m",
+        "mapreduce.map.java.opts": "-Xmx1228m",
+        "mapreduce.task.io.sort.mb": "859"
+    },
+    "hive-site": {
+        "hive.tez.container.size": "2048",
+        "hive.auto.convert.join.noconditionaltask.size": "536870912"
+    },
+    "tez-site": {
+        "tez.task.resource.memory.mb": "2048",
+        "tez.am.resource.memory.mb": "2048"
     },
     "core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
