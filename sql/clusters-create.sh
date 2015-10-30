@@ -41,7 +41,8 @@ do
   aws cloudformation create-stack --stack-name ${cluster} \
     --capabilities CAPABILITY_IAM \
     --template-body file://./cloudformation.json \
-    --parameters ParameterKey=KeyName,ParameterValue=secloud
+    --parameters ParameterKey=KeyName,ParameterValue=secloud \
+        ParameterKey=OpenLocation,ParameterValue=0.0.0.0/0
 
   echo Initiated creation of $cluster cluster
 # this is the sleep interval between instances

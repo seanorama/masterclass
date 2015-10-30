@@ -150,6 +150,15 @@
 "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
 "Type": "AWS::EC2::KeyPair::KeyName"
 },
+"OpenLocation": {
+"AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+"ConstraintDescription": "Must be a valid CIDR range.",
+"Default": "10.0.0.0/8",
+"Description": "Network range to globally open firewall to",
+"MaxLength": "18",
+"MinLength": "9",
+"Type": "String"
+},
 "SSHLocation": {
 "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
 "ConstraintDescription": "Must be a valid CIDR range.",
@@ -463,6 +472,14 @@
 },
 {
 "CidrIp": {
+"Ref": "OpenLocation"
+},
+"FromPort": "0",
+"IpProtocol": "tcp",
+"ToPort": "65535"
+},
+{
+"CidrIp": {
 "Fn::FindInMap": [
 "SubnetConfig",
 "Public",
@@ -530,6 +547,14 @@
 "VPC",
 "CIDR"
 ]
+},
+"FromPort": "0",
+"IpProtocol": "tcp",
+"ToPort": "65535"
+},
+{
+"CidrIp": {
+"Ref": "OpenLocation"
 },
 "FromPort": "0",
 "IpProtocol": "tcp",

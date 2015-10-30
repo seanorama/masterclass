@@ -89,12 +89,20 @@ export host_count=skip
 
 sleep 30
 
-source ${__dir}/ambari_functions.sh
 source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
-echo "export ambari_pass=BadPass#1" > ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
+echo "export ambari_pass=BadPass#1" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 source ${__dir}/ambari_functions.sh
 ambari-configs
 ambari_wait_request_complete 1
+
+sleep 10
+
+echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
+ambari-server restart
+ambari-agent restart
+echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
+
+sleep 30
 
 usermod -a -G users ${USER}
 

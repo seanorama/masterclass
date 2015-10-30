@@ -63,6 +63,18 @@ JavaVersion = t.add_parameter(Parameter(
 ))
 
 
+OpenLocation = t.add_parameter(Parameter(
+    "OpenLocation",
+    ConstraintDescription="Must be a valid CIDR range.",
+    Description="Network range to globally open firewall to",
+    Default="10.0.0.0/8",
+    MinLength="9",
+    AllowedPattern="(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+    MaxLength="18",
+    Type="String",
+))
+
+
 SSHLocation = t.add_parameter(Parameter(
     "SSHLocation",
     ConstraintDescription="Must be a valid CIDR range.",
@@ -154,6 +166,9 @@ DefaultSecurityGroup = t.add_resource(ec2.SecurityGroup(
             ToPort="65535", IpProtocol="tcp", CidrIp=FindInMap("SubnetConfig", "VPC", "CIDR"), FromPort="0"
         ),
         ec2.SecurityGroupRule(
+            ToPort="65535", IpProtocol="tcp", CidrIp=Ref(OpenLocation), FromPort="0"
+        ),
+        ec2.SecurityGroupRule(
             ToPort="65535", IpProtocol="udp", CidrIp=FindInMap("SubnetConfig", "VPC", "CIDR"), FromPort="0"
         ),
         ec2.SecurityGroupRule(
@@ -185,6 +200,9 @@ AmbariSecurityGroup = t.add_resource(ec2.SecurityGroup(
         ),
         ec2.SecurityGroupRule(
             ToPort="65535", IpProtocol="tcp", CidrIp=FindInMap("SubnetConfig", "Public", "CIDR"), FromPort="0"
+        ),
+        ec2.SecurityGroupRule(
+            ToPort="65535", IpProtocol="tcp", CidrIp=Ref(OpenLocation), FromPort="0"
         ),
         ec2.SecurityGroupRule(
             ToPort="65535", IpProtocol="udp", CidrIp=FindInMap("SubnetConfig", "Public", "CIDR"), FromPort="0"
