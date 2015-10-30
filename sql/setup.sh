@@ -96,13 +96,6 @@ ambari_wait_request_complete 1
 
 sleep 30
 
-echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-ambari-server restart
-ambari-agent restart
-echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
-
-sleep 30
-
 usermod -a -G users ${USER}
 
 ## Generic setup
@@ -116,3 +109,9 @@ git clone https://github.com/seanorama/masterclass
 cd masterclass/sql
 ./labs-setup.sh
 
+sleep 10
+
+echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
+nohup ambari-server restart
+nohup ambari-agent restart
+echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
