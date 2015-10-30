@@ -25,6 +25,8 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
 
+sleep 45
+
 cd ${__dir}/../deploy/
 
 cat << EOF > configuration-custom.json
@@ -81,13 +83,10 @@ cat << EOF > configuration-custom.json
 }
 EOF
 
-sleep 30
-
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE SPARK"
 export host_count=skip
 ./deploy-recommended-cluster.bash
-
-sleep 30
+sleep 5
 
 source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
 echo "export ambari_pass=BadPass#1" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
@@ -95,7 +94,7 @@ source ${__dir}/ambari_functions.sh
 ambari-configs
 ambari_wait_request_complete 1
 
-sleep 10
+sleep 30
 
 echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
 ambari-server restart
