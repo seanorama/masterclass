@@ -321,7 +321,7 @@ AmbariNode = t.add_resource(ec2.Instance(
     CreationPolicy=CreationPolicy(
         ResourceSignal=ResourceSignal(
           Count=1,
-          Timeout="PT30M"
+          Timeout="PT45M"
     )),
     KeyName=Ref(KeyName),
     InstanceType=Ref(AmbariInstanceType),

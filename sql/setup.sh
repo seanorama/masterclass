@@ -104,7 +104,7 @@ ${__dir}/onboarding.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/configs/proxyusers.sh
 
-cd
+cd /opt
 git clone https://github.com/seanorama/masterclass
 cd masterclass/sql
 ./labs-setup.sh

@@ -165,7 +165,7 @@
 "CreationPolicy": {
 "ResourceSignal": {
 "Count": 1,
-"Timeout": "PT30M"
+"Timeout": "PT45M"
 }
 },
 "Properties": {
@@ -393,6 +393,9 @@
 "########################################################################\n",
 "## AWS specific system modifications\n",
 "\n",
+"printf 'Defaults !requiretty\n",
+"' > /etc/sudoers.d/888-dont-requiretty\n",
+"\n",
 "## swappiness to 0\n",
 "sysctl -w vm.swappiness=0\n",
 "mkdir -p /etc/sysctl.d\n",
@@ -410,13 +413,12 @@
 "  mkdir -p /mnt${drv}\n",
 "  echo \"${drv} /mnt${drv} ext4 defaults,noatime,nodiratime 0 0\" >> /etc/fstab\n",
 "  nohup mkfs.ext4 -m 0 -T largefile4 $drv &\n",
-"  mount ${drv}\n",
 "done\n",
 "wait\n",
 "\n",
-"printf 'Defaults !requiretty\n",
-"' > /etc/sudoers.d/888-dont-requiretty\n",
-"\n",
+"for drv in /dev/xvd[b-z]; do\n",
+"  mount ${drv}\n",
+"done\n",
 "\n",
 "## Deploy Cluster for SQL masterclass\n",
 "export cluster_name=${stack}\n",
