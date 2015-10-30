@@ -50,7 +50,8 @@ cat << EOF > configuration-custom.json
         "mapreduce.reduce.memory.mb": "2048",
         "mapreduce.reduce.java.opts": "-Xmx1228m",
         "mapreduce.map.java.opts": "-Xmx1228m",
-        "mapreduce.task.io.sort.mb": "859"
+        "mapreduce.task.io.sort.mb": "859",
+        "yarn.app.mapreduce.am.resource.mb" : "2048"
     },
     "hive-site": {
         "hive.tez.container.size": "2048",
