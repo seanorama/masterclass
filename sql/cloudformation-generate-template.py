@@ -260,6 +260,8 @@ yum install -y epel-release
 ########################################################################
 ## AWS specific system modifications
 
+printf 'Defaults !requiretty\n' > /etc/sudoers.d/888-dont-requiretty
+
 ## swappiness to 0
 sysctl -w vm.swappiness=0
 mkdir -p /etc/sysctl.d
@@ -277,12 +279,12 @@ for drv in /dev/xvd[b-z]; do
   mkdir -p /mnt${drv}
   echo "${drv} /mnt${drv} ext4 defaults,noatime,nodiratime 0 0" >> /etc/fstab
   nohup mkfs.ext4 -m 0 -T largefile4 $drv &
-  mount ${drv}
 done
 wait
 
-printf 'Defaults !requiretty\n' > /etc/sudoers.d/888-dont-requiretty
-
+for drv in /dev/xvd[b-z]; do
+  mount ${drv}
+done
 
 ## Deploy Cluster for SQL masterclass
 export cluster_name=${stack}
