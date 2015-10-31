@@ -24,8 +24,14 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 #mypass=masterclass
 ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
+sleep 15
 
-sleep 45
+echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
+nohup sh -c "service ambari-server restart 2>&1" || true
+nohup service ambari-agent restart
+echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
+
+sleep 30
 
 cd ${__dir}/../deploy/
 
@@ -84,6 +90,7 @@ cat << EOF > configuration-custom.json
 EOF
 
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE SPARK"
+export ambari_port=8081
 export host_count=skip
 ./deploy-recommended-cluster.bash
 sleep 5
@@ -111,11 +118,5 @@ cd masterclass/sql
 
 sleep 10
 
-echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-nohup service ambari-server stop
-sleep 10
-nohup service ambari-server restart
-nohup service ambari-agent restart
-echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 
 exit 0
