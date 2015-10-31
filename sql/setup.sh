@@ -112,8 +112,10 @@ cd masterclass/sql
 sleep 10
 
 echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-nohup ambari-server restart || true
-nohup ambari-agent restart || true
+nohup service ambari-server stop
+sleep 10
+nohup service ambari-server restart
+nohup service ambari-agent restart
 echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 
 exit 0
