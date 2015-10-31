@@ -26,9 +26,11 @@ ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
 sleep 15
 
+cd /root
 echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-nohup sh -c "service ambari-server restart 2>&1" || true
-nohup service ambari-agent restart
+ambari-server restart &
+sleep 30
+ambari-agent restart
 echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 
 sleep 30
