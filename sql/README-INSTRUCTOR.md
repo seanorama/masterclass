@@ -1,4 +1,4 @@
-# SQL Masterclass: Instructor Notes
+# Masterclass: Instructor Notes
 ===================================
 
 ## Important
@@ -138,7 +138,7 @@ You can create your own, or use a hosted version such as TitanPad. You should cr
 
 ########
 
-## Debugging
+## Issues: Deployment
 
 #### Creation
 
@@ -154,4 +154,29 @@ You can create your own, or use a hosted version such as TitanPad. You should cr
 #### AWS Website
 
 If you suddenly notice that your instances/cloudformations/etc have vanished from the AWS control panel, you may have to re-login (from Okta if a Hortonworker)
+
+
+
+########
+
+## Issues: Other
+
+#### Run commands in bulk on all nodes
+
+* There are several options, such as pdsh, cssh, ...
+* Execute this to get a command which will then let you use 'cssh' across all of the hosts:
+
+    ```
+./clusters-report.sh | grep "^[0-9]" | xargs echo tmux-cssh -u masterclass
+    ```
+
+#### Venue Internet blocks Ambari Server (port 8080)
+
+* Change Ambari to port 8080
+
+  ```
+echo "client.api.port=8081" | sudo tee -a /etc/ambari-server/conf/ambari.properties
+sudo ambari-server restart
+sudo ambari-agent restart
+  ```
 

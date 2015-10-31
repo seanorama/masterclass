@@ -1,3 +1,10 @@
+## Debugging Master Classes
+
+______________________________________
+
+## Notes only valid for pdsh deployed labs
+
+
 ## Various notes & commands for whoever is running the class
 
 #### Set the list of hosts:
