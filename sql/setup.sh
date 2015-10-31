@@ -28,7 +28,7 @@ sleep 15
 
 cd /root
 echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-ambari-server restart &
+nohup ambari-server restart &
 sleep 30
 ambari-agent restart
 echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
