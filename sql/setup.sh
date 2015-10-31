@@ -109,9 +109,12 @@ git clone https://github.com/seanorama/masterclass
 cd masterclass/sql
 ./labs-setup.sh
 
+exit 0
+
 sleep 10
 
 echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-nohup ambari-server restart
-nohup ambari-agent restart
+nohup ambari-server restart || true
+nohup ambari-agent restart || true
 echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
+
