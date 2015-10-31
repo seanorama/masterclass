@@ -24,16 +24,8 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 #mypass=masterclass
 ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
-sleep 15
 
-cd /root
-echo -e "\nclient.api.port=8081\n" >> /etc/ambari-server/conf/ambari.properties
-nohup ambari-server restart &
-sleep 5
-ambari-agent restart
-echo "export ambari_port=8081" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
-
-sleep 60
+sleep 30
 
 cd ${__dir}/../deploy/
 
@@ -105,9 +97,8 @@ ambari_wait_request_complete 1
 
 sleep 30
 
-usermod -a -G users ${USER}
-
 ## Generic setup
+usermod -a -G users ${USER}
 chkconfig mysqld on; service mysqld start
 ${__dir}/onboarding.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
@@ -118,7 +109,5 @@ git clone https://github.com/seanorama/masterclass
 cd masterclass/sql
 ./labs-setup.sh
 
-sleep 10
-
-
 exit 0
+
