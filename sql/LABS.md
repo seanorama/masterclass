@@ -156,9 +156,14 @@ __Goal__: Convert raw data to a table and then to an ORC table including some Hi
       msg string,
       hashtag string
   )
-  ROW FORMAT SERDE "org.apache.hadoop.hive.ql.io.orc.OrcSerde"
   STORED AS orc;
-  
+  ```
+
+  __Note__: This is implemented via a SerDe. You could add 
+
+  `ROW FORMAT SERDE "org.apache.hadoop.hive.ql.io.orc.OrcSerde"`
+
+  ```sql  
   INSERT OVERWRITE TABLE tweets_orc_msg_hashtags
   SELECT
     tweet_id,
@@ -298,6 +303,13 @@ __Goal__: Understand external data sources using HBase as an example
 __Goal:__ Understand the SQL explain
 
 - Use Hive view to execute a join SQL statement and press _"Explain"_ instead of _"Execute_"
+
+  ```sql
+  SELECT d.dept_name, count(*) as cnt
+  FROM departments d, employees e, dept_emp x
+  WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
+  GROUP BY d.dept_name ORDER BY cnt DESC limit 5;  
+  ```
 
   ```sql
   SELECT e.first_name, e.last_name, e.hire_date, d.dept_name, x.from_date, x.to_date
