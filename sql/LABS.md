@@ -47,7 +47,7 @@ More details on the deployment process at the end of this document.
 ## Labs
 
 
-### Lab 1: Handover cluster  ==> CHECK WITH SEAN !!!!
+### Lab 1: Handover cluster
 
 __Goal:__ Get access to the system
 
