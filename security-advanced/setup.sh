@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -o xtrace
 
+echo ##############
+set
+echo ##############
+export
+
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
   "6")
@@ -21,12 +26,13 @@ sleep 10
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
+    bash -c "nohup ambari-server start" || true
+    sleep 10
     yum -y -q install jq python-argparse python-configobj
-    source ~/ambari-bootstrap/extras/ambari_functions.sh
-    ambari-change-pass admin admin ${ref_ambari_pass}
+    ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
+    ambari-change-pass admin admin ${ambari_pass}
 
-    if [ "${ref_deploy_cluster}" = "True" ]; then
-        export ambari_pass="${ref_ambari_pass}"
+    if [ "${deploy}" = "true" ]; then
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack}
         echo $host_count
