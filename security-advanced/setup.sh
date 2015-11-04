@@ -20,7 +20,7 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 sleep 10
 
 ## Ambari Server specific tasks
-if [ "${install_ambari_server}}" = "true" ]; then
+if [ "${install_ambari_server}" = "true" ]; then
     yum -y -q install jq python-argparse python-configobj
     source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari-change-pass admin admin ${ref_ambari_pass}
@@ -29,7 +29,8 @@ if [ "${install_ambari_server}}" = "true" ]; then
         export ambari_pass="${ref_ambari_pass}"
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack}
-        export host_count=$((ref_additional_instance_count + 1))
+        echo $host_count
+        export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
         ./deploy-recommended-cluster.bash
         cd ~
