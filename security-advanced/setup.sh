@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -o xtrace
 
-echo ##############
-set
-echo ##############
-export
+export TERM=xterm
 
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
@@ -35,7 +32,6 @@ if [ "${install_ambari_server}" = "true" ]; then
     if [ "${deploy}" = "true" ]; then
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack}
-        echo $host_count
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
         ./deploy-recommended-cluster.bash
