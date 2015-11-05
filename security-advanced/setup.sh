@@ -24,8 +24,8 @@ sleep 10
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
     bash -c "nohup ambari-server start" || true
-    sleep 10
-    yum -y -q install jq python-argparse python-configobj
+    yum -y -q install mysql-connector-java jq python-argparse python-configobj
+    ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari-change-pass admin admin ${ambari_pass}
 
