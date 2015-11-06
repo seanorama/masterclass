@@ -1,5 +1,10 @@
 # Instructor notes
 
+## Requirements
+
+- AWS CLI configured
+- Hortonworkers: Access to AWS SE account (see the wiki)
+
 ## Infrastructure preparation
 
 ## AWS specific notes
