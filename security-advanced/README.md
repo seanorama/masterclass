@@ -4,7 +4,16 @@
 
 Find our Active Directory instance details in Google Drive. Title "infrastructure" in the Training folder.
 
-#### Configure name resolution & certificate to Active Directory
+## Accessing your Cluster
+
+Credentials will be provided for these services:
+
+* SSH
+* Ambari
+
+## Use your Cluster
+
+### Configure name resolution & certificate to Active Directory
 
 1. Add your Active Directory to /etc/hosts (if not in DNS)
 
@@ -35,5 +44,20 @@ BASE dc=lab,dc=hortonworks,dc=net
 EOF
 
 ## test with
-ldapsearch -W -D administrator@lab.hortonworks.net
+ldapsearch -W -D hadoopadmin@lab.hortonworks.net
    ```
+
+## Active Directory environment
+
+- KDC:
+    - KDC host: ad01.lab.hortonworks.net
+    - Realm name: LAB.HORTONWORKS.NET
+    - LDAP url: ldaps://ad01.lab.hortonworks.net
+    - Container DN: ou=hadoopclusters,dc=lab,dc=hortonworks,dc=net
+    - Domains: us-west-2.compute.internal,.us-west-2.compute.internal
+- Kadmin:
+    - Kadmin host: ad01.lab.hortonworks.net
+    - Admin principal: hadoopadmin@lab.hortonworks.net
+    - Admin password:
+
+

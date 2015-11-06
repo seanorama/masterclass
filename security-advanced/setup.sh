@@ -13,6 +13,8 @@ case ${el_version} in
   ;;
 esac
 
+echo "172.31.0.175 ad01.lab.hortonworks.net ad01" >> /etc/hosts
+
 yum makecache
 yum -y -q install git epel-release ntpd
 
