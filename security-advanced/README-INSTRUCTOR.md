@@ -1,13 +1,21 @@
 # Instructor notes
+========================================
 
 ## Requirements
+========================================
 
 - AWS CLI configured
 - Hortonworkers: Access to AWS SE account (see the wiki)
 
+----------------------------------------
+
 ## Infrastructure preparation
+========================================
+
+----------------------------------------
 
 ## AWS specific notes
+========================================
 
 The following uses AWS CloudFormation to deploy however many clusters (`lab_count`) you want.
 
@@ -44,3 +52,5 @@ ParameterKey=SecurityGroups,ParameterValue="sg-1c565979,sg-1cb3f678"
    ```
 ../bin/clusters-terminate.sh
    ```
+
+----------------------------------------
