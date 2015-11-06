@@ -12,7 +12,7 @@ The following uses AWS CloudFormation to deploy however many clusters (`lab_coun
 export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
 export lab_prefix=sme-security      ## template for naming the cloudformation stacks
 export lab_first=1                  ## number to start at in naming
-export lab_count=2                  ## number of clusters to create
+export lab_count=1                  ## number of clusters to create
    ```
 
 2. Set parameters for deploying into existing AWS VPC, Subnet & SecurityGroups
@@ -32,4 +32,10 @@ ParameterKey=SecurityGroups,ParameterValue="sg-1c565979,sg-1cb3f678"
 ../bin/clusters-create.sh
    ```
 
+   ```
+../bin/clusters-report.sh
+   ```
 
+   ```
+../bin/clusters-terminate.sh
+   ```
