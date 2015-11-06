@@ -52,9 +52,9 @@ $password = "BadPass#1"
    ```
 
 4. Configure AD. You have 2 options:
-    1. Deploy AD without DNS (relying on /etc/hosts or a separate DNS)
+   1. Deploy AD without DNS (relying on /etc/hosts or a separate DNS)
 
-        ```
+   ```
 Import-Module ADDSDeployment
 $secure_string_pwd = convertto-securestring ${password} -asplaintext -force
 Install-ADDSForest `
@@ -69,9 +69,9 @@ Install-ADDSForest `
 -SysvolPath "C:\Windows\SYSVOL" `
 -SafeModeAdministratorPassword:$secure_string_pwd `
 -Force:$true
-        ```
+   ```
 
-    2. Deploy AD with DNS
+   2. Deploy AD with DNS
 
         ```
 Import-Module ADDSDeployment
@@ -109,8 +109,10 @@ http://www.javaxt.com/Tutorials/Windows/How_to_Enable_LDAPS_in_Active_Directory
 
 ****************************************
 
-## Populate AD with sample users
+## Configure AD OUs, Groups, Users, ...
 ----------------------------------------
+
+1. Set these before running scripts:
 
    ```powershell
 $my_base = "DC=lab,DC=hortonworks,DC=net"
@@ -120,7 +122,7 @@ $my_users = "hr1","hr2","hr3","legal1","legal2","legal3","sales1","sales2","sale
 $my_admin = "hadoopadmin"
    ```
    
-#### Create OUs
+1. Create OUs
 
    ```powershell
 ## create OUs
@@ -129,11 +131,11 @@ $my_ous | ForEach-Object {
 }
    ```
    
-#### Create user `hadoopadmin` in `OU=serviceusers,DC=lab,DC=hortonworks,DC=net`
+1. Create user `hadoopadmin` in `OU=serviceusers,DC=lab,DC=hortonworks,DC=net`
 
-#### Delegate OU permissions to `hadoopadmin` for `OU=hadoopclusters`
+1. Delegate OU permissions to `hadoopadmin` for `OU=hadoopclusters`
 
-#### Create groups
+1. Create groups
 
    ```powershell
 $my_groups | ForEach-Object {
@@ -141,22 +143,17 @@ $my_groups | ForEach-Object {
 }
    ```
 
-#### Create users
-
+1. Create users
    - TODO notes here
 
-#### Add users to groups
-
+1. Add users to groups
    - TODO
 
-#### Create service users & keytabs
-
+1. Create service users & keytabs
    - TODO: ambari, rangeradmin, keyadmin
    
-#### Create user who can register computers (for SSSD)
-
+1. Create user who can register computers (for SSSD)
    - TODO
    
-#### Create 'ldapconnect' user for LDAP lookups (ambari, ranger, knox, ...)
-
+1. Create 'ldapconnect' user for LDAP lookups (ambari, ranger, knox, ...)
    - TODO
