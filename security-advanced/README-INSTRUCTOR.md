@@ -2,7 +2,7 @@
 ========================================
 
 ## Requirements
-========================================
+----------------------------------------
 
 - AWS CLI configured
 - Hortonworkers: Access to AWS SE account (see the wiki)
@@ -10,12 +10,13 @@
 ----------------------------------------
 
 ## Infrastructure preparation
-========================================
+----------------------------------------
+
 
 ----------------------------------------
 
 ## AWS specific notes
-========================================
+----------------------------------------
 
 The following uses AWS CloudFormation to deploy however many clusters (`lab_count`) you want.
 
