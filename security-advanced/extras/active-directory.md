@@ -23,9 +23,13 @@ Below are the steps, including many PowerShell commands to prepare an AD environ
 
 
 ## Change hostname, if needed, and restart
+
+   ```
+## this will restart the server
 $new_hostname = ad01
 Rename-Computer -NewName $new_hostname -Restart
-
+   ```
+   
 ****************************************
 
 ## Install AD
@@ -108,36 +112,51 @@ http://www.javaxt.com/Tutorials/Windows/How_to_Enable_LDAPS_in_Active_Directory
 ## Populate AD with sample users
 ----------------------------------------
 
+   ```powershell
 $my_base = "DC=lab,DC=hortonworks,DC=net"
 $my_ous = "CorpUsers","HadoopNodes","ServiceUsers"
 $my_groups = "hadoop-users","ldap-users","legal","hr","sales"
 $my_users = "hr1","hr2","hr3","legal1","legal2","legal3","sales1","sales2","sales3"
 $my_admin = "hadoopadmin"
-
-1. Create OUs
+   ```
+   
+#### Create OUs
 
    ```powershell
 ## create OUs
 $my_ous | ForEach-Object {
   NEW-ADOrganizationalUnit $_;
 }
+   ```
+   
+#### Create user `hadoopadmin` in `OU=serviceusers,DC=lab,DC=hortonworks,DC=net`
 
-## create groups
+#### Delegate OU permissions to `hadoopadmin` for `OU=hadoopclusters`
+
+#### Create groups
+
+   ```powershell
 $my_groups | ForEach-Object {
     NEW-ADGroup –name $_ –groupscope Global –path "OU=CorpUsers,$my_base";
 }
-
-## create admin user
-
-## create users
-
-## add users to groups
-
-## delegate OU permissions to admin
-
    ```
 
+#### Create users
 
+   - TODO notes here
 
+#### Add users to groups
 
+   - TODO
 
+#### Create service users & keytabs
+
+   - TODO: ambari, rangeradmin, keyadmin
+   
+#### Create user who can register computers (for SSSD)
+
+   - TODO
+   
+#### Create 'ldapconnect' user for LDAP lookups (ambari, ranger, knox, ...)
+
+   - TODO
