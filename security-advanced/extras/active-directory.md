@@ -147,7 +147,7 @@ $my_groups | ForEach-Object {
    - user who can register computers for SSSD (registersssd)
    - ldapconnect user for LDAP lookups (ambari, ranger, knox, ...)
 
-   a. Create NewUsers.csv file under C:\Users\Administrator\Downloads (*TODO:* automate creation of this csv based on above users)
+   a. Create NewUsers.csv file under C:\Users\Administrator\Downloads (**TODO:** automate creation of this csv based on above users)
    ```
 samAccountName,Name,ParentOU
 hadoopadmin,"hadoopadmin hadoopadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
@@ -166,7 +166,7 @@ hr1,"Hr1 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 hr2,"Hr2 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 hr3,"Hr3 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"   
    ```
-  b. Create Create-BulkADUsers-CSV.ps1 file under C:\Users\Administrator\Downloads  (*TODO:* stop hardcoding domain and password)
+  b. Create Create-BulkADUsers-CSV.ps1 file under C:\Users\Administrator\Downloads  (**TODO:** stop hardcoding domain and password)
   ```
 Import-Module ActiveDirectory
 Import-Csv "C:\Users\Administrator\Downloads\NewUsers.csv" | ForEach-Object {
@@ -194,4 +194,10 @@ powershell.exe -executionpolicy ByPass
    - hadoopadmin, ambari, keyadmin, rangeradmin to group hadoop-users
    - ldapconnect, registersssd to group ldap-users
 
-1. *TODO* create principals
+1. **TODO** create principals
+
+1. To test the LDAP connection from a Linux node
+```
+sudo yum install openldap-clients
+ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldapconnect@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
+```
