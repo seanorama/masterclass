@@ -116,7 +116,7 @@ http://www.javaxt.com/Tutorials/Windows/How_to_Enable_LDAPS_in_Active_Directory
 
    ```powershell
 $my_base = "DC=lab,DC=hortonworks,DC=net"
-$my_ous = "CorpUsers","HadoopNodes","ServiceUsers"
+$my_ous = "CorpUsers","HadoopClusters","ServiceUsers"
 $my_groups = "hadoop-users","ldap-users","legal","hr","sales"
 $my_users = "hr1","hr2","hr3","legal1","legal2","legal3","sales1","sales2","sales3"
 $my_admin = "hadoopadmin"
@@ -185,7 +185,7 @@ New-ADUser -Name $_.Name `
 powershell.exe -executionpolicy ByPass
 .\Create-BulkADUsers-CSV.ps1 .\NewUsers.csv  
   ```
-1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopClusters` (right click HadoopNodes > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
+1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopClusters` (right click HadoopClusters > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
 
 1. Add users to groups (select users > right click > Add to a group)
    - hr1, hr2, hr3 to group hr
