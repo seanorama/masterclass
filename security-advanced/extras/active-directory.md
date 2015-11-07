@@ -131,9 +131,6 @@ $my_ous | ForEach-Object {
 }
    ```
    
-1. Create user `hadoopadmin` in `OU=serviceusers,DC=lab,DC=hortonworks,DC=net`
-
-1. Delegate OU permissions to `hadoopadmin` for `OU=hadoopclusters`
 
 1. Create groups
 
@@ -143,17 +140,51 @@ $my_groups | ForEach-Object {
 }
    ```
 
-1. Create users
-   - TODO notes here
+1. Create users including
+   - admin user (hadoopadmin)
+   - business users (legal1, legal2, ...)
+   - service users (rangeradmin, keyadmin, ambari)
+   - user who can register computers for SSSD (registersssd)
+   - ldapconnect user for LDAP lookups (ambari, ranger, knox, ...)
 
+   a. Create NewUsers.csv file under C:\Users\Administrator\Downloads (*TODO:* automate creation of this csv based on above users)
+   ```
+samAccountName,Name,ParentOU
+hadoopadmin,"hadoopadmin hadoopadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+rangeradmin,"rangeradmin rangeradmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+keyadmin,"keyadmin keyadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+ambari,"ambari ambari","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+ldapconnect,"ldapconnect ldapconnect","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+registersssd,"registersssd registersssd","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+legal1,"Legal1 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+legal2,"Legal2 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+legal3,"Legal3 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+sales1,"Sales1 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+sales2,"Sales2 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+sales3,"Sales3 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+hr1,"Hr1 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+hr2,"Hr2 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
+hr3,"Hr3 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"   
+   ```
+  b. Create Create-BulkADUsers-CSV.csv file under C:\Users\Administrator\Downloads  (*TODO:* stop hardcoding domain and password)
+  ```
+Import-Module ActiveDirectory
+Import-Csv "C:\Users\Administrator\Downloads\NewUsers.csv" | ForEach-Object {
+ $userPrincinpal = $_."samAccountName" + "@lab.hortonworks.net"
+New-ADUser -Name $_.Name `
+ -Path $_."ParentOU" `
+ -SamAccountName  $_."samAccountName" `
+ -UserPrincipalName  $userPrincinpal `
+ -AccountPassword (ConvertTo-SecureString "BadPass#1" -AsPlainText -Force) `
+ -ChangePasswordAtLogon $true  `
+ -Enabled $true
+}  
+  ```
+  c. Run script to create users
+  ```
+powershell.exe -executionpolicy ByPass
+.\Create-BulkADUsers-CSV.ps1 .\NewUsers.csv  
+  ```
 1. Add users to groups
    - TODO
 
-1. Create service users & keytabs
-   - TODO: ambari, rangeradmin, keyadmin
-   
-1. Create user who can register computers (for SSSD)
-   - TODO
-   
-1. Create 'ldapconnect' user for LDAP lookups (ambari, ranger, knox, ...)
-   - TODO
