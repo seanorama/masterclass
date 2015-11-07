@@ -176,7 +176,7 @@ New-ADUser -Name $_.Name `
  -SamAccountName  $_."samAccountName" `
  -UserPrincipalName  $userPrincinpal `
  -AccountPassword (ConvertTo-SecureString "BadPass#1" -AsPlainText -Force) `
- -ChangePasswordAtLogon $true  `
+ -ChangePasswordAtLogon $false  `
  -Enabled $true
 }  
   ```
