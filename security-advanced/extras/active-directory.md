@@ -166,7 +166,7 @@ hr1,"Hr1 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 hr2,"Hr2 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 hr3,"Hr3 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"   
    ```
-  b. Create Create-BulkADUsers-CSV.csv file under C:\Users\Administrator\Downloads  (*TODO:* stop hardcoding domain and password)
+  b. Create Create-BulkADUsers-CSV.ps1 file under C:\Users\Administrator\Downloads  (*TODO:* stop hardcoding domain and password)
   ```
 Import-Module ActiveDirectory
 Import-Csv "C:\Users\Administrator\Downloads\NewUsers.csv" | ForEach-Object {
