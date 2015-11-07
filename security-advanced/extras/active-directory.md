@@ -185,6 +185,13 @@ New-ADUser -Name $_.Name `
 powershell.exe -executionpolicy ByPass
 .\Create-BulkADUsers-CSV.ps1 .\NewUsers.csv  
   ```
-1. Add users to groups
-   - TODO
+1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopClusters` (right click HadoopNodes > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
 
+1. Add users to groups (select users > right click > Add to a group)
+   - hr1, hr2, hr3 to group hr
+   - legal1, legal2, legal3 to goup legal
+   - sales1, sales2, sales3 to group sales
+   - hadoopadmin, ambari, keyadmin, rangeradmin to group hadoop-users
+   - ldapconnect, registersssd to group ldap-users
+
+1. *TODO* create principals
