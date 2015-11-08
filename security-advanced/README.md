@@ -130,6 +130,43 @@ sudo service sssd restart
 sudo kdestroy
 ```
 
+## Setup Ambari/AD sync
 
+1. Add your AD properties as defaults for Ambari LDAP sync  
+  ```
+ad_dc="ad01.lab.hortonworks.net"
+ad_root="dc=lab,dc=hortonworks,dc=net"
+ad_user="cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
+sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
+authentication.ldap.baseDn=${ad_root}
+authentication.ldap.managerDn=${ad_user}
+authentication.ldap.primaryUrl=${ad_dc}:389
+authentication.ldap.bindAnonymously=false
+authentication.ldap.dnAttribute=distinguishedName
+authentication.ldap.groupMembershipAttr=member
+authentication.ldap.groupNamingAttr=cn
+authentication.ldap.groupObjectClass=group
+authentication.ldap.useSSL=false
+authentication.ldap.userObjectClass=user
+authentication.ldap.usernameAttribute=sAMAccountName
+EOF
 
+  ```
+
+1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
+  ```
+  sudo ambari-server setup-ldap
+  ```
+
+2. Reestart Ambari server and agents
+  ```
+   sudo ambari-server restart
+   sudo ambari-agent restart
+  ```
+3. Run LDAP sync. When prompted for username/password enter admin/admin
+  ```
+  sudo ambari-server sync-ldap --all  
+  ```
+
+4. Now you should be able to login as AD users. Login as admin/admin and give ambari user Admin priviledge via 'Manage Ambari'
