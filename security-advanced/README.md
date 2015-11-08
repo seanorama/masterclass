@@ -48,6 +48,7 @@ ldapsearch -W -D hadoopadmin@lab.hortonworks.net
    ```
 
 ## Active Directory environment
+Enable kerberos using Ambari security wizard 
 
 - KDC:
     - KDC host: ad01.lab.hortonworks.net
@@ -170,3 +171,73 @@ EOF
   ```
 
 4. Now you should be able to login as AD users. Login as admin/admin and give ambari user Admin priviledge via 'Manage Ambari'
+
+
+## Ranger install and AD integration
+
+#### Create & confirm MySQL user 'root'
+
+- `sudo mysql -h $(hostname -f)`
+- Execute following in the MySQL shell. Change the password to your preference. 
+
+    ```sql
+CREATE USER 'root'@'%';
+GRANT ALL PRIVILEGES ON *.* to 'root'@'%' WITH GRANT OPTION;
+SET PASSWORD FOR 'root'@'%' = PASSWORD('BadPass#1');
+SET PASSWORD = PASSWORD('BadPass#1');
+FLUSH PRIVILEGES;
+exit
+```
+
+- Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
+  - Output should be a simple count. Check the last step if there are errors.
+
+###### Prepare Ambari for MySQL *(or the database you want to use)*
+
+- Add MySQL JAR to Ambari:
+  - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
+    - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
+
+
+###### Install Ranger via Ambari
+
+1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs
+  - passwords
+  - External URL: http://localhost:6080
+
+
+###### Setup Ranger/AD user/group sync
+
+1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger
+```
+ranger.usersync.source.impl.class ldap
+ranger.usersync.ldap.searchBase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.user.searchbase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.group.searchbase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.binddn cn=ldapconnect,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.ldapbindpassword BadPass#1
+ranger.usersync.ldap.url ldap://ad01.lab.hortonworks.net
+ranger.usersync.ldap.user.nameattribute sAMAccountName
+ranger.usersync.ldap.user.searchfilter (objectcategory=person)
+ranger.usersync.ldap.user.groupnameattribute memberof, ismemberof, msSFU30PosixMemberOf
+ranger.usersync.group.memberattributename member
+ranger.usersync.group.nameattribute cn
+ranger.usersync.group.objectclass group
+```
+2. Check the usersyc log and Ranger UI if users/groups got synced
+```
+tail -f /var/log/ranger/usersync/usersync.log
+```
+
+###### Setup Ranger/AD auth
+
+1. Enable AD users to login to Ranger by making below changes in Ambari > Ranger > Config > ranger-admin-site
+```
+ranger.authentication.method ACTIVE_DIRECTORY
+ranger.ldap.ad.domain lab.hortonworks.net
+ranger.ldap.ad.url "ldap://ad01.lab.hortonworks.net:389"
+ranger.ldap.ad.base.dn "dc=lab,dc=hortonworks,dc=net"
+ranger.ldap.ad.bind.dn "cn=ldapconnect,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net"
+ranger.ldap.ad.referral follow
+ranger.ldap.ad.bind.password "BadPass#1"
+```
