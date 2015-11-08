@@ -200,7 +200,7 @@ exit
 
 ###### install SolrCloud from HDPSearch for Audits
 
-- install SolrCloud from HDPSearch for Audits using http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
+- install SolrCloud from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
 - Note that Zookeeper must be running on nodes where this is setup
 ```
