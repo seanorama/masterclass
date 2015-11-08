@@ -150,12 +150,12 @@ $my_groups | ForEach-Object {
    a. Create NewUsers.csv file under C:\Users\Administrator\Downloads (**TODO:** automate creation of this csv based on above users)
    ```
 samAccountName,Name,ParentOU
-hadoopadmin,"hadoopadmin hadoopadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
-rangeradmin,"rangeradmin rangeradmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
-keyadmin,"keyadmin keyadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
-ambari,"ambari ambari","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
-ldapconnect,"ldapconnect ldapconnect","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
-registersssd,"registersssd registersssd","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+hadoopadmin,"hadoopadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+rangeradmin,"rangeradmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+keyadmin,"keyadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+ambari,"ambari","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+ldapconnect,"ldapconnect","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
+registersssd,"registersssd","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net"
 legal1,"Legal1 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 legal2,"Legal2 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
 legal3,"Legal3 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net"
