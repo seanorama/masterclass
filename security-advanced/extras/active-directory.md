@@ -194,14 +194,14 @@ powershell.exe -executionpolicy ByPass
    - hadoopadmin, ambari, keyadmin, rangeradmin to group hadoop-users
    - ldapconnect, registersssd to group ldap-users
 
-To test the LDAP connection from a Linux node
-```
-sudo yum install openldap-clients
-ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldapconnect@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
-```
+1. To test the LDAP connection from a Linux node
+  ```
+  sudo yum install openldap-clients
+  ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldapconnect@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
+  ```
 
 1. Give registersssd user permissions to join workstations to OU=CorpUsers (needed to run 'adcli join' successfully)
-```
+  ```
 # CorpUsers > Properties > Security > Advanced > 
 #    Add > 'Select a principal' > registersssd > Check names > Ok > Select below checkboxes > OK
 #           Create Computer Objects
@@ -215,7 +215,7 @@ ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldapconnect@lab.hortonworks.ne
 #           Reset Password
 #           Validated write to DNS host name
 #           Validated write to service principle name
-```
+  ```
 
 For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/
 
