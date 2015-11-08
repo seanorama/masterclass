@@ -175,7 +175,7 @@ EOF
 
 ## Ranger install and AD integration
 
-#### Create & confirm MySQL user 'root'
+###### Create & confirm MySQL user 'root'
 
 - `sudo mysql -h $(hostname -f)`
 - Execute following in the MySQL shell. Change the password to your preference. 
@@ -198,17 +198,76 @@ exit
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
+###### install SolrCloud from HDPSearch for Audits
+
+- install SolrCloud from HDPSearch for Audits using http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
+
+- Note that Zookeeper must be running on nodes where this is setup
+```
+# change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64   
+yum install lucidworks-hdpsearch
+wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
+cd /usr/local
+tar xvf solr_for_audit_setup_v3.tgz
+cd /usr/local/solr_for_audit_setup
+mv install.properties install.properties.org
+
+sudo tee install.properties > /dev/null <<EOF
+#!/bin/bash
+JAVA_HOME=$JAVA_HOME
+SOLR_USER=solr
+SOLR_INSTALL=false
+SOLR_INSTALL_FOLDER=/opt/lucidworks-hdpsearch/solr
+SOLR_RANGER_HOME=/opt/ranger_audit_server
+SOLR_RANGER_PORT=6083
+SOLR_DEPLOYMENT=solrcloud
+SOLR_ZK=localhost:2181/ranger_audits
+SOLR_HOST_URL=http://`hostname -f`:${SOLR_RANGER_PORT}
+SOLR_SHARDS=1
+SOLR_REPLICATION=1
+SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
+SOLR_MAX_MEM=1g
+EOF
+./setup.sh
+/opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+/opt/ranger_audit_server/scripts/start_solr.sh
+
+#you may need to edit the host/port in this script before running
+#vi /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
+/opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
+# access Solr webui at http://hostname:6083/solr
+
+#optional - install banana dashboard
+cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards
+wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json
+
+# replace host/port in this line::: "server": "http://sandbox.hortonworks.com:6083/solr/",
+vi default.json
+
+chown solr:solr default.json
+
+# access banana dashboard at http://hostname:6083/solr/banana/index.html
+
+```
+- access Solr webui at http://hostname:6083/solr
+- access banana dashboard at http://hostname:6083/solr/banana/index.html
 
 ###### Install Ranger via Ambari
 
-1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs
-  - passwords
+1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs + Solr configs:
+  - Required passwords
   - External URL: http://localhost:6080
+  - ranger-admin-site: 
+    - ranger.audit.source.type solr
+    - ranger.audit.solr.zookeepers localhost:2181/ranger_audits
+    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
 
+**TODO** Need to check SolrCloud configs
 
 ###### Setup Ranger/AD user/group sync
 
-1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger
+1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger to sync AD users/groups
 ```
 ranger.usersync.source.impl.class ldap
 ranger.usersync.ldap.searchBase dc=lab,dc=hortonworks,dc=net
@@ -240,4 +299,28 @@ ranger.ldap.ad.base.dn "dc=lab,dc=hortonworks,dc=net"
 ranger.ldap.ad.bind.dn "cn=ldapconnect,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net"
 ranger.ldap.ad.referral follow
 ranger.ldap.ad.bind.password "BadPass#1"
+```
+
+###### Setup Ranger HDFS plugin
+
+In Ambari > HDFS > Config > ranger-hdfs-audit:
+```
+xasecure.audit.provider.summary.enabled true
+xasecure.audit.destination.hdfs.dir hdfs://yournamenodehostname:8020/ranger/audit
+xasecure.audit.destination.db true
+xasecure.audit.destination.hdfs true
+xasecure.audit.destination.solr true
+xasecure.audit.is.enabled true
+```
+**TODO** Need to check SolrCloud configs
+xasecure.audit.destination.solr.zookeepers localhost:2181/ranger_audits
+
+In Ambari > HDFS > Config > ranger-hdfs-plugin-properties:
+```
+ranger-hdfs-plugin-enabled Yes
+REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
+REPOSITORY_CONFIG_PASSWORD "BadPass#1"
+policy_user "rangeradmin"
+common.name.for.certificate " "
+hadoop.rpc.protection " "
 ```
