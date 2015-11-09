@@ -93,15 +93,15 @@ Enable kerberos using Ambari security wizard
     - Admin password:
 
 ## Setup AD/OS integration via SSSD
-- Run below manually on each node
+- Run below on each node
 ```
-# Pre-req: give registersssd user permissions to join workstations to OU=CorpUsers (needed to run 'adcli join' successfully)
+# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopClusters (needed to run 'adcli join' successfully)
 
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="dc=lab,dc=hortonworks,dc=net"
-ad_ou="ou=CorpUsers,${ad_root}"
+ad_ou="ou=HadoopClusters,${ad_root}"
 ad_realm=${ad_domain^^}
 
 sudo kinit ${ad_user}
