@@ -163,7 +163,11 @@ sudo service sssd restart
 
 sudo kdestroy
 ```
-
+- Test your nodes can recognize AD users
+```
+id sales1
+groups sales1
+```
 ## Setup Ambari/AD sync
 
 1. Add your AD properties as defaults for Ambari LDAP sync  
