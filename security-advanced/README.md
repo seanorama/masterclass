@@ -18,7 +18,9 @@ Credentials will be provided for these services:
 1. Add your Active Directory to /etc/hosts (if not in DNS)
 
    ```
-echo "172.31.0.175 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+cat /etc/hosts | grep ad01   
+#add entry if needed
+#echo "172.31.0.175 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
 2. Add your CA certificate (if using self-signed & not already configured)
@@ -46,6 +48,35 @@ EOF
 ## test with
 ldapsearch -W -D hadoopadmin@lab.hortonworks.net
    ```
+4. (Optional) Install Logsearch 
+- To deploy the Logsearch stack, run below
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/abajwa-hw/logsearch-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/LOGSEARCH
+```
+
+- Edit the `/var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json` file...
+```
+sudo vi /var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json
+```
+- ...by adding the below entries to the middle of the file
+```
+    "LOGSEARCH_SOLR-START" : ["ZOOKEEPER_SERVER-START"],
+    "LOGSEARCH_MASTER-START": ["LOGSEARCH_SOLR-START"],
+    "LOGSEARCH_LOGFEEDER-START": ["LOGSEARCH_SOLR-START", "LOGSEARCH_MASTER-START"],
+```
+
+- Restart Ambari
+```
+sudo service ambari-server restart
+```
+- Then you can click on 'Add Service' from the 'Actions' dropdown menu in the bottom left of the Ambari dashboard:
+
+On bottom left -> Actions -> Add service -> check Logsearch service -> Next -> Next -> Next -> Deploy
+
+- The SolrCloud console should be available at http://(yourhost):8886. Check that the hadoop_logs and history collections got created
+- Launch the Logsearch webapp via navigating to http://(yourhost):8888/
+
 
 ## Active Directory environment
 Enable kerberos using Ambari security wizard 
