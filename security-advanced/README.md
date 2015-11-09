@@ -233,42 +233,7 @@ exit
 
 - install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Option 1: SolrStandalone
-```
-#install Solr Standalone from HDPSearch using http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
-# java and Zookeeper must be installed on nodes where this is setup
-# change JAVA_HOME and SOLR_RANGER_HOME as needed
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64   
-yum install lucidworks-hdpsearch
-wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
-cd /usr/local
-tar xvf solr_for_audit_setup_v3.tgz
-cd /usr/local/solr_for_audit_setup
-mv install.properties install.properties.org
-
-sudo tee install.properties > /dev/null <<EOF
-#!/bin/bash
-#!/bin/bash
-JAVA_HOME=$JAVA_HOME
-SOLR_USER=solr
-SOLR_INSTALL=false
-SOLR_INSTALL_FOLDER=/opt/lucidworks-hdpsearch/solr
-SOLR_RANGER_HOME=/opt/ranger_audit_server
-SOLR_RANGER_PORT=6083
-SOLR_DEPLOYMENT=standalone
-SOLR_RANGER_DATA_FOLDER=/opt/ranger_audit_server/data
-#SOLR_ZK=localhost:2181/ranger_audits
-SOLR_HOST_URL=http://`hostname -f`:\${SOLR_RANGER_PORT}
-#SOLR_SHARDS=1
-#SOLR_REPLICATION=1
-SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
-SOLR_MAX_MEM=1g
-EOF
-./setup.sh
-/opt/ranger_audit_server/scripts/start_solr.sh
-# access Solr webui at http://hostname:6083/solr
-```
-- Option 2: Solr Cloud. Note that Zookeeper must be running on nodes where this is setup
+- Install Solr Cloud. Note that Zookeeper must be running on nodes where this is setup
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64   
@@ -326,10 +291,9 @@ chown solr:solr default.json
   - External URL: http://localhost:6080
   - ranger-admin-site: 
     - ranger.audit.source.type solr
-    - ranger.audit.solr.zookeepers localhost:2181/ranger_audits
     - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
 
-**TODO** Need to check SolrCloud configs
+**TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
 ###### Setup Ranger/AD user/group sync
 
@@ -378,8 +342,7 @@ xasecure.audit.destination.hdfs true
 xasecure.audit.destination.solr true
 xasecure.audit.is.enabled true
 ```
-**TODO** Need to check SolrCloud configs
-xasecure.audit.destination.solr.zookeepers localhost:2181/ranger_audits
+**TODO** Need to update docs on xasecure.audit.destination.solr.zookeepers. For now don't change this property
 
 In Ambari > HDFS > Config > ranger-hdfs-plugin-properties:
 ```
