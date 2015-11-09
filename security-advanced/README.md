@@ -47,6 +47,8 @@ EOF
 
 ## test with
 ldapsearch -W -D hadoopadmin@lab.hortonworks.net
+
+openssl s_client -connect ad01:636 </dev/null
    ```
 4. (Optional) Install Logsearch 
 - To deploy the Logsearch stack, run below
