@@ -170,6 +170,7 @@ groups sales1
 ```
 ## Setup Ambari/AD sync
 
+Run below on only Ambari node
 1. Add your AD properties as defaults for Ambari LDAP sync  
   ```
 ad_dc="ad01.lab.hortonworks.net"
@@ -212,7 +213,7 @@ EOF
 
 ## Ranger install and AD integration
 
-We will install Ranger on the same node as Mysql, so run the setup steps on this node.
+We will install Ranger on the same node as Mysql, so run the setup steps on only MySQL node.
 
 ###### Create & confirm MySQL user 'root'
 
@@ -241,7 +242,7 @@ exit
 
 - install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Install Solr Cloud on each node. Note that Zookeeper must be running on nodes where this is setup
+- Install Solr Cloud *on each node*. Note that Zookeeper must be running on nodes where this is setup
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default   
