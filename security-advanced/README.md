@@ -237,12 +237,13 @@ exit
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default   
-yum install lucidworks-hdpsearch
-wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
+export host=$(curl -4 icanhazip.com)
+sudo yum install lucidworks-hdpsearch
+sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
 cd /usr/local
-tar xvf solr_for_audit_setup_v3.tgz
+sudo tar xvf solr_for_audit_setup_v3.tgz
 cd /usr/local/solr_for_audit_setup
-mv install.properties install.properties.org
+sudo mv install.properties install.properties.org
 
 sudo tee install.properties > /dev/null <<EOF
 #!/bin/bash
@@ -254,30 +255,30 @@ SOLR_RANGER_HOME=/opt/ranger_audit_server
 SOLR_RANGER_PORT=6083
 SOLR_DEPLOYMENT=solrcloud
 SOLR_ZK=localhost:2181/ranger_audits
-SOLR_HOST_URL=http://`hostname -f`:\${SOLR_RANGER_PORT}
+SOLR_HOST_URL=http://$host:\${SOLR_RANGER_PORT}
 SOLR_SHARDS=1
 SOLR_REPLICATION=1
 SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
-./setup.sh
-/opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
-/opt/ranger_audit_server/scripts/start_solr.sh
+sudo ./setup.sh
+sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
-#you may need to edit the host/port in this script before running
-
-/opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
+sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
+   /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
+sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
 # access Solr webui at http://hostname:6083/solr
 ```
 
 - optional - install banana dashboard
 ```
-cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json
-
+sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+export host=$(curl -4 icanhazip.com)
 # replace host/port in this line::: "server": "http://sandbox.hortonworks.com:6083/solr/",
-vi default.json
-chown solr:solr default.json
+sudo sed -i "s,sandbox.hortonworks.com,$host," \
+   /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 # access banana dashboard at http://hostname:6083/solr/banana/index.html
 ```
 - At this point you should be able to: 
