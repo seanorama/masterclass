@@ -265,7 +265,7 @@ EOF
 /opt/ranger_audit_server/scripts/start_solr.sh
 
 #you may need to edit the host/port in this script before running
-#vi /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
+
 /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
 # access Solr webui at http://hostname:6083/solr
 ```
