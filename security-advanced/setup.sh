@@ -20,7 +20,8 @@ yum -y -q install git epel-release ntpd
 
 cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
-export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-291/ambaribn.repo
+#export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-291/ambaribn.repo
+export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-323/ambaribn.repo
 ~/ambari-bootstrap/ambari-bootstrap.sh
 sleep 10
 
@@ -37,6 +38,7 @@ if [ "${install_ambari_server}" = "true" ]; then
         export cluster_name=${stack}
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
+        export export ambari_services="ACCUMULO AMBARI_METRICS FALCON FLUME HBASE HDFS HIVE KNOX MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP STORM TEZ YARN ZOOKEEPER"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
