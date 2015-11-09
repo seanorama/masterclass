@@ -356,3 +356,26 @@ policy_user "rangeradmin"
 common.name.for.certificate " "
 hadoop.rpc.protection " "
 ```
+
+###### Setup Ranger Hive plugin
+
+- In Ambari > HIVE > Config > Settings
+  - Under Security > 'Choose authorization' > Ranger
+- In Ambari > HIVE > Config > Advanced > ranger-hdfs-audit
+```
+xasecure.audit.provider.summary.enabled true
+xasecure.audit.destination.hdfs.dir hdfs://yournamenodehostname:8020/ranger/audit
+xasecure.audit.destination.db true
+xasecure.audit.destination.hdfs true
+xasecure.audit.destination.solr true
+xasecure.audit.is.enabled true
+```
+- In Ambari > Hive > Config > ranger-hive-plugin-properties:
+```
+ranger-hdfs-plugin-enabled Yes
+REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
+REPOSITORY_CONFIG_PASSWORD "BadPass#1"
+policy_user "rangeradmin"
+common.name.for.certificate " "
+hadoop.rpc.protection " "
+```
