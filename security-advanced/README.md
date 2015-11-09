@@ -206,6 +206,8 @@ EOF
 
 ## Ranger install and AD integration
 
+We will install Ranger on the same node as Mysql, so run the setup steps on this node.
+
 ###### Create & confirm MySQL user 'root'
 
 - `sudo mysql -h $(hostname -f)`
@@ -233,7 +235,7 @@ exit
 
 - install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Install Solr Cloud. Note that Zookeeper must be running on nodes where this is setup
+- Install Solr Cloud on each node. Note that Zookeeper must be running on nodes where this is setup
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default   
@@ -289,7 +291,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs + Solr configs:
   - Required passwords
-  - External URL: http://localhost:6080
+  - External URL: http://mysqlinternalhostname.compute.internal:6080
   - ranger-admin-site: 
     - ranger.audit.source.type solr
     - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
