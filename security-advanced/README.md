@@ -356,13 +356,30 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 5. Ranger plugins tab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-7.png)
 
-6. Ranger Audits tab
+6. Ranger Audits tab 
+- add a prefix "/ranger" to the HDFS audits. 
+- For solr don't use the cloud option for now due to Ranger bug. Use Solr standlone and use internal IP of host where cloud running
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
+
+## Ambari views
+- Setup kerberos for Ambari: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
+```
+cd /etc/security/keytabs/
+sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
+sudo chown ambari:hadoop ambari.keytab
+sudo chmod 400 ambari.keytab
+
+sudo ambari-server stop
+sudo ambari-server setup-security
+sudo ambari-server restart
+sudo ambari-agent restart
+```
+- Setup http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
 
 
 
