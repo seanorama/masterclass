@@ -73,7 +73,7 @@ sudo vi /var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.
 sudo service ambari-server restart
 ```
 - Then you can click on 'Add Service' from the 'Actions' dropdown menu in the bottom left of the Ambari dashboard:
-
+  - Note: on multinode clusters, on the screen where you configure which nodes services should go to, install Solr on all nodes by clicking the + icon
 On bottom left -> Actions -> Add service -> check Logsearch service -> Next -> Next -> Next -> Deploy
 
 - The SolrCloud console should be available at http://(yourhost):8886. Check that the hadoop_logs and history collections got created
