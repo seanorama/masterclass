@@ -284,7 +284,7 @@ exit
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default   
 export host=$(curl -4 icanhazip.com)
-sudo yum install lucidworks-hdpsearch
+sudo yum -y install lucidworks-hdpsearch
 sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
 cd /usr/local
 sudo tar xvf solr_for_audit_setup_v3.tgz
