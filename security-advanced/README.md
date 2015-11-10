@@ -231,13 +231,18 @@ Agenda:
     - Hive
     - Jobs
     - Capacity Scheduler
-  - Using Hadoop components in secured mode. Audit excerices for:
+  - Using Hadoop components in secured mode. Audit excercises for:
     - HDFS
     - Hive
     - Hbase
     - YARN
     - Storm
     - Kafka
+    - Knox
+      - AD integration
+      - WebHDFS
+      - Hive
+  - Access webUIs via SPNEGO 
   - Manually setup Solr Ranger plugin(?)
 
 ## Ranger prereqs
