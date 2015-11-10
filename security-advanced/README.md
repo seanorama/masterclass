@@ -217,7 +217,7 @@ We will install Ranger on the same node as Mysql, so run the setup steps on only
 
 ###### Create & confirm MySQL user 'root'
 
-- `sudo mysql -h $(hostname -f)`
+- `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
     ```sql
