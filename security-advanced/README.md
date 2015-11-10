@@ -398,6 +398,16 @@ sudo ambari-agent restart
 ```
 - Setup http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
 
+- Automation to install views
+```
+git clone https://github.com/seanorama/ambari-bootstrap
+cd ambari-bootstrap/extras/
+grep pass ambari_functions.sh
+export ambari_pass=BadPass#1
+source ambari_functions.sh
+./ambari-views/create-views.sh
+   
+```
 
 ## Appendix
 
