@@ -233,7 +233,7 @@ exit
   - Output should be a simple count. Check the last step if there are errors.
 
 ###### Prepare Ambari for MySQL *(or the database you want to use)*
-
+- Run this on Ambari node
 - Add MySQL JAR to Ambari:
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
