@@ -174,11 +174,11 @@ Run below on only Ambari node
 1. Add your AD properties as defaults for Ambari LDAP sync  
   ```
 ad_dc="ad01.lab.hortonworks.net"
-ad_root="dc=lab,dc=hortonworks,dc=net"
+ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
 sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
-authentication.ldap.baseDn=ou=CorpUsers,${ad_root}
+authentication.ldap.baseDn=${ad_root}
 authentication.ldap.managerDn=${ad_user}
 authentication.ldap.primaryUrl=${ad_dc}:389
 authentication.ldap.bindAnonymously=false
