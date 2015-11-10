@@ -211,12 +211,34 @@ EOF
 4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
 
 
-## Ranger install and AD integration
+## Day two
 
-We will install Ranger on the same node as Mysql, so run the setup steps on only MySQL node.
+Agenda:
+
+  - LDAP tool demo
+  - Ranger pre-reqs
+  - Ranger install
+  - Ambari views setup on secure cluster
+  - Using Hadoop components in secured mode. Audit excerices for:
+    - HDFS
+    - Hive
+    - Hbase
+    - YARN
+    - Storm
+    - Kafka
+
+  - Manually setup Solr Ranger plugin(?)
+
+## Ranger prereqs
+
+###### Manually install missing components
+
+- Use the 'Add Service' Wizard to install Kafka 
+
 
 ###### Create & confirm MySQL user 'root'
 
+Prepare MySQL DB for Ranger use. Run these steps on MySQL 
 - `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
@@ -293,6 +315,9 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 - At this point you should be able to: 
   - access Solr webui at http://hostname:6083/solr
   - access banana dashboard at http://hostname:6083/solr/banana/index.html (if installed)
+
+
+## Ranger install
 
 ###### Install Ranger via Ambari 2.1.3
 
