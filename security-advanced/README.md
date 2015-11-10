@@ -178,7 +178,7 @@ ad_root="dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
 sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
-authentication.ldap.baseDn=${ad_root}
+authentication.ldap.baseDn=ou=CorpUsers,${ad_root}
 authentication.ldap.managerDn=${ad_user}
 authentication.ldap.primaryUrl=${ad_dc}:389
 authentication.ldap.bindAnonymously=false
@@ -192,7 +192,6 @@ authentication.ldap.usernameAttribute=sAMAccountName
 EOF
 
   ```
- - Note: to avoid the $users getting imported, try changing `authentication.ldap.baseDn=ou=CorpUsers,${ad_root}` 
   
 1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
   ```
