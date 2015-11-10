@@ -208,7 +208,7 @@ EOF
   sudo ambari-server sync-ldap --all  
   ```
 
-4. Now you should be able to login as AD users. Login as admin/admin and give ambari user Admin priviledge via 'Manage Ambari'
+4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
 
 
 ## Ranger install and AD integration
