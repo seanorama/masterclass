@@ -217,8 +217,19 @@ Agenda:
 
   - LDAP tool demo
   - Ranger pre-reqs
+    - Install any missing services i.e. Kafka
+    - Setup MySQL
+    - Setup Solr for Ranger audits
   - Ranger install
+    - Configure MySQL/Solr/HDFS audits
+    - Configure user/group sync with AD
+    - Configure plugins
+    - Auth via AD
   - Ambari views setup on secure cluster
+    - Files
+    - Hive
+    - Jobs
+    - Capacity Scheduler
   - Using Hadoop components in secured mode. Audit excerices for:
     - HDFS
     - Hive
@@ -226,7 +237,6 @@ Agenda:
     - YARN
     - Storm
     - Kafka
-
   - Manually setup Solr Ranger plugin(?)
 
 ## Ranger prereqs
