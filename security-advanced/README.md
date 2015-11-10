@@ -375,12 +375,28 @@ sudo chown ambari:hadoop ambari.keytab
 sudo chmod 400 ambari.keytab
 
 sudo ambari-server stop
-sudo ambari-server setup-security
+centos@ip-172-31-4-234 keytabs]$ sudo ambari-server setup-security
+Using python  /usr/bin/python2.7
+Security setup options...
+===========================================================================
+Choose one of the following options:
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 3
+Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
+Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
+Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
+Ambari Server 'setup-security' completed successfully.
+sudo ambari-server restart
+
 sudo ambari-server restart
 sudo ambari-agent restart
 ```
 - Setup http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
-
 
 
 ## Appendix
