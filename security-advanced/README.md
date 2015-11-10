@@ -226,11 +226,10 @@ Agenda:
     - Configure plugins
     - Auth via AD
   - Ambari views setup on secure cluster
-    - Secure Ambari 
+    - Kerberos for Ambari 
     - Files
     - Hive
-    - Jobs
-    - Capacity Scheduler
+    - Others (Jobs/Capacity Scheduler...)
   - Using Hadoop components in secured mode. Audit excercises for:
     - HDFS
     - Hive
