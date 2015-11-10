@@ -409,6 +409,35 @@ source ambari_functions.sh
    
 ```
 
+- Import data
+  - Create user dir for admin
+  ```
+   sudo -u hdfs hadoop fs  -mkdir /user/admin
+   sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
+  ```
+  - Now login to ambari as admin and run this via Hive view
+```
+CREATE TABLE `sample_07` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+load data local inpath '/tmp/sample_07.csv' into table sample_07;
+
+
+CREATE TABLE `sample_08` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+load data local inpath '/tmp/sample_08.csv' into table sample_08;
+
+```
+
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
