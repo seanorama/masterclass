@@ -295,31 +295,10 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - access Solr webui at http://hostname:6083/solr
   - access banana dashboard at http://hostname:6083/solr/banana/index.html (if installed)
 
-
 ###### Install Ranger via Ambari 2.1.3
 
-1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
-  - Ranger Admin
-    - Ranger DB Host: mysqlnodeinternalhostname.us-west-2.compute.internal 
-    - passwords
-  - Ranger User Info
-    - Enable USer Sync : yes
-    - Sync Source: LDAP/AD
-    - 
-
-  - External URL: http://mysqlinternalhostname.compute.internal:6080
-  - ranger-admin-site: 
-    - ranger.audit.source.type solr
-    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
-
-
-
-## Appendix
-
-###### Install Ranger via Ambari 2.1.2
-
 1. Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. 
-2. Configs
+2. Configs:
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
@@ -327,6 +306,25 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+
+
+
+
+
+## Appendix
+
+###### Install Ranger via Ambari 2.1.3
+
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
+  - Ranger Admin
+    - Ranger DB Host: mysqlnodeinternalhostname.us-west-2.compute.internal 
+    - passwords
+
+
+  - External URL: http://mysqlinternalhostname.compute.internal:6080
+  - ranger-admin-site: 
+    - ranger.audit.source.type solr
+    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
 
 **TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
