@@ -226,6 +226,7 @@ Agenda:
     - Configure plugins
     - Auth via AD
   - Ambari views setup on secure cluster
+    - Secure Ambari 
     - Files
     - Hive
     - Jobs
