@@ -318,12 +318,15 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ###### Install Ranger via Ambari 2.1.2
 
-1. Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. For now just populate the required configs + Solr configs:
-  - Required passwords
-  - External URL: http://mysqlinternalhostname.compute.internal:6080
-  - ranger-admin-site: 
-    - ranger.audit.source.type solr
-    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. 
+2. Configs
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 
 **TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
