@@ -192,7 +192,8 @@ authentication.ldap.usernameAttribute=sAMAccountName
 EOF
 
   ```
-
+ - Note: to avoid the $users getting imported, try changing `authentication.ldap.baseDn=ou=CorpUsers,${ad_root}` 
+  
 1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
   ```
   sudo ambari-server setup-ldap
@@ -294,9 +295,30 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - access Solr webui at http://hostname:6083/solr
   - access banana dashboard at http://hostname:6083/solr/banana/index.html (if installed)
 
-###### Install Ranger via Ambari
 
-1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs + Solr configs:
+###### Install Ranger via Ambari 2.1.3
+
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
+  - Ranger Admin
+    - Ranger DB Host: mysqlnodeinternalhostname.us-west-2.compute.internal 
+    - passwords
+  - Ranger User Info
+    - Enable USer Sync : yes
+    - Sync Source: LDAP/AD
+    - 
+
+  - External URL: http://mysqlinternalhostname.compute.internal:6080
+  - ranger-admin-site: 
+    - ranger.audit.source.type solr
+    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
+
+
+
+## Appendix
+
+###### Install Ranger via Ambari 2.1.2
+
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. For now just populate the required configs + Solr configs:
   - Required passwords
   - External URL: http://mysqlinternalhostname.compute.internal:6080
   - ranger-admin-site: 
