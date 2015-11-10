@@ -368,7 +368,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ## Appendix
 
-###### Install Ranger via Ambari 2.1.3
+###### Install Ranger via Ambari 2.1.2 (current GA version)
 
 1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
   - Ranger Admin
