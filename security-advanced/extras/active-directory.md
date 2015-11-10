@@ -200,7 +200,7 @@ powershell.exe -executionpolicy ByPass
   ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldapconnect@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
   ```
 
-1. Give registersssd user permissions to join workstations to OU=CorpUsers (needed to run 'adcli join' successfully)
+1. Give registersssd user permissions to join workstations to OU=HadoopClusters (needed to run 'adcli join' successfully)
   ```
 # CorpUsers > Properties > Security > Advanced > 
 #    Add > 'Select a principal' > registersssd > Check names > Ok > Select below checkboxes > OK

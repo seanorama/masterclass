@@ -18,7 +18,9 @@ Credentials will be provided for these services:
 1. Add your Active Directory to /etc/hosts (if not in DNS)
 
    ```
-echo "172.31.0.175 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+cat /etc/hosts | grep ad01   
+#add entry if needed
+#echo "172.31.0.175 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
 2. Add your CA certificate (if using self-signed & not already configured)
@@ -45,7 +47,38 @@ EOF
 
 ## test with
 ldapsearch -W -D hadoopadmin@lab.hortonworks.net
+
+openssl s_client -connect ad01:636 </dev/null
    ```
+4. (Optional) Install Logsearch 
+- To deploy the Logsearch stack, run below
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/abajwa-hw/logsearch-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/LOGSEARCH
+```
+
+- Edit the `/var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json` file...
+```
+sudo vi /var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json
+```
+- ...by adding the below entries to the middle of the file
+```
+    "LOGSEARCH_SOLR-START" : ["ZOOKEEPER_SERVER-START"],
+    "LOGSEARCH_MASTER-START": ["LOGSEARCH_SOLR-START"],
+    "LOGSEARCH_LOGFEEDER-START": ["LOGSEARCH_SOLR-START", "LOGSEARCH_MASTER-START"],
+```
+
+- Restart Ambari
+```
+sudo service ambari-server restart
+```
+- Then you can click on 'Add Service' from the 'Actions' dropdown menu in the bottom left of the Ambari dashboard:
+  - Note: on multinode clusters, on the screen where you configure which nodes services should go to, install Solr on all nodes by clicking the + icon
+On bottom left -> Actions -> Add service -> check Logsearch service -> Next -> Next -> Next -> Deploy
+
+- The SolrCloud console should be available at http://(yourhost):8886. Check that the hadoop_logs and history collections got created
+- Launch the Logsearch webapp via navigating to http://(yourhost):8888/
+
 
 ## Active Directory environment
 Enable kerberos using Ambari security wizard 
@@ -62,15 +95,15 @@ Enable kerberos using Ambari security wizard
     - Admin password:
 
 ## Setup AD/OS integration via SSSD
-- Run below manually on each node
+- Run below on each node
 ```
-# Pre-req: give registersssd user permissions to join workstations to OU=CorpUsers (needed to run 'adcli join' successfully)
+# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopClusters (needed to run 'adcli join' successfully)
 
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="dc=lab,dc=hortonworks,dc=net"
-ad_ou="ou=CorpUsers,${ad_root}"
+ad_ou="ou=HadoopClusters,${ad_root}"
 ad_realm=${ad_domain^^}
 
 sudo kinit ${ad_user}
@@ -130,13 +163,18 @@ sudo service sssd restart
 
 sudo kdestroy
 ```
-
+- Test your nodes can recognize AD users
+```
+id sales1
+groups sales1
+```
 ## Setup Ambari/AD sync
 
+Run below on only Ambari node
 1. Add your AD properties as defaults for Ambari LDAP sync  
   ```
 ad_dc="ad01.lab.hortonworks.net"
-ad_root="dc=lab,dc=hortonworks,dc=net"
+ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
 sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
@@ -154,7 +192,7 @@ authentication.ldap.usernameAttribute=sAMAccountName
 EOF
 
   ```
-
+  
 1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
   ```
   sudo ambari-server setup-ldap
@@ -170,14 +208,53 @@ EOF
   sudo ambari-server sync-ldap --all  
   ```
 
-4. Now you should be able to login as AD users. Login as admin/admin and give ambari user Admin priviledge via 'Manage Ambari'
+4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
 
 
-## Ranger install and AD integration
+## Day two
+
+Agenda:
+
+  - LDAP tool demo
+  - Ranger pre-reqs
+    - Install any missing services i.e. Kafka
+    - Setup MySQL
+    - Setup Solr for Ranger audits
+  - Ranger install
+    - Configure MySQL/Solr/HDFS audits
+    - Configure user/group sync with AD
+    - Configure plugins
+    - Auth via AD
+  - Ambari views setup on secure cluster
+    - Kerberos for Ambari 
+    - Files
+    - Hive
+    - Others (Jobs/Capacity Scheduler...)
+  - Using Hadoop components in secured mode. Audit excercises for:
+    - HDFS
+    - Hive
+    - Hbase
+    - YARN
+    - Storm
+    - Kafka
+    - Knox
+      - AD integration
+      - WebHDFS
+      - Hive
+  - Access webUIs via SPNEGO 
+  - Manually setup Solr Ranger plugin(?)
+
+## Ranger prereqs
+
+###### Manually install missing components
+
+- Use the 'Add Service' Wizard to install Kafka 
+
 
 ###### Create & confirm MySQL user 'root'
 
-- `sudo mysql -h $(hostname -f)`
+Prepare MySQL DB for Ranger use. Run these steps on MySQL 
+- `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
     ```sql
@@ -193,7 +270,7 @@ exit
   - Output should be a simple count. Check the last step if there are errors.
 
 ###### Prepare Ambari for MySQL *(or the database you want to use)*
-
+- Run this on Ambari node
 - Add MySQL JAR to Ambari:
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
@@ -202,51 +279,17 @@ exit
 
 - install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Option 1: SolrStandalone
-```
-#install Solr Standalone from HDPSearch using http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
-# java and Zookeeper must be installed on nodes where this is setup
-# change JAVA_HOME and SOLR_RANGER_HOME as needed
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64   
-yum install lucidworks-hdpsearch
-wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
-cd /usr/local
-tar xvf solr_for_audit_setup_v3.tgz
-cd /usr/local/solr_for_audit_setup
-mv install.properties install.properties.org
-
-sudo tee install.properties > /dev/null <<EOF
-#!/bin/bash
-#!/bin/bash
-JAVA_HOME=$JAVA_HOME
-SOLR_USER=solr
-SOLR_INSTALL=false
-SOLR_INSTALL_FOLDER=/opt/lucidworks-hdpsearch/solr
-SOLR_RANGER_HOME=/opt/ranger_audit_server
-SOLR_RANGER_PORT=6083
-SOLR_DEPLOYMENT=standalone
-SOLR_RANGER_DATA_FOLDER=/opt/ranger_audit_server/data
-#SOLR_ZK=localhost:2181/ranger_audits
-SOLR_HOST_URL=http://`hostname -f`:\${SOLR_RANGER_PORT}
-#SOLR_SHARDS=1
-#SOLR_REPLICATION=1
-SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
-SOLR_MAX_MEM=1g
-EOF
-./setup.sh
-/opt/ranger_audit_server/scripts/start_solr.sh
-# access Solr webui at http://hostname:6083/solr
-```
-- Option 2: Solr Cloud. Note that Zookeeper must be running on nodes where this is setup
+- Install Solr Cloud *on each node*. Note that Zookeeper must be running on nodes where this is setup
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64   
-yum install lucidworks-hdpsearch
-wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
+export JAVA_HOME=/usr/java/default   
+export host=$(curl -4 icanhazip.com)
+sudo yum -y install lucidworks-hdpsearch
+sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
 cd /usr/local
-tar xvf solr_for_audit_setup_v3.tgz
+sudo tar xvf solr_for_audit_setup_v3.tgz
 cd /usr/local/solr_for_audit_setup
-mv install.properties install.properties.org
+sudo mv install.properties install.properties.org
 
 sudo tee install.properties > /dev/null <<EOF
 #!/bin/bash
@@ -258,47 +301,87 @@ SOLR_RANGER_HOME=/opt/ranger_audit_server
 SOLR_RANGER_PORT=6083
 SOLR_DEPLOYMENT=solrcloud
 SOLR_ZK=localhost:2181/ranger_audits
-SOLR_HOST_URL=http://`hostname -f`:\${SOLR_RANGER_PORT}
+SOLR_HOST_URL=http://$host:\${SOLR_RANGER_PORT}
 SOLR_SHARDS=1
 SOLR_REPLICATION=1
 SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
-./setup.sh
-/opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
-/opt/ranger_audit_server/scripts/start_solr.sh
+sudo ./setup.sh
+sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
-#you may need to edit the host/port in this script before running
-#vi /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
-/opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
+sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
+   /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
+sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
 # access Solr webui at http://hostname:6083/solr
 ```
 
 - optional - install banana dashboard
 ```
-cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json
-
+sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+export host=$(curl -4 icanhazip.com)
 # replace host/port in this line::: "server": "http://sandbox.hortonworks.com:6083/solr/",
-vi default.json
-chown solr:solr default.json
+sudo sed -i "s,sandbox.hortonworks.com,$host," \
+   /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
+sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 # access banana dashboard at http://hostname:6083/solr/banana/index.html
 ```
 - At this point you should be able to: 
   - access Solr webui at http://hostname:6083/solr
   - access banana dashboard at http://hostname:6083/solr/banana/index.html (if installed)
 
-###### Install Ranger via Ambari
 
-1. Install Ranger using Amabris 'Add Service' wizard. For now just populate the required configs + Solr configs:
-  - Required passwords
-  - External URL: http://localhost:6080
+## Ranger install
+
+###### Install Ranger via Ambari 2.1.3
+
+- Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
+
+1. Ranger Admin tab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
+
+2. Ranger User info tab - Common configs subtab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
+
+3. Ranger User info tab - User configs subtab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
+
+4. Ranger User info tab - Group configs subtab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
+
+5. Ranger plugins tab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-7.png)
+
+6. Ranger Audits tab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
+
+7.Advanced tab
+![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
+
+
+
+
+## Appendix
+
+###### Install Ranger via Ambari 2.1.2 (current GA version)
+
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
+  - Ranger Admin
+    - Ranger DB Host: mysqlnodeinternalhostname.us-west-2.compute.internal 
+    - passwords
+
+
+  - External URL: http://mysqlinternalhostname.compute.internal:6080
   - ranger-admin-site: 
     - ranger.audit.source.type solr
-    - ranger.audit.solr.zookeepers localhost:2181/ranger_audits
     - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
 
-**TODO** Need to check SolrCloud configs
+**TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
 ###### Setup Ranger/AD user/group sync
 
@@ -347,10 +430,32 @@ xasecure.audit.destination.hdfs true
 xasecure.audit.destination.solr true
 xasecure.audit.is.enabled true
 ```
-**TODO** Need to check SolrCloud configs
-xasecure.audit.destination.solr.zookeepers localhost:2181/ranger_audits
+**TODO** Need to update docs on xasecure.audit.destination.solr.zookeepers. For now don't change this property
 
 In Ambari > HDFS > Config > ranger-hdfs-plugin-properties:
+```
+ranger-hdfs-plugin-enabled Yes
+REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
+REPOSITORY_CONFIG_PASSWORD "BadPass#1"
+policy_user "rangeradmin"
+common.name.for.certificate " "
+hadoop.rpc.protection " "
+```
+
+###### Setup Ranger Hive plugin
+
+- In Ambari > HIVE > Config > Settings
+  - Under Security > 'Choose authorization' > Ranger
+- In Ambari > HIVE > Config > Advanced > ranger-hdfs-audit
+```
+xasecure.audit.provider.summary.enabled true
+xasecure.audit.destination.hdfs.dir hdfs://yournamenodehostname:8020/ranger/audit
+xasecure.audit.destination.db true
+xasecure.audit.destination.hdfs true
+xasecure.audit.destination.solr true
+xasecure.audit.is.enabled true
+```
+- In Ambari > Hive > Config > ranger-hive-plugin-properties:
 ```
 ranger-hdfs-plugin-enabled Yes
 REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
