@@ -296,21 +296,21 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ###### Install Ranger via Ambari 2.1.3
 
-- Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. 
-- Set the below configs for below tabs:
+- Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
+
 1. Ranger Admin tab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 
-2. Range User info tab - Common configs subtab
+2. Ranger User info tab - Common configs subtab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
-
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
-3. Range User info tab - User configs subtab
+
+3. Ranger User info tab - User configs subtab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
 
-4. Range User info tab - Group configs subtab
+4. Ranger User info tab - Group configs subtab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
@@ -322,7 +322,6 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 7.Advanced tab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
-
 
 
 
