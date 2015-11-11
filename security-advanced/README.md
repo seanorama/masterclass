@@ -449,20 +449,30 @@ load data local inpath '/tmp/sample_08.csv' into table sample_08;
 
 ```
 
+#### HDFS Exercise
+- Create a file as sales1 
 ```
 su - sales1
 kinit
-hdfs dfs -put /tmp/samples_07.csv /user/sales1
+hdfs dfs -put /tmp/sample_07.csv /user/sales1
 exit
 ```
-
+- Access it as sales2
 ```
 su - sales2
 kinit
-hdfs dfs -cat /user/sales1/samples_07.csv
+hdfs dfs -cat /user/sales1/sample_07.csv
 ```
+- Notice that it works 
 
-- Login to 
+- Login to Ranger as admin/admin > Audit > check the audit for the event above
+
+```
+#still  as sales2
+hdfs dfs -ls /user/sales1
+```
+- Notice that everyone has read permissions on this file
+- 
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
