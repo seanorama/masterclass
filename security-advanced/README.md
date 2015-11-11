@@ -472,7 +472,22 @@ hdfs dfs -cat /user/sales1/sample_07.csv
 hdfs dfs -ls /user/sales1
 ```
 - Notice that everyone has read permissions on this file
-- 
+- Login to Ambari as admin. Under HDFS > Configs > Set below and restart HDFS
+  - fs.permissions.umask-mode = 077
+  
+- Add a second file into the same dir after changing the umask
+```
+su - sales1
+hdfs dfs -put /tmp/sample_08.csv /user/sales1
+```
+
+- Try to access it as sales2: this should fail now with `Permission denied` and permissions should reflect it
+```
+su - sales2
+hdfs dfs -cat /user/sales1/sample_08.csv
+hdfs dfs -ls /user/sales1
+```
+
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
