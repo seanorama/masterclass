@@ -412,11 +412,20 @@ source ambari_functions.sh
 ```
 
 - Import data
+```
+cd /tmp
+wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
+wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+```
   - Create user dir for admin
   ```
    sudo -u hdfs hadoop fs  -mkdir /user/admin
    sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
+
+   sudo -u hdfs hadoop fs  -mkdir /user/sales1
+   sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
   ```
+  
   - Now login to ambari as admin and run this via Hive view
 ```
 CREATE TABLE `sample_07` (
@@ -440,6 +449,20 @@ load data local inpath '/tmp/sample_08.csv' into table sample_08;
 
 ```
 
+```
+su - sales1
+kinit
+hdfs dfs -put /tmp/samples_07.csv /user/sales1
+exit
+```
+
+```
+su - sales2
+kinit
+hdfs dfs -cat /user/sales1/samples_07.csv
+```
+
+- Login to 
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
