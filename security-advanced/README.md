@@ -662,6 +662,8 @@ Agenda:
             </service>
         </topology>
 ```
+- Login to Ranger and setup a Knox policy for sales group for WEBHDFS
+
 - Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl reuqest to 8443 port where Knox is running:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
