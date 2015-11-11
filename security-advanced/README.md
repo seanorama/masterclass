@@ -487,6 +487,11 @@ su - sales2
 hdfs dfs -cat /user/sales1/sample_08.csv
 hdfs dfs -ls /user/sales1
 ```
+- Recommendation for application files in HDFS. e.g.
+```
+hdfs dfs -chown -R hdfs /apps/hive/warehouse
+hdfs dfs -chmod -R 000 /apps/hive/warehouse
+```
 
 ## Appendix
 
