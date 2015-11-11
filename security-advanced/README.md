@@ -497,6 +497,23 @@ hdfs dfs -chown -R hdfs /apps/hive/warehouse
 hdfs dfs -chmod -R 000 /apps/hive/warehouse
 ```
 
+## Day 3
+
+Agenda:
+1. Architechture
+2. Wire encryption overview
+3. Knox/AD
+4. Ranger KMS
+5. Security training flow review
+6. Roadmap/next steps
+7. SME rules of engagement
+  - Enabling regions
+  - Contributing to training team
+8. Ranger Logo
+
+
+
+
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
