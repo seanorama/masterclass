@@ -515,6 +515,16 @@ Agenda:
 
 ## Knox
 
+- Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology)
+   - Read password for use in following command (this will prompt you for a password):
+   ```
+read -s -p "Password: " knoxpass
+   ```
+   - Create password alias
+   ```
+sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
+unset knoxpass
+   ```
 - Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal
 - Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
 ```
@@ -561,7 +571,7 @@ Agenda:
 
 <param>
     <name>main.ldapRealm.contextFactory.systemPassword</name>
-    <value>BadPass#1</value>
+    <value>${ALIAS=knoxLdapSystemPassword}</value>
 </param>
 
                     <param>
