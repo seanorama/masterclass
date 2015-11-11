@@ -34,6 +34,7 @@ if [ "${install_ambari_server}" = "true" ]; then
     ambari-change-pass admin admin ${ambari_pass}
 
     if [ "${deploy}" = "true" ]; then
+        sleep 60
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack}
         export host_count=${host_count:-skip}
