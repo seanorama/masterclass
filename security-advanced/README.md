@@ -502,6 +502,7 @@ hdfs dfs -chmod -R 000 /apps/hive/warehouse
 Agenda:
 1. Architechture
 2. Wire encryption overview
+  - http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.2.0/Wire_Encryption_v22/index.html#Item1.1
 3. Knox/AD
 4. Ranger KMS
 5. Security training flow review
