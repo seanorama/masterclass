@@ -410,6 +410,7 @@ source ambari_functions.sh
 ./ambari-views/create-views.sh
    
 ```
+#### HDFS Exercise
 
 - Import data
 ```
@@ -424,6 +425,9 @@ wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/
 
    sudo -u hdfs hadoop fs  -mkdir /user/sales1
    sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
+   
+sudo -u hdfs hadoop fs  -mkdir /user/sales2
+sudo -u hdfs hadoop fs  -chown sales2:hadoop /user/sales2
   ```
   
   - Now login to ambari as admin and run this via Hive view
@@ -449,7 +453,7 @@ load data local inpath '/tmp/sample_08.csv' into table sample_08;
 
 ```
 
-#### HDFS Exercise
+
 - Create a file as sales1 
 ```
 su - sales1
