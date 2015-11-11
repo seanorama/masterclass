@@ -513,7 +513,159 @@ Agenda:
 8. Ranger Logo
 
 
+## Knox
 
+- Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal
+- Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
+```
+        <topology>
+
+            <gateway>
+
+                <provider>
+                    <role>authentication</role>
+                    <name>ShiroProvider</name>
+                    <enabled>true</enabled>
+                    <param>
+                        <name>sessionTimeout</name>
+                        <value>30</value>
+                    </param>
+                    <param>
+                        <name>main.ldapRealm</name>
+                        <!-- <value>org.apache.shiro.realm.ldap.JndiLdapRealm</value> -->
+                        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value> 
+                    </param>
+
+<!-- changes for AD/user sync -->
+
+<param>
+    <name>main.ldapContextFactory</name>
+    <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapContextFactory</value>
+</param>
+
+<!-- main.ldapRealm.contextFactory needs to be placed before other main.ldapRealm.contextFactory* entries  -->
+<param>
+    <name>main.ldapRealm.contextFactory</name>
+    <value>$ldapContextFactory</value>
+</param>
+
+                    <param>
+                        <name>main.ldapRealm.contextFactory.url</name>
+                        <value>ldap://ad01.lab.hortonworks.net:389</value> 
+                    </param>
+
+<param>
+    <name>main.ldapRealm.contextFactory.systemUsername</name>
+    <value>cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
+</param>
+
+<param>
+    <name>main.ldapRealm.contextFactory.systemPassword</name>
+    <value>BadPass#1</value>
+</param>
+
+                    <param>
+                        <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
+                        <value>simple</value>
+                    </param>
+                    <param>
+                        <name>urls./**</name>
+                        <value>authcBasic</value> 
+                    </param>
+
+<param>
+    <name>main.ldapRealm.searchBase</name>
+    <value>ou=CorpUsers,dc=lab,dc=hortonworks,dc=net</value>
+</param>
+<param>
+    <name>main.ldapRealm.userObjectClass</name>
+    <value>person</value>
+</param>
+<param>
+    <name>main.ldapRealm.userSearchAttributeName</name>
+    <value>sAMAccountName</value>
+</param>
+
+<!-- changes needed for group sync-->
+<param>
+    <name>main.ldapRealm.authorizationEnabled</name>
+    <value>true</value>
+</param>
+<param>
+    <name>main.ldapRealm.groupSearchBase</name>
+    <value>ou=CorpUsers,dc=lab,dc=hortonworks,dc=net</value>
+</param>
+<param>
+    <name>main.ldapRealm.groupObjectClass</name>
+    <value>group</value>
+</param>
+<param>
+    <name>main.ldapRealm.groupIdAttribute</name>
+    <value>cn</value>
+</param>
+
+
+                </provider>
+
+                <provider>
+                    <role>identity-assertion</role>
+                    <name>Default</name>
+                    <enabled>true</enabled>
+                </provider>
+
+                <provider>
+                    <role>authorization</role>
+                    <name>XASecurePDPKnox</name>
+                    <enabled>true</enabled>
+                </provider>
+
+            </gateway>
+
+            <service>
+                <role>NAMENODE</role>
+                <url>hdfs://{{namenode_host}}:{{namenode_rpc_port}}</url>
+            </service>
+
+            <service>
+                <role>JOBTRACKER</role>
+                <url>rpc://{{rm_host}}:{{jt_rpc_port}}</url>
+            </service>
+
+            <service>
+                <role>WEBHDFS</role>
+                <url>http://{{namenode_host}}:{{namenode_http_port}}/webhdfs</url>
+            </service>
+
+            <service>
+                <role>WEBHCAT</role>
+                <url>http://{{webhcat_server_host}}:{{templeton_port}}/templeton</url>
+            </service>
+
+            <service>
+                <role>OOZIE</role>
+                <url>http://{{oozie_server_host}}:{{oozie_server_port}}/oozie</url>
+            </service>
+
+            <service>
+                <role>WEBHBASE</role>
+                <url>http://{{hbase_master_host}}:{{hbase_master_port}}</url>
+            </service>
+
+            <service>
+                <role>HIVE</role>
+                <url>http://{{hive_server_host}}:{{hive_http_port}}/{{hive_http_path}}</url>
+            </service>
+
+            <service>
+                <role>RESOURCEMANAGER</role>
+                <url>http://{{rm_host}}:{{rm_port}}/ws</url>
+            </service>
+        </topology>
+```
+- Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl reuqest to 8443 port where Knox is running:
+```
+curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+```
 
 ## Appendix
 
