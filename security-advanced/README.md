@@ -143,6 +143,7 @@ ad_server = ${ad_dc}
 ldap_id_mapping = true
 debug_level = 9
 enumerate = true
+override_homedir = /home/%d/%u
 #ldap_schema = ad
 #cache_credentials = true
 #ldap_group_nesting_level = 5
