@@ -85,10 +85,10 @@ __Goal:__ Use of Hive View and File View to issue SQL statements and understand 
 - Use Hive view to query a table
 
   ```sql
-  SELECT * 
-  FROM customers 
-  WHERE length(last_name) > 7
-  ORDER BY last_name;
+SELECT * 
+FROM customers 
+WHERE length(last_name) > 7
+ORDER BY last_name;
   ```
 
 - Save the query
@@ -98,21 +98,21 @@ __Goal:__ Use of Hive View and File View to issue SQL statements and understand 
 - Use Hive view to create a table and fill it
   
   ```sql
-  CREATE EXTERNAL TABLE IF NOT EXISTS cust2 (
+CREATE EXTERNAL TABLE IF NOT EXISTS cust2 (
     last_name STRING,
     first_name STRING,
     house STRING,
     street STRING,
     post_code STRING
-  )
-  LOCATION "/tmp/cust2";
+)
+LOCATION "/tmp/cust2";
   ```
 
   ```sql
-  INSERT into cust2
-  SELECT last_name, first_name, address[0], address[1], address[3] 
-  FROM customers 
-  ORDER BY last_name;
+INSERT into cust2
+SELECT last_name, first_name, address[0], address[1], address[3] 
+FROM customers 
+ORDER BY last_name;
   ```
 
 - Refresh the Database Explorer and examine `cust2`.
@@ -129,19 +129,20 @@ __Goal:__ Use of Hive View and File View to issue SQL statements and understand 
 __Goal__: Convert raw data to a table and then to an ORC table including some Hive SQL functions
 
 - Use File View to navigate to `/masterclass/lab3/tweets`
+
 - Use Hive View to create Schema (with data)
 
   ```sql
-  CREATE EXTERNAL TABLE IF NOT EXISTS tweets_text_partition(
+CREATE EXTERNAL TABLE IF NOT EXISTS tweets_text_partition(
     tweet_id bigint,
     created_unixtime bigint,
     created_time string,
     displayname string,
     msg string,
     fulltext string
-  )
-  ROW FORMAT DELIMITED FIELDS TERMINATED BY "|"
-  LOCATION "/masterclass/lab3/tweets";
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY "|"
+LOCATION "/masterclass/lab3/tweets";
   ```
 
   Use Database Explorer to look at schema and data 
@@ -149,14 +150,14 @@ __Goal__: Convert raw data to a table and then to an ORC table including some Hi
 - Prepare the data as ORC
 
   ```sql
-  CREATE EXTERNAL TABLE IF NOT EXISTS tweets_orc_msg_hashtags(
-      tweet_id bigint,
-      created_unixtime string,
-      displayname string,
-      msg string,
-      hashtag string
-  )
-  STORED AS orc;
+CREATE EXTERNAL TABLE IF NOT EXISTS tweets_orc_msg_hashtags(
+    tweet_id bigint,
+    created_unixtime string,
+    displayname string,
+    msg string,
+    hashtag string
+)
+STORED AS orc;
   ```
 
   __Note__: This is implemented via a SerDe. You could add 
@@ -164,25 +165,25 @@ __Goal__: Convert raw data to a table and then to an ORC table including some Hi
   `ROW FORMAT SERDE "org.apache.hadoop.hive.ql.io.orc.OrcSerde"`
 
   ```sql  
-  INSERT OVERWRITE TABLE tweets_orc_msg_hashtags
-  SELECT
+INSERT OVERWRITE TABLE tweets_orc_msg_hashtags
+SELECT
     tweet_id,
     from_unixtime(floor(created_unixtime/1000)),
     displayname,
     msg,
     get_json_object(fulltext,'$.entities.hashtags[0].text')
-  FROM tweets_text_partition;
+FROM tweets_text_partition;
   ```
 
 - Create a simple query
 
   ```sql
-  SELECT hashtag, count(*) as cnt
-  FROM tweets_orc_msg_hashtags
-  where hashtag is not null 
-  group by hashtag
-  having cnt>10
-  LIMIT 10;
+SELECT hashtag, count(*) AS cnt
+FROM tweets_orc_msg_hashtags
+WHERE hashtag IS NOT null 
+GROUP BY hashtag
+HAVING cnt>10
+LIMIT 10;
   ```
 
 
@@ -194,36 +195,36 @@ __Goal:__ Understand the Serialization/Deserialization feature
 - Download the file `sample_twitter_data.txt` and examine the structure
 
   ```sql
-  CREATE TABLE IF NOT EXISTS twitter_json (
+CREATE TABLE IF NOT EXISTS twitter_json (
     geolocation STRUCT<lat: DOUBLE, long: DOUBLE>,
     tweetmessage STRING,
     createddate STRING,
     `user` STRUCT<screenname: STRING,
                   name: STRING,
-                  id: INT,
+                  id: BIGINT,
                   geoenabled: BOOLEAN,
                   userlocation: STRING>
-  ) 
-  ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe';
+) 
+ROW FORMAT SERDE 'org.openx.data.jsonserde.JsonSerDe';
   
-  LOAD DATA INPATH '/masterclass/lab4/twitter/sample_twitter_data.txt' 
-  INTO TABLE twitter_json;
+LOAD DATA INPATH '/masterclass/lab4/twitter/sample_twitter_data.txt' 
+INTO TABLE twitter_json;
   ```
 
 - Query the file
 
   ```sql
-  SELECT * 
-  FROM twitter_json;
-  
-  SELECT createddate, `user`.screenname 
-  FROM twitter_json WHERE `user`.name LIKE 'Sarah%';
+SELECT * 
+FROM twitter_json;
+
+SELECT createddate, `user`.screenname 
+FROM twitter_json WHERE `user`.name LIKE 'Sarah%';
   ```
 
 __Note__: If you cannot add a SerDe jar to the overall Hive Path, then prefix the three commands above with
 
   ```sql
-  ADD JAR /the/path/to/json-serde-1.1.9.9-Hive13-jar-with-dependencies.jar;
+ADD JAR /the/path/to/json-serde-1.1.9.9-Hive13-jar-with-dependencies.jar;
   ```
 
 ### Lab 5: Use HBase table from Hive
@@ -236,31 +237,38 @@ __Goal__: Understand external data sources using HBase as an example
 - Query from Phoenix `phoenix-sqlline localhost:2181:/hbase-unsecure`:
 
   ```sql
-  CREATE VIEW "employees" ( pk VARCHAR PRIMARY KEY, "f"."birth_date" VARCHAR, "f"."first_name" VARCHAR, "f"."last_name" VARCHAR, "f"."gender" VARCHAR, "f"."hire_date" VARCHAR );
+CREATE VIEW "employees" ( 
+    pk VARCHAR PRIMARY KEY, 
+    "f"."birth_date" VARCHAR, 
+    "f"."first_name" VARCHAR, 
+    "f"."last_name" VARCHAR, 
+    "f"."gender" VARCHAR, 
+    "f"."hire_date" VARCHAR
+);
 
-  SELECT * from "employees" limit 10;
+SELECT * from "employees" limit 10;
   ```
 
 - Link with Hive
 
   ```sql
-  CREATE EXTERNAL TABLE employees_hbase(
+CREATE EXTERNAL TABLE employees_hbase(
     key BIGINT, 
     birth_date STRING, 
     first_name STRING, 
     last_name STRING, 
     gender STRING, 
     hire_date STRING
-  )
-  STORED BY "org.apache.hadoop.hive.hbase.HBaseStorageHandler"
-  WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,f:birth_date,f:first_name,f:last_name,f:gender,f:hire_date")
-  TBLPROPERTIES("hbase.table.name" = "employees");
+)
+STORED BY "org.apache.hadoop.hive.hbase.HBaseStorageHandler"
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,f:birth_date,f:first_name,f:last_name,f:gender,f:hire_date")
+TBLPROPERTIES("hbase.table.name" = "employees");
   ```
 
 - Query new external table in Hive
 
   ```sql
-  SELECT * from employees_hbase limit 10;
+SELECT * from employees_hbase limit 10;
   ```
 
 
@@ -270,31 +278,31 @@ __Goal__: Understand external data sources using HBase as an example
 - Use Hive view to create a table in HBase
 
   ```sql
-  CREATE TABLE tweets_hbase(
+CREATE TABLE tweets_hbase(
     tweet_id BIGINT, 
     created_unixtime BIGINT, 
     created_time STRING, 
     displayname STRING, 
     msg STRING, 
     fulltext STRING  
-  )
-  STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
-  WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,f:c1,f:c2,f:c3,f:c4,f:c5")
-  TBLPROPERTIES ("hbase.table.name" = "tweets");
+)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,f:c1,f:c2,f:c3,f:c4,f:c5")
+TBLPROPERTIES ("hbase.table.name" = "tweets");
   ```
 
 - Goto Ambari Dashboard - HBase - Quick Links - HBase Master UI to check whether tweets table exists
 - Insert data into HBase table
 
   ```sql
-  INSERT INTO tweets_hbase
-  SELECT * from tweets_text_partition;
+INSERT INTO tweets_hbase
+SELECT * from tweets_text_partition;
   ```
 
 - Query from Hive
 
   ```sql
-  SELECT * from tweets_hbase;
+SELECT * from tweets_hbase;
   ```
 
 
@@ -305,17 +313,27 @@ __Goal:__ Understand the SQL explain
 - Use Hive view to execute a join SQL statement and press _"Explain"_ instead of _"Execute_"
 
   ```sql
-  SELECT d.dept_name, count(*) as cnt
-  FROM departments d, employees e, dept_emp x
-  WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
-  GROUP BY d.dept_name ORDER BY cnt DESC limit 5;  
+SELECT d.dept_name, count(*) as cnt
+FROM departments d, employees e, dept_emp x
+WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
+GROUP BY d.dept_name ORDER BY cnt DESC limit 5;  
   ```
 
   ```sql
-  SELECT e.first_name, e.last_name, e.hire_date, d.dept_name, x.from_date, x.to_date
-  FROM departments d, employees e, dept_emp x
-  WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
-  ORDER BY d.dept_name, e.last_name, e.first_name, x.from_date;
+SELECT e.first_name, e.last_name, e.hire_date, d.dept_name, x.from_date, x.to_date
+FROM departments d, employees e, dept_emp x
+WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
+ORDER BY d.dept_name, e.last_name, e.first_name, x.from_date;
   ```
 
+  ```sql
+ANALYZE TABLE departments COMPUTE STATISTICS for COLUMNS;
+ANALYZE TABLE dept_emp COMPUTE STATISTICS for COLUMNS;
+ANALYZE TABLE employees COMPUTE STATISTICS for COLUMNS;
+  ```
 
+  ```sql
+ANALYZE TABLE departments COMPUTE STATISTICS;
+ANALYZE TABLE dept_emp COMPUTE STATISTICS;
+ANALYZE TABLE employees COMPUTE STATISTICS;
+  ```
