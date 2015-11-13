@@ -164,19 +164,23 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 #### Run commands in bulk on all nodes
 
 * There are several options, such as pdsh, cssh, ...
-* Execute this to get a command which will then let you use 'cssh' across all of the hosts:
+
+* Example using tmux-cssh *(which is installed on the jump box)*
 
     ```
 ./clusters-report.sh | grep "^[0-9]" | xargs echo tmux-cssh -u masterclass
     ```
+
+* After executing you will get a terminal with small windows to all of the clusters.
+* Anything you type will go to all hosts.
 
 #### Venue Internet blocks Ambari Server (port 8080)
 
 * Change Ambari to port 8080
 
   ```
+export TERM=xterm
 echo "client.api.port=8081" | sudo tee -a /etc/ambari-server/conf/ambari.properties
 sudo ambari-server restart
 sudo ambari-agent restart
   ```
-
