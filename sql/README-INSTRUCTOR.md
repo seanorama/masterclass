@@ -176,7 +176,7 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 
 #### Venue Internet blocks Ambari Server (port 8080)
 
-* Change Ambari to port 8080
+* Change Ambari to port 8081
 
   ```
 export TERM=xterm
