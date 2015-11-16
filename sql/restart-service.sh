@@ -50,7 +50,7 @@ function get_state {
 	PASSWORD=$3
 	CLUSTER=$4
 	SERVICE=$5
-	RESULT=$(curl -s -u admin:admin -H "X-Requested-By: ambari" http://${HOST}:${PORT}/api/v1/clusters/${CLUSTER}/services/${SERVICE} | jq -r .ServiceInfo.state)
+	RESULT=$(curl -s -u admin:${PASSWORD} -H "X-Requested-By: ambari" http://${HOST}:${PORT}/api/v1/clusters/${CLUSTER}/services/${SERVICE} | jq -r .ServiceInfo.state)
 	echo $RESULT
 }
 
@@ -119,7 +119,6 @@ while [ $WAIT -eq 1 ]; do
 	if [ "$STATE" == "$CRIT" ]; then
 		echo -e "\nDone"
 		WAIT=0
-	else
-		sleep 5
 	fi
+	sleep 5
 done
