@@ -680,6 +680,12 @@ unset knoxpass
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
+## Ranger KMS/Data encryption setup
+
+- Follow the docs: http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html
+- Note that when the Ranger repo is created you need to ensure that it uses principal name (e.g. keyadmin@LAB.HORTONWORKS.NET) instead of username
+
+
 ## Appendix
 
 ###### Install Ranger via Ambari 2.1.2 (current GA version)
