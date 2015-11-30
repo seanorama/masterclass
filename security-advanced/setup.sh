@@ -21,7 +21,7 @@ yum -y -q install git epel-release ntpd
 cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 #export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-291/ambaribn.repo
-export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-521/ambaribn.repo
+export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos${el_version}/2.x/BUILDS/2.1.3.0-521/ambaribn.repo
 ~/ambari-bootstrap/ambari-bootstrap.sh
 sleep 10
 
