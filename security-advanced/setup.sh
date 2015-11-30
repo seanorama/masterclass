@@ -3,20 +3,20 @@ set -o xtrace
 
 export TERM=xterm
 
+echo "172.31.0.175 ad01.lab.hortonworks.net ad01" >> /etc/hosts
+
+yum makecache
+yum -y -q install git epel-release ntpd
+
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
   "6")
-    true
+    sed -i "s/mirrorlist=https/mirrorlist=http/" /etc/yum.repos.d/epel.repo || true
   ;;
   "7")
     rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
   ;;
 esac
-
-echo "172.31.0.175 ad01.lab.hortonworks.net ad01" >> /etc/hosts
-
-yum makecache
-yum -y -q install git epel-release ntpd
 
 cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
