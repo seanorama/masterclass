@@ -12,7 +12,6 @@ RUN service sshd start
 
 RUN useradd student
 RUN usermod -aG wheel student
-RUN usermod -aG sudo student
 RUN echo 'student:BadPass#1' | chpasswd
 
 ENV PS1 "[\u@\h \W]"\#" "
