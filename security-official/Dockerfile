@@ -14,6 +14,10 @@ RUN useradd student
 RUN usermod -aG wheel student
 RUN echo 'student:BadPass#1' | chpasswd
 RUN sed -i -e 's/^# \(%wheel\)/\1/' /etc/sudoers
+COPY authorized_keys /home/student/.ssh/authorized_keys
+
+RUN cp -a /etc/ambari-agent/conf/internal-hostname.sh /etc/ambari-agent/conf/public-hostname.sh
+RUN ambari-agent restart
 
 ENV PS1 "[\u@\h \W]"\#" "
 RUN echo 'export PS1="[\u@\h \W]"\#" "' >> /root/.bash_profile
