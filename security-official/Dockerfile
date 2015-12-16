@@ -13,6 +13,7 @@ RUN service sshd start
 RUN useradd student
 RUN usermod -aG wheel student
 RUN echo 'student:BadPass#1' | chpasswd
+RUN sed -i -e 's/^# \(%wheel\)/\1/' /etc/sudoers
 
 ENV PS1 "[\u@\h \W]"\#" "
 RUN echo 'export PS1="[\u@\h \W]"\#" "' >> /root/.bash_profile
