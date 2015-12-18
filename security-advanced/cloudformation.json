@@ -160,27 +160,6 @@
 }
 },
 "Resources": {
-"AccessRoleAmbari": {
-"Properties": {
-"AssumeRolePolicyDocument": {
-"Statement": [
-{
-"Action": [
-"sts:AssumeRole"
-],
-"Effect": "Allow",
-"Principal": {
-"Service": [
-"ec2.amazonaws.com"
-]
-}
-}
-]
-},
-"Path": "/"
-},
-"Type": "AWS::IAM::Role"
-},
 "AdditionalNodeLaunchConfig": {
 "Properties": {
 "AssociatePublicIpAddress": "true",
@@ -601,9 +580,6 @@
 "VirtualName": "ephemeral23"
 }
 ],
-"IamInstanceProfile": {
-"Ref": "InstanceProfileAmbari"
-},
 "ImageId": {
 "Fn::FindInMap": [
 "CENTOS7",
@@ -766,57 +742,6 @@
 }
 },
 "Type": "AWS::EC2::Instance"
-},
-"CFNRolePolicies": {
-"Properties": {
-"PolicyDocument": {
-"Statement": [
-{
-"Action": "cloudformation:Describe*",
-"Effect": "Allow",
-"Resource": "*"
-}
-]
-},
-"PolicyName": "CFNaccess",
-"Roles": [
-{
-"Ref": "AccessRoleAmbari"
-}
-]
-},
-"Type": "AWS::IAM::Policy"
-},
-"InstanceProfileAmbari": {
-"Properties": {
-"Path": "/",
-"Roles": [
-{
-"Ref": "AccessRoleAmbari"
-}
-]
-},
-"Type": "AWS::IAM::InstanceProfile"
-},
-"S3RolePolicies": {
-"Properties": {
-"PolicyDocument": {
-"Statement": [
-{
-"Action": "s3:*",
-"Effect": "Allow",
-"Resource": "*"
-}
-]
-},
-"PolicyName": "s3access",
-"Roles": [
-{
-"Ref": "AccessRoleAmbari"
-}
-]
-},
-"Type": "AWS::IAM::Policy"
 },
 "waitConditionAmbari": {
 "Properties": {
