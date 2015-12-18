@@ -87,7 +87,7 @@ Enable kerberos using Ambari security wizard
     - KDC host: ad01.lab.hortonworks.net
     - Realm name: LAB.HORTONWORKS.NET
     - LDAP url: ldaps://ad01.lab.hortonworks.net
-    - Container DN: ou=hadoopclusters,dc=lab,dc=hortonworks,dc=net
+    - Container DN: ou=HadoopServices,dc=lab,dc=hortonworks,dc=net
     - Domains: us-west-2.compute.internal,.us-west-2.compute.internal
 - Kadmin:
     - Kadmin host: ad01.lab.hortonworks.net
@@ -97,13 +97,13 @@ Enable kerberos using Ambari security wizard
 ## Setup AD/OS integration via SSSD
 - Run below on each node
 ```
-# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopClusters (needed to run 'adcli join' successfully)
+# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="dc=lab,dc=hortonworks,dc=net"
-ad_ou="ou=HadoopClusters,${ad_root}"
+ad_ou="ou=HadoopNodes,${ad_root}"
 ad_realm=${ad_domain^^}
 
 sudo kinit ${ad_user}

@@ -68,7 +68,7 @@ Install-ADDSForest `
 
    2. Deploy AD with DNS
 
-        ```
+    ```
 Install-WindowsFeature AD-Domain-Services –IncludeManagementTools
 Import-Module ADDSDeployment
 $secure_string_pwd = convertto-securestring ${password} -asplaintext -force
@@ -85,6 +85,7 @@ Install-ADDSForest `
 -SysvolPath "C:\Windows\SYSVOL" `
 -SafeModeAdministratorPassword:$secure_string_pwd `
 -Force:$true
+    ```
 
 ****************************************
 
@@ -122,8 +123,7 @@ openssl x509 -req -in wildcard-lab-hortonworks-net.csr -CA ca.crt -CAkey ca.key 
 ## Configure AD OUs, Groups, Users, ...
 ----------------------------------------
 
-1. Set these before running scripts:
-
+```
 $my_base = "DC=lab,DC=hortonworks,DC=net"
 $my_ous = "CorpUsers","HadoopNodes","HadoopServices","ServiceUsers"
 $my_groups = "hadoop-users","ldap-users","legal","hr","sales","hadoop-admins"
@@ -171,6 +171,7 @@ Import-Csv "Users.csv" | ForEach-Object {
     add-adgroupmember -identity $_."Group" -member (Get-ADUser $_."samAccountName")
     add-adgroupmember -identity "hadoop-users" -member (Get-ADUser $_."samAccountName")
 }
+```
 
 1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices` (right click HadoopServices > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
 
