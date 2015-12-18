@@ -39,7 +39,7 @@ if [ "${install_ambari_server}" = "true" ]; then
         export cluster_name=${stack}
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
-        export ambari_services="ACCUMULO AMBARI_METRICS FALCON FLUME HBASE HDFS HIVE KNOX MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP STORM TEZ YARN ZOOKEEPER"
+        #export ambari_services="ACCUMULO AMBARI_METRICS FALCON FLUME HBASE HDFS HIVE KNOX MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP STORM TEZ YARN ZOOKEEPER"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
