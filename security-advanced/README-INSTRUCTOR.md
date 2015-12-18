@@ -24,7 +24,7 @@ The following uses AWS CloudFormation to deploy however many clusters (`lab_coun
 
    ```sh
 export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
-export lab_prefix=sme-security      ## template for naming the cloudformation stacks
+export lab_prefix=sec      ## template for naming the cloudformation stacks
 export lab_first=1                  ## number to start at in naming
 export lab_count=1                  ## number of clusters to create
    ```
