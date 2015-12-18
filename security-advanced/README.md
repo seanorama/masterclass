@@ -18,7 +18,7 @@ Credentials will be provided for these services:
 1. Add your Active Directory to /etc/hosts (if not in DNS)
 
    ```
-echo "172.31.0.175 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+echo "172.30.0.88 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
 2. Add your CA certificate (if using self-signed & not already configured)
@@ -90,7 +90,8 @@ EOF
   ```
 3. Run LDAP sync. When prompted for username/password enter admin/admin
   ```
-  sudo ambari-server sync-ldap --all  
+  echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
+  sudo ambari-server sync-ldap --groups groups.txt
   ```
 
 4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
@@ -113,7 +114,7 @@ Enable kerberos using Ambari security wizard
     - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
     - Admin password:
 
-## Setup AD/OS integration via SSSD
+### Setup AD/OS integration via SSSD
 - Run below on each node
 ```
 # Pre-req: give registersssd user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
@@ -126,13 +127,14 @@ ad_ou="ou=HadoopNodes,${ad_root}"
 ad_realm=${ad_domain^^}
 
 sudo kinit ${ad_user}
+```
 
+- Run below on each node
+```
 sudo yum makecache fast
 sudo yum -y -q install epel-release ## epel is required for adcli
-sudo yum -y -q install sssd oddjob-mkhomedir authconfig sssd-krb5 sssd-ad sssd-tools libnss-sss libpam-sss 
+sudo yum -y -q install sssd oddjob-mkhomedir authconfig sssd-krb5 sssd-ad sssd-tools
 sudo yum -y -q install adcli
-
-
 
 sudo adcli join -v \
   --domain-controller=${ad_dc} \
@@ -146,6 +148,7 @@ sudo adcli join -v \
 ##   pam, ssh, autofs should be disabled on master & data nodes
 ##   - we only need nss on those nodes
 ##   - edge nodes need the ability to login
+
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
@@ -153,27 +156,34 @@ services = nss, pam, ssh, autofs, pac
 config_file_version = 2
 domains = ${ad_realm}
 override_space = _
+
 [domain/${ad_realm}]
 id_provider = ad
+ad_server = ${ad_dc}
+#ad_server = ad01, ad02, ad03
+#ad_backup_server = ad-backup01, 02, 03
 auth_provider = ad
 chpass_provider = ad
-#access_provider = ad
-ad_server = ${ad_dc}
-ldap_id_mapping = true
-debug_level = 9
-enumerate = true
-override_homedir = /home/%d/%u
-#ldap_schema = ad
-#cache_credentials = true
-#ldap_group_nesting_level = 5
-ldap_tls_cacertdir = /etc/pki/tls/certs
-ldap_tls_cacert = /etc/pki/tls/certs/ca-bundle.crt
-ldap_tls_reqcert = never
+access_provider = ad
+enumerate = False
+krb5_realm = ${ad_realm}
+ldap_schema = ad
+ldap_id_mapping = True
+cache_credentials = True
+ldap_access_order = expire
+ldap_account_expire_policy = ad
+ldap_force_upper_case_realm = true
+fallback_homedir = /home/%d/%u
+default_shell = /bin/false
+ldap_referrals = false
+
 [nss]
+memcache_timeout = 3600
 override_shell = /bin/bash
 EOF
-sudo chmod 0600 /etc/sssd/sssd.conf
 
+sudo chmod 0600 /etc/sssd/sssd.conf
+sudo service sssd restart
 sudo authconfig --enablesssd --enablesssdauth --enablemkhomedir --enablelocauthorize --update
 
 sudo chkconfig oddjobd on
@@ -189,6 +199,40 @@ id sales1
 groups sales1
 ```
 
+### Refresh HDFS User-Group mappings
+
+- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN.
+
+- Execute the following on the Ambari node:
+```
+cluster=YOURCLUSTERNAME ## look at the name in Ambari
+sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
+```
+
+Execute the following on the node where the YARN ResourceManager is installed:
+```
+sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
+sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
+```
+
+- kinit as a normal Hadoop user
+```
+kinit hr1
+```
+
+- check the users groups
+```
+hdfs groups
+yarn rmadmin -getGroups hr1
+```
+
+- output should look like:
+```
+hr1@LAB.HORTONWORKS.NET : domain_users hadoop-users hr
+```
+
+******************************
 
 ## Day two
 
