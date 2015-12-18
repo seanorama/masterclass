@@ -32,11 +32,14 @@ export lab_count=1                  ## number of clusters to create
 2. Set parameters for deploying into existing AWS VPC, Subnet & SecurityGroups
 
    ```sh
-## Update with your subnet, securitygroups and the number of instances you want
+## Update with your keypair name, subnet, securitygroups and the number of instances you want
 export cfn_parameters='
-ParameterKey=AdditionalInstanceCount,ParameterValue=2
-ParameterKey=SubnetId,ParameterValue=subnet-76f4222f
-ParameterKey=SecurityGroups,ParameterValue="sg-1c565979,sg-1cb3f678"
+[
+  {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER"},
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
+  {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
+  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
 '
    ```
 

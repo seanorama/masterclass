@@ -8,7 +8,6 @@
 ##
 
 ####
-lab_ssh_key=${lab_key:-secloud}
 lab_location="${lab_location:-0.0.0.0/0}"
 lab_prefix=${lab_prefix:-mc-test}
 lab_first=${lab_first:-1}
@@ -45,10 +44,8 @@ do
   aws cloudformation create-stack --stack-name ${cluster} \
     --capabilities CAPABILITY_IAM \
     --template-body file://./cloudformation.json \
-    --parameters ParameterKey=KeyName,ParameterValue=${lab_ssh_key} \
-        ${cfn_parameters} \
+    --parameters "${cfn_parameters}" \
         ${cfn_switches}
-        #ParameterKey=OpenLocation,ParameterValue=${lab_location} \
 
 ########################################################################
   echo Initiated creation of $cluster cluster
