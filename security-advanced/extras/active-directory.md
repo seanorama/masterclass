@@ -198,8 +198,7 @@ For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permi
 
 1. create principal for Ambari. This will be used later to kerborize Ambari before setting up views
 ```
-ktpass -out c:\temp\ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -p
-ass BadPAss#1 -mapuser ambari@LAB.HORTONWORKS.NET -mapop set -crypto All -ptype KRB5_NT_PRINCIPAL
+ktpass -out ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -pass BadPAss#1 -mapuser ambari@LAB.HORTONWORKS.NET -mapop set -crypto All -ptype KRB5_NT_PRINCIPAL
 ```
 
 1. To test the LDAP connection from a Linux node
