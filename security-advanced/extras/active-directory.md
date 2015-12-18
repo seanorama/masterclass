@@ -116,6 +116,8 @@ openssl genrsa -out wildcard-lab-hortonworks-net.key 2048
 openssl req -new -key wildcard-lab-hortonworks-net.key -out wildcard-lab-hortonworks-net.csr \
     -subj '/CN=*.lab.hortonworks.net/O=Hortonworks Testing/C=US'
 openssl x509 -req -in wildcard-lab-hortonworks-net.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out wildcard-lab-hortonworks-net.crt -days 3650
+
+openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cryptographic Provider' -LMK -inkey wildcard-lab-hortonworks-net.key -in wildcard-lab-hortonworks-net.crt -certfile ca.crt  -out wildcard-lab-hortonworks-net.p12.2
 ```
 
 ****************************************
