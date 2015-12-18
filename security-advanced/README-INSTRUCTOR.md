@@ -49,12 +49,19 @@ export cfn_parameters='
 ../bin/clusters-create.sh
    ```
 
+4. List clusters
+
    ```
 ../bin/clusters-report.sh
    ```
 
+5. Delete clusters
+
    ```
 ../bin/clusters-terminate.sh
    ```
+
+6. Use the clusters:
+   - `ssh centos@ipFromReportAbove` ## use the key which was specified during the build
 
 ----------------------------------------
