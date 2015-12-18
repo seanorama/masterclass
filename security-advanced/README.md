@@ -44,41 +44,62 @@ BASE dc=lab,dc=hortonworks,dc=net
 EOF
 
 ## test with
-ldapsearch -W -D hadoopadmin@lab.hortonworks.net
+ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 openssl s_client -connect ad01:636 </dev/null
    ```
-4. (Optional) Install Logsearch 
-- To deploy the Logsearch stack, run below
-```
-VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/abajwa-hw/logsearch-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/LOGSEARCH
-```
 
-- Edit the `/var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json` file...
-```
-sudo vi /var/lib/ambari-server/resources/stacks/HDP/$VERSION/role_command_order.json
-```
-- ...by adding the below entries to the middle of the file
-```
-    "LOGSEARCH_SOLR-START" : ["ZOOKEEPER_SERVER-START"],
-    "LOGSEARCH_MASTER-START": ["LOGSEARCH_SOLR-START"],
-    "LOGSEARCH_LOGFEEDER-START": ["LOGSEARCH_SOLR-START", "LOGSEARCH_MASTER-START"],
-```
+## Secure Ambari
 
-- Restart Ambari
-```
-sudo service ambari-server restart
-```
-- Then you can click on 'Add Service' from the 'Actions' dropdown menu in the bottom left of the Ambari dashboard:
-  - Note: on multinode clusters, on the screen where you configure which nodes services should go to, install Solr on all nodes by clicking the + icon
-On bottom left -> Actions -> Add service -> check Logsearch service -> Next -> Next -> Next -> Deploy
+### Create Ambari Keystore
 
-- The SolrCloud console should be available at http://(yourhost):8886. Check that the hadoop_logs and history collections got created
-- Launch the Logsearch webapp via navigating to http://(yourhost):8888/
+### Setup Ambari/AD sync
+
+Run below on only Ambari node
+1. Add your AD properties as defaults for Ambari LDAP sync  
+  ```
+ad_dc="ad01.lab.hortonworks.net"
+ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
+ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
+
+sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
+authentication.ldap.baseDn=${ad_root}
+authentication.ldap.managerDn=${ad_user}
+authentication.ldap.primaryUrl=${ad_dc}:389
+authentication.ldap.bindAnonymously=false
+authentication.ldap.dnAttribute=distinguishedName
+authentication.ldap.groupMembershipAttr=member
+authentication.ldap.groupNamingAttr=cn
+authentication.ldap.groupObjectClass=group
+authentication.ldap.useSSL=false
+authentication.ldap.userObjectClass=user
+authentication.ldap.usernameAttribute=sAMAccountName
+EOF
+
+  ```
+  
+1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
+  ```
+  sudo ambari-server setup-ldap
+  ```
+
+2. Reestart Ambari server and agents
+  ```
+   sudo ambari-server restart
+   sudo ambari-agent restart
+  ```
+3. Run LDAP sync. When prompted for username/password enter admin/admin
+  ```
+  sudo ambari-server sync-ldap --all  
+  ```
+
+4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
 
 
-## Active Directory environment
+## Kerberize the Cluster
+
+### Run Ambari Kerberos Wizard against Active Directory environment
+
 Enable kerberos using Ambari security wizard 
 
 - KDC:
@@ -89,7 +110,7 @@ Enable kerberos using Ambari security wizard
     - Domains: us-west-2.compute.internal,.us-west-2.compute.internal
 - Kadmin:
     - Kadmin host: ad01.lab.hortonworks.net
-    - Admin principal: hadoopadmin@lab.hortonworks.net
+    - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
     - Admin password:
 
 ## Setup AD/OS integration via SSSD
@@ -167,47 +188,6 @@ sudo kdestroy
 id sales1
 groups sales1
 ```
-## Setup Ambari/AD sync
-
-Run below on only Ambari node
-1. Add your AD properties as defaults for Ambari LDAP sync  
-  ```
-ad_dc="ad01.lab.hortonworks.net"
-ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
-ad_user="cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
-
-sudo tee -a /etc/ambari-server/conf/ambari.properties > /dev/null << EOF
-authentication.ldap.baseDn=${ad_root}
-authentication.ldap.managerDn=${ad_user}
-authentication.ldap.primaryUrl=${ad_dc}:389
-authentication.ldap.bindAnonymously=false
-authentication.ldap.dnAttribute=distinguishedName
-authentication.ldap.groupMembershipAttr=member
-authentication.ldap.groupNamingAttr=cn
-authentication.ldap.groupObjectClass=group
-authentication.ldap.useSSL=false
-authentication.ldap.userObjectClass=user
-authentication.ldap.usernameAttribute=sAMAccountName
-EOF
-
-  ```
-  
-1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
-  ```
-  sudo ambari-server setup-ldap
-  ```
-
-2. Reestart Ambari server and agents
-  ```
-   sudo ambari-server restart
-   sudo ambari-agent restart
-  ```
-3. Run LDAP sync. When prompted for username/password enter admin/admin
-  ```
-  sudo ambari-server sync-ldap --all  
-  ```
-
-4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
 
 
 ## Day two
@@ -565,7 +545,7 @@ unset knoxpass
 
 <param>
     <name>main.ldapRealm.contextFactory.systemUsername</name>
-    <value>cn=ldapconnect,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
+    <value>cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
 </param>
 
 <param>
@@ -709,7 +689,7 @@ ranger.usersync.source.impl.class ldap
 ranger.usersync.ldap.searchBase dc=lab,dc=hortonworks,dc=net
 ranger.usersync.ldap.user.searchbase dc=lab,dc=hortonworks,dc=net
 ranger.usersync.group.searchbase dc=lab,dc=hortonworks,dc=net
-ranger.usersync.ldap.binddn cn=ldapconnect,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.binddn cn=ldap-reader,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net
 ranger.usersync.ldap.ldapbindpassword BadPass#1
 ranger.usersync.ldap.url ldap://ad01.lab.hortonworks.net
 ranger.usersync.ldap.user.nameattribute sAMAccountName
@@ -732,7 +712,7 @@ ranger.authentication.method ACTIVE_DIRECTORY
 ranger.ldap.ad.domain lab.hortonworks.net
 ranger.ldap.ad.url "ldap://ad01.lab.hortonworks.net:389"
 ranger.ldap.ad.base.dn "dc=lab,dc=hortonworks,dc=net"
-ranger.ldap.ad.bind.dn "cn=ldapconnect,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net"
+ranger.ldap.ad.bind.dn "cn=ldap-reader,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net"
 ranger.ldap.ad.referral follow
 ranger.ldap.ad.bind.password "BadPass#1"
 ```
