@@ -1,9 +1,5 @@
 # Environment notes
 
-## Note to Hortonworkers
-
-Find our Active Directory instance details in Google Drive. Title "infrastructure" in the Training folder.
-
 ## Accessing your Cluster
 
 Credentials will be provided for these services:
