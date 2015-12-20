@@ -8,11 +8,6 @@
 - Configure AWS CLI: `aws configure`
   - Details on creating credentials: http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html
   - These AWS IAM permissions are needed: EC2, AutoScaling, CloudFormation, Marketplace
-- Clone this repo
-   ```
-git clone https://github.com/seanorama/masterclass
-cd masterclass/security-official
-   ```
 
 ## How this works
 -----------------
@@ -33,6 +28,13 @@ For managing multiple clusters (each takes variables for naming & the number of 
 
 ## Deploy, report & terminate clusters on AWS
 -------------------------
+
+1. Get this repo:
+
+   ```
+git clone https://github.com/seanorama/masterclass
+cd masterclass/security-official
+   ```
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
     - Open the CloudFormat Web UI
