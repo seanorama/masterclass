@@ -135,31 +135,6 @@ KeyName = t.add_parameter(Parameter(
     Description="Name of an existing EC2 KeyPair to enable SSH access to the instance",
 ))
 
-AccessRoleAmbari = t.add_resource(iam.Role(
-    "AccessRoleAmbari",
-    Path="/",
-    AssumeRolePolicyDocument={ "Statement": [{ "Action": ["sts:AssumeRole"], "Effect": "Allow", "Principal": { "Service": ["ec2.amazonaws.com"] } }] },
-))
-
-InstanceProfileAmbari = t.add_resource(iam.InstanceProfile(
-    "InstanceProfileAmbari",
-    Path="/",
-    Roles=[Ref("AccessRoleAmbari")],
-))
-
-S3RolePolicies = t.add_resource(iam.PolicyType(
-    "S3RolePolicies",
-    PolicyName="s3access",
-    PolicyDocument={ "Statement": [{ "Action": "s3:*", "Resource": "*", "Effect": "Allow" }] },
-    Roles=[Ref(AccessRoleAmbari)],
-))
-
-CFNRolePolicies = t.add_resource(iam.PolicyType(
-    "CFNRolePolicies",
-    PolicyName="CFNaccess",
-    PolicyDocument={ "Statement": [{ "Action": "cloudformation:Describe*", "Resource": "*", "Effect": "Allow" }] },
-    Roles=[Ref("AccessRoleAmbari")],
-))
 
 t.add_mapping("CENTOS7", {
     "eu-west-1": {"AMI": "ami-33734044"},
@@ -307,7 +282,6 @@ AmbariNode = t.add_resource(ec2.Instance(
     ),
     KeyName=Ref(KeyName),
     InstanceType=Ref(InstanceType),
-    IamInstanceProfile=Ref(InstanceProfileAmbari),
     SubnetId=Ref(SubnetId),
     SecurityGroupIds=Ref(SecurityGroups),
     # NetworkInterfaces=[
