@@ -38,7 +38,7 @@ cd masterclass/security-official
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
     - Open the CloudFormat Web UI
-    - Or with the command-line: `./cloudformation-status.sh`
+    - Or with the command-line: `..bin//cloudformation-status.sh`
 
 1. Open a 'screen' so the commands continue if you lose connectivity:
 
