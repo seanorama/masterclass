@@ -114,7 +114,7 @@ Instructions for each:
 2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
   - On your Windows Server: [Install Active Directory Certificate Services](https://technet.microsoft.com/en-us/library/jj717285.aspx)
     - Ensure to configure as "Enterprise CA" not "Standalone CA".
-    - On the Windows host:
+    - Once it's installed:
       - Server Manager -> Tools -> Certificate Authority
       - Action -> Properties
       - General Tab -> View Certificate -> Details -> Copy to File
@@ -122,6 +122,7 @@ Instructions for each:
       - Save as 'activedirectory.cer' (or whatever you like)
       - Open with Notepad -> Copy Contents
       - This is your public CA to be distributed to all of your client hosts.
+      - Reboot the Active Directory server for it to load the certificate.
 
 3. Generate a self-signed certificate however you like.
    - Many options for this. I prefer OpenSSL (run from wherever you like):
@@ -138,10 +139,12 @@ openssl x509 -req -in wildcard-lab-hortonworks-net.csr -CA ca.crt -CAkey ca.key 
 openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cryptographic Provider' -LMK -inkey wildcard-lab-hortonworks-net.key -in wildcard-lab-hortonworks-net.crt -certfile ca.crt  -out wildcard-lab-hortonworks-net.p12
       ```
    - Copy wildcard-lab-hortonworks-net.p12 to the Active Directory server
-   - On your Active Directory server, run 'mmc'.
+   - On your Active Directory server:
+      - Run "mmc"
       - Open the "Certificates snap-in".
       - Expand the "Certificates" node under "Personal".
       - Select "All Tasks" -> "Import...", and import the the "p12".
+      - Reboot the Active Directory server for it to load the certificate.
 
 ****************************************
 
