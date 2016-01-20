@@ -98,16 +98,34 @@ https://technet.microsoft.com/en-gb/library/cc772007.aspx
 
 ****************************************
 
-## Create CA & self-signed certificate for LDAPS
+## Enable LDAPS
 ----------------------------------------
 
-- Full instructions: http://www.javaxt.com/Tutorials/Windows/How_to_Enable_LDAPS_in_Active_Directory
-    - Alternatively you could install Certificate Services in AD and create the certificate from there
+There are several methods to enable SSL for LDAP (aka LDAPS).
 
-- I created on my local system with these commands.
-    - Note: This method of managing a CA is not secure. Stricly for testing.
+1. Use a certificate from a public respected certificate authority.
+2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
+3. Generate a self-signed certificate from your own certificate authority.
 
-```
+
+Instructions for each:
+
+1. See Active Directory documentation.
+2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
+  - On your Windows Server: [Install Active Directory Certificate Services](https://technet.microsoft.com/en-us/library/jj717285.aspx)
+    - Ensure to configure as "Enterprise CA" not "Standalone CA".
+    - On the Windows host:
+      - Server Manager -> Tools -> Certificate Authority
+      - Action -> Properties
+      - General Tab -> View Certificate -> Details -> Copy to File
+      - Choose the format: "Base-64 encoded X.509 (.CER)"
+      - Save as 'activedirectory.cer' (or whatever you like)
+      - Open with Notepad -> Copy Contents
+      - This is your public CA to be distributed to all of your client hosts.
+
+3. Generate a self-signed certificate however you like.
+   - Many options for this. I prefer OpenSSL (run from wherever you like):
+      ```
 openssl genrsa -out ca.key 4096
 openssl req -new -x509 -days 3650 -key ca.key -out ca.crt \
     -subj '/CN=lab.hortonworks.net/O=Hortonworks Testing/C=US'
@@ -117,8 +135,13 @@ openssl req -new -key wildcard-lab-hortonworks-net.key -out wildcard-lab-hortonw
     -subj '/CN=*.lab.hortonworks.net/O=Hortonworks Testing/C=US'
 openssl x509 -req -in wildcard-lab-hortonworks-net.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out wildcard-lab-hortonworks-net.crt -days 3650
 
-openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cryptographic Provider' -LMK -inkey wildcard-lab-hortonworks-net.key -in wildcard-lab-hortonworks-net.crt -certfile ca.crt  -out wildcard-lab-hortonworks-net.p12.2
-```
+openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cryptographic Provider' -LMK -inkey wildcard-lab-hortonworks-net.key -in wildcard-lab-hortonworks-net.crt -certfile ca.crt  -out wildcard-lab-hortonworks-net.p12
+      ```
+   - Copy wildcard-lab-hortonworks-net.p12 to the Active Directory server
+   - On your Active Directory server, run 'mmc'.
+      - Open the "Certificates snap-in".
+      - Expand the "Certificates" node under "Personal".
+      - Select "All Tasks" -> "Import...", and import the the "p12".
 
 ****************************************
 
