@@ -166,7 +166,7 @@ $my_groups | ForEach-Object {
 
 $UserCSV = @"
 samAccountName,Name,ParentOU,Group
-hadoopadmin,"hadoopadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-admins"
+hadoopadmin,"hadoopadmin","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hadoop-admins"
 rangeradmin,"rangeradmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
 ambari,"ambari","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
 keyadmin,"keyadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
