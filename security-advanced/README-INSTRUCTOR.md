@@ -33,7 +33,7 @@ For managing multiple clusters (each takes variables for naming & the number of 
 
    ```
 git clone https://github.com/seanorama/masterclass
-cd masterclass/security-official
+cd masterclass/security-advanced
    ```
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
