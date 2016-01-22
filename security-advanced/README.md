@@ -12,6 +12,7 @@ Credentials will be provided for these services:
 ### Configure name resolution & certificate to Active Directory
 
 1. Add your Active Directory to /etc/hosts (if not in DNS)
+  - **Change the IP to match your AD**
 
    ```
 echo "172.30.0.88 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
