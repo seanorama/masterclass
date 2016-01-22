@@ -13,16 +13,17 @@ Credentials will be provided for these services:
 
 1. Add your Active Directory to /etc/hosts (if not in DNS)
   - **Change the IP to match your AD**
-
    ```
-echo "172.30.0.88 ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+ad_ip=172.30.0.88
+echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
 2. Add your CA certificate (if using self-signed & not already configured)
-
+  - **Change the URL to where you've placed your CA cert**
    ```
+cert_url=https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/extras/ca.crt
 sudo yum -y install openldap-clients ca-certificates
-sudo curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/extras/ca.crt \
+sudo curl -sSL "${cert_url}" \
     -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
 
 sudo update-ca-trust force-enable
@@ -85,15 +86,20 @@ EOF
    sudo ambari-server restart
    sudo ambari-agent restart
   ```
-3. Run LDAP sync. When prompted for username/password enter admin/admin
+3. Run LDAP sync
+  - Use the local Ambari admin credentials
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
   ```
 
-4. Now you should be able to login as AD users. Login as admin/BadPass#1 and give ambari user Admin priviledge via 'Manage Ambari'
+4. Give 'hadoop-admins' permissions to manage the cluster
+  - Login to Ambari as your local 'admin' user
+  - Manage Ambari -> Grant 'hadoop-admins' permissions to manage the cluster
+  - Login to Ambari as 'hadoopadmin' and verify rights to manage the cluster
 
-
+5. (optional) Disable local 'admin' user
+ 
 ## Kerberize the Cluster
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
@@ -140,11 +146,6 @@ sudo adcli join -v \
   --login-user="${ad_user}" \
   -v \
   --show-details
-
-## todo:
-##   pam, ssh, autofs should be disabled on master & data nodes
-##   - we only need nss on those nodes
-##   - edge nodes need the ability to login
 
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
@@ -202,7 +203,7 @@ groups sales1
 
 - Execute the following on the Ambari node:
 ```
-cluster=YOURCLUSTERNAME ## look at the name in Ambari
+cluster=YOURCLUSTERNAME ## change to match the name of your cluster
 sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
