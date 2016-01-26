@@ -15,13 +15,12 @@
   - HadoopNodes: list of nodes registered with AD
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
 
-- In addition, the below steps would have been completed in advance:
+- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
   - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
   - Active Directory secure LDAP (LDAPS) connectivity has been configured.
   - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
   - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
 
-http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html
 
 
 ## Accessing your Cluster
@@ -130,7 +129,7 @@ EOF
 
 4. Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user
-  - Manage Ambari -> Grant 'hadoop-admins' permissions to manage the cluster
+  - Manage Ambari -> Grant 'hadoopadmin' user permissions to manage the cluster
   - Login to Ambari as 'hadoopadmin' and verify rights to manage the cluster
 
 5. (optional) Disable local 'admin' user
