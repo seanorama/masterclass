@@ -10,6 +10,14 @@ Credentials will be provided for these services:
 ## Use your Cluster
 
 ### Configure name resolution & certificate to Active Directory
+0. SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
+```
+ssh -i training-keypair.pem.cer centos@IPADDRESS
+```
+- To change user to root you can:
+```
+sudo su -
+```
 
 1. Add your Active Directory to /etc/hosts (if not in DNS)
   - **Change the IP to match your ADs internal IP**
