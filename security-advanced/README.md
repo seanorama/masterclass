@@ -158,8 +158,8 @@ EOF
 
 4. Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user
-  - Manage Ambari -> Grant 'hadoopadmin' user permissions to manage the cluster
-  - Login to Ambari as 'hadoopadmin' and verify rights to manage the cluster
+  - Click dropdown on top right of Ambari UI -> Manage Ambari -> Grant 'hadoopadmin' user permissions to manage the cluster
+  - Logout and log back in to Ambari as 'hadoopadmin' and verify rights to manage the cluster
 
 5. (optional) Disable local 'admin' user
  
@@ -178,7 +178,7 @@ Enable kerberos using Ambari security wizard
 - Kadmin:
     - Kadmin host: ad01.lab.hortonworks.net
     - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
-    - Admin password:
+    - Admin password: BadPass#1
 
 ### Setup AD/OS integration via SSSD
 - Run below on each node
