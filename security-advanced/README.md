@@ -184,10 +184,11 @@ Enable kerberos using Ambari security wizard
     - Admin password: BadPass#1
 
 ### Setup AD/OS integration via SSSD
-- Run below on each node
-```
-# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
+-  Pre-req: Your instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
+
+- Run below **on each node**
+```
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
 ad_dc="ad01.lab.hortonworks.net"
