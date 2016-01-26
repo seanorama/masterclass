@@ -8,7 +8,7 @@
     - hadoopadmin: Admin user (for AD, Ambari, ...)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
   
-  - ServiceUsers OU: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
+  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
   
   - HadoopServices OU: hadoop service principals (will be created by Ambari)
