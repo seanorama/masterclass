@@ -4,16 +4,16 @@
 
 - Active Directory will already be setup and its OUs will look something like the below:
   - CorpUsers: business users/end users (plus hadoopadmin)
-  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
   
   - ServiceUsers: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
-  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
   
   - HadoopServices: hadoop service principals (will be created by Ambari)
-  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
   
   - HadoopNodes: list of nodes registered with AD
-  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
 
 - In addition, the below steps would have been completed in advance:
   - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
