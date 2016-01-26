@@ -2,8 +2,10 @@
 
 ## AD overview
 
-- Active Directory will already be setup and its OUs will look something like the below:
-  - CorpUsers: business users/end users (plus hadoopadmin)
+- Active Directory will already be setup by the instructors. Its OUs will look something like the below:
+  - CorpUsers:
+    - business users/end users (e.g. it1, hr1, legal1)
+    - hadoopadmin: Admin user (for AD, Ambari, ...)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
   
   - ServiceUsers: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
