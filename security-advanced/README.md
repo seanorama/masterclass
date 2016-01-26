@@ -170,7 +170,7 @@ EOF
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
-Enable kerberos using Ambari security wizard 
+Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). Enter the below details:
 
 - KDC:
     - KDC host: ad01.lab.hortonworks.net
@@ -182,6 +182,8 @@ Enable kerberos using Ambari security wizard
     - Kadmin host: ad01.lab.hortonworks.net
     - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
     - Admin password: BadPass#1
+
+- Then click Next on all the following screens to pick the default values
 
 ### Setup AD/OS integration via SSSD
 
