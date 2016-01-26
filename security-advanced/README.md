@@ -35,12 +35,13 @@ Credentials will be provided for these services by the instructor:
 
 ## Use your Cluster
 
-### Windows/Putty 
+### To connect using Putty from Windows laptop
 
 - Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
 - Use putty to connect to your nodes
 
-### Linux/MacOSX steps
+### To connect from Linux/MacOSX laptop
+
 - SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
 ```
 ssh -i training-keypair.pem.cer centos@IPADDRESS
@@ -50,7 +51,7 @@ ssh -i training-keypair.pem.cer centos@IPADDRESS
 sudo su -
 ```
 
-### Why is security needed
+### Why is security needed?
 
 - On your unsecured cluster try to access a restricted dir in HDFS
 ```
@@ -65,7 +66,7 @@ hdfs dfs -ls /tmp/hive
 ## this shows the file listing
 ```
 
-- This should tell you that without kerberos there is no security 
+- This should tell you why kerberos is needed on Hadoop :)
 
 
 ### Configure name resolution & certificate to Active Directory
