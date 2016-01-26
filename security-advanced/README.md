@@ -32,11 +32,7 @@ Credentials will be provided for these services by the instructor:
 
 ## Use your Cluster
 
-### Configure name resolution & certificate to Active Directory
-
-**Run below on all nodes**
-
-0. SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
+- SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
 ```
 ssh -i training-keypair.pem.cer centos@IPADDRESS
 ```
@@ -44,6 +40,28 @@ ssh -i training-keypair.pem.cer centos@IPADDRESS
 ```
 sudo su -
 ```
+
+### Why is security needed
+
+- On your unsecured cluster try to access a restricted dir in HDFS
+```
+hdfs dfs -ls /tmp/hive   
+## this should fail with Permission Denied
+```
+
+- Now try again after setting HADOOP_USER_NAME
+```
+export HADOOP_USER_NAME=hdfs
+hdfs dfs -ls /tmp/hive   ## this shows the file listing
+```
+
+- This should tell you that without kerberos there is no security 
+
+
+### Configure name resolution & certificate to Active Directory
+
+**Run below on all nodes**
+
 
 1. Add your Active Directory to /etc/hosts (if not in DNS)
   - **Change the IP to match your ADs internal IP**
