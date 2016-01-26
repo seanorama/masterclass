@@ -96,7 +96,7 @@ URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
 BASE dc=lab,dc=hortonworks,dc=net
 EOF
 
-## test with
+## test by running below (LDAP password is: BadPass#1)
 ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 openssl s_client -connect ad01:636 </dev/null
