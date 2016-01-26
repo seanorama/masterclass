@@ -1,8 +1,32 @@
 # Environment notes
 
+## AD overview
+
+- Active Directory will already be setup and its OUs will look something like the below:
+  - CorpUsers: business users/end users (plus hadoopadmin)
+  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
+  
+  - ServiceUsers: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
+  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
+  
+  - HadoopServices: hadoop service principals (will be created by Ambari)
+  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
+  
+  - HadoopNodes: list of nodes registered with AD
+  ![Image](https://https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
+
+- In addition, the below steps would have been completed in advance:
+  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
+  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
+  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
+  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
+
+http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html
+
+
 ## Accessing your Cluster
 
-Credentials will be provided for these services:
+Credentials will be provided for these services by the instructor:
 
 * SSH
 * Ambari
