@@ -158,8 +158,8 @@ EOF
 4. Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
   - Grant 'hadoopadmin' user permissions to manage the cluster:
-    - Click dropdown on top right of Ambari UI
-    - Manage Ambari
+    - Click the dropdown on top right of Ambari UI
+    - Click 'Manage Ambari'
     - Under 'Users', select 'hadoopadmin'
     - Change 'Ambari Admin' to Yes 
   - Logout and log back into Ambari as 'hadoopadmin' and verify the user has rights to manage the cluster
