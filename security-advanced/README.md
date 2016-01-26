@@ -10,6 +10,9 @@ Credentials will be provided for these services:
 ## Use your Cluster
 
 ### Configure name resolution & certificate to Active Directory
+
+** Run below on all nodes **
+
 0. SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
 ```
 ssh -i training-keypair.pem.cer centos@IPADDRESS
