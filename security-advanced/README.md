@@ -73,7 +73,6 @@ hdfs dfs -ls /tmp/hive
 
 **Run below on all nodes**
 
-
 1. Add your Active Directory to /etc/hosts (if not in DNS)
   - **Change the IP to match your ADs internal IP**
    ```
@@ -150,16 +149,17 @@ EOF
    sudo ambari-agent restart
   ```
 3. Run LDAP sync
-  - When prompted, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
+  - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
   ```
 
 4. Give 'hadoop-admins' permissions to manage the cluster
-  - Login to Ambari as your local 'admin' user
-  - Click dropdown on top right of Ambari UI -> Manage Ambari -> Grant 'hadoopadmin' user permissions to manage the cluster
-  - Logout and log back in to Ambari as 'hadoopadmin' and verify rights to manage the cluster
+  - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
+  - Grant 'hadoopadmin' user permissions to manage the cluster:
+    - Click dropdown on top right of Ambari UI -> Manage Ambari -> Users -> hadoopadmin -> Ambari Admin -> Yes 
+  - Logout and log back into Ambari as 'hadoopadmin' and verify the user has rights to manage the cluster
 
 5. (optional) Disable local 'admin' user
  
