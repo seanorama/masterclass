@@ -35,6 +35,12 @@ Credentials will be provided for these services by the instructor:
 
 ## Use your Cluster
 
+### Windows/Putty 
+
+- Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
+- 
+
+### Linux/MacOSX steps
 - SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
 ```
 ssh -i training-keypair.pem.cer centos@IPADDRESS
@@ -55,7 +61,8 @@ hdfs dfs -ls /tmp/hive
 - Now try again after setting HADOOP_USER_NAME
 ```
 export HADOOP_USER_NAME=hdfs
-hdfs dfs -ls /tmp/hive   ## this shows the file listing
+hdfs dfs -ls /tmp/hive   
+## this shows the file listing
 ```
 
 - This should tell you that without kerberos there is no security 
@@ -142,7 +149,7 @@ EOF
    sudo ambari-agent restart
   ```
 3. Run LDAP sync
-  - Use the local Ambari admin credentials
+  - When prompted, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
