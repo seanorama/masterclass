@@ -2,7 +2,7 @@
 
 ## AD overview
 
-- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been created to look something like the below:
+- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
   - CorpUsers OU, which contains:
     - business users and groups (e.g. it1, hr1, legal1) and 
     - hadoopadmin: Admin user (for AD, Ambari, ...)
@@ -24,6 +24,7 @@
   - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
 
 
+- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/cc780336(v=ws.10).aspx) 
 
 ## Accessing your Cluster
 
