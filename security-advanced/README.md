@@ -38,7 +38,7 @@ Credentials will be provided for these services by the instructor:
 ### Windows/Putty 
 
 - Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
-- 
+- Use putty to connect to your nodes
 
 ### Linux/MacOSX steps
 - SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
