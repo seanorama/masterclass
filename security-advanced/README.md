@@ -2,19 +2,19 @@
 
 ## AD overview
 
-- Active Directory will already be setup by the instructors. Its OUs will look something like the below:
-  - CorpUsers:
-    - business users/end users (e.g. it1, hr1, legal1)
+- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been created to look something like the below:
+  - CorpUsers OU, which contains:
+    - business users and groups (e.g. it1, hr1, legal1) and 
     - hadoopadmin: Admin user (for AD, Ambari, ...)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
   
-  - ServiceUsers: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
+  - ServiceUsers OU: service users not setup by Ambari  (e.g. rangeradmin, ambari etc)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
   
-  - HadoopServices: hadoop service principals (will be created by Ambari)
+  - HadoopServices OU: hadoop service principals (will be created by Ambari)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
   
-  - HadoopNodes: list of nodes registered with AD
+  - HadoopNodes OU: list of nodes registered with AD
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
 
 - In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
