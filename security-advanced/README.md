@@ -468,6 +468,19 @@ sudo ambari-server restart
 
 - Then go through the rest of the install wizard by clicking Next to complete installation of Solr
 
+- In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=SOLR
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+```
+
 ###### Setup Solr for Ranger audit 
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
