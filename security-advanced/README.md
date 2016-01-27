@@ -388,7 +388,6 @@ sudo yum -y install lucidworks-hdpsearch
 ```
 VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
-ls /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
 sudo ambari-server restart
 ```
 - Install Solr by starting the 'Add service wizard' and choosing Solr. Pick the defaults in the wizard except:
