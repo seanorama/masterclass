@@ -440,7 +440,7 @@ EOF
 sudo ./setup.sh
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 
-# skip this if you installed Solr via Ambari
+# skip this step to start_solr if you installed Solr via Ambari
 sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
