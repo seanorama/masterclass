@@ -397,13 +397,14 @@ sudo ambari-server restart
   
   - On the screen to configure the Solr service
     - under 'Advanced solr-config':
+      - set `solr.datadir` to `/opt/ranger_audit_server`    
       - set `solr.download.location` to `HDPSEARCH`
       - set `solr.znode` to `/ranger_audits`
     - under 'Advanced solr-env':
       - set `solr.port` to `6083`
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
 
-
+- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
 
 ###### Setup Solr for Ranger audit 
 
@@ -439,16 +440,17 @@ EOF
 sudo ./setup.sh
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 
-# not needed if installing Solr via Ambari
+# skip this if you installed Solr via Ambari
 sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
-# access Solr webui at http://hostname:6083/solr
 ```
 
-- optional - install banana dashboard
+- Now you should access Solr webui at http://hostname:6083/solr
+
+- (Optional) - install banana dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
