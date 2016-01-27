@@ -272,7 +272,14 @@ groups sales1
 
 - Execute the following on the Ambari node:
 ```
-cluster=YOURCLUSTERNAME ## change to match the name of your cluster
+export AMBARI_HOST=BadPass#1
+export PASSWORD=admin
+
+#detect name of cluster
+output=`curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://$AMBARI_HOST:8080/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#refresh user and group mappings
 sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
