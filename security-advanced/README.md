@@ -190,7 +190,7 @@ Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). Ent
 ### Setup AD/OS integration via SSSD
 
 - Why? 
-  - Currently your hadoop nodes do not recognize users/groups.
+  - Currently your hadoop nodes do not recognize users/groups defined in AD.
   - You can check this by running below:
   ```
   id it1
