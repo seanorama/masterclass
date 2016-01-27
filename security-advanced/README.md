@@ -371,7 +371,7 @@ exit
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
-##### install SolrCloud from HDPSearch for Audits
+##### Install SolrCloud from HDPSearch for Audits
 
 
 ###### Option 1: Install Solr manually
