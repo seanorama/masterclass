@@ -537,32 +537,47 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 - Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
 
-1. Ranger Admin tab
+1. Ranger Admin tab:
+  - Ranger DB Host = FQDN of host where Mysql is running (e.g. ip-172-30-0-242.us-west-2.compute.internal)
+  - Enter passwords
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 
 2. Ranger User info tab - Common configs subtab
+  - Enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
 
 3. Ranger User info tab - User configs subtab
+  - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
+  - User Search Category = `(objectcategory=person)`
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
 
 4. Ranger User info tab - Group configs subtab
+  - No changes needed
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
+  - Enable all plugins
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-7.png)
 
 6. Ranger Audits tab 
+  - SolrCloud = ON
+  - Audit to DB = ON
+  - enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
+  - No changes needed
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
-- Click Next and install Ranger
+- On Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+  
+- Click Next > Deploy to install Ranger
 
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 
