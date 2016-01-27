@@ -342,12 +342,12 @@ Agenda:
 
 ## Ranger prereqs
 
-###### Manually install missing components
+##### Manually install missing components
 
-- Use the 'Add Service' Wizard to install Kafka 
+- Use the 'Add Service' Wizard to install Kafka, Storm, Knox
 
 
-###### Create & confirm MySQL user 'root'
+##### Create & confirm MySQL user 'root'
 
 Prepare MySQL DB for Ranger use. Run these steps on MySQL 
 - `sudo mysql`
@@ -365,16 +365,16 @@ exit
 - Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
   - Output should be a simple count. Check the last step if there are errors.
 
-###### Prepare Ambari for MySQL *(or the database you want to use)*
+##### Prepare Ambari for MySQL *(or the database you want to use)*
 - Run this on Ambari node
 - Add MySQL JAR to Ambari:
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
-###### install SolrCloud from HDPSearch for Audits
+##### install SolrCloud from HDPSearch for Audits
 
 
-####### Option 1: Install Solr manually
+###### Option 1: Install Solr manually
 
 - Install Solr *on each node where Zookeeper is running* manually.
 ```
@@ -382,7 +382,7 @@ export JAVA_HOME=/usr/java/default
 sudo yum -y install lucidworks-hdpsearch
 ```
 
-####### Option 2: Use Ambari service for Solr
+###### Option 2: Use Ambari service for Solr
 
 - Install Ambari service for Solr
 ```
@@ -403,7 +403,7 @@ sudo ambari-server restart
 
 
 
-####### Setup Solr for Ranger audit 
+###### Setup Solr for Ranger audit 
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
 
@@ -463,7 +463,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ## Ranger install
 
-###### Install Ranger via Ambari 2.1.3
+##### Install Ranger via Ambari 2.1.3
 
 - Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
 
@@ -816,7 +816,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 ## Appendix
 
-###### Install Ranger via Ambari 2.1.2 (current GA version)
+##### Install Ranger via Ambari 2.1.2 (current GA version)
 
 1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
   - Ranger Admin
@@ -831,7 +831,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 **TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
-###### Setup Ranger/AD user/group sync
+##### Setup Ranger/AD user/group sync
 
 1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger to sync AD users/groups
 ```
@@ -854,7 +854,7 @@ ranger.usersync.group.objectclass group
 tail -f /var/log/ranger/usersync/usersync.log
 ```
 
-###### Setup Ranger/AD auth
+##### Setup Ranger/AD auth
 
 1. Enable AD users to login to Ranger by making below changes in Ambari > Ranger > Config > ranger-admin-site
 ```
@@ -867,7 +867,7 @@ ranger.ldap.ad.referral follow
 ranger.ldap.ad.bind.password "BadPass#1"
 ```
 
-###### Setup Ranger HDFS plugin
+##### Setup Ranger HDFS plugin
 
 In Ambari > HDFS > Config > ranger-hdfs-audit:
 ```
@@ -890,7 +890,7 @@ common.name.for.certificate " "
 hadoop.rpc.protection " "
 ```
 
-###### Setup Ranger Hive plugin
+##### Setup Ranger Hive plugin
 
 - In Ambari > HIVE > Config > Settings
   - Under Security > 'Choose authorization' > Ranger
