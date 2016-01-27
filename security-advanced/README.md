@@ -344,7 +344,7 @@ Agenda:
 
 ##### Manually install missing components
 
-- Use the 'Add Service' Wizard to install Kafka, Storm, Knox
+- (Optional) Use the 'Add Service' Wizard to install Knox, Hbase, Kafka, Storm 
 
 
 ##### Create & confirm MySQL user 'root'
