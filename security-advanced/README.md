@@ -399,6 +399,7 @@ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]
 sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
 sudo ambari-server restart
 ```
+- Login to Ambari as hadoopadmin and wait for all the services to turn green
 - Install Solr by starting the 'Add service wizard' and choosing Solr. Pick the defaults in the wizard except:
   - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
