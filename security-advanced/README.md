@@ -349,6 +349,52 @@ Agenda:
   - Access webUIs via SPNEGO 
   - Manually setup Solr Ranger plugin(?)
 
+
+
+## Kerberos for Ambari
+
+- Setup kerberos for Ambari. Below steps as based on doc: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
+
+```
+# run on Ambari node to start security setup guide
+cd /etc/security/keytabs/
+sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
+sudo chown ambari:hadoop ambari.keytab
+sudo chmod 400 ambari.keytab
+sudo ambari-server stop
+sudo ambari-server setup-security
+```
+- Enter below when prompted (sample output shown below):
+  - choice: `3`
+  - principal: `ambari@LAB.HORTONWORKS.NET`
+  - keytab path: `/etc/security/keytabs/ambari.keytab`
+```
+Using python  /usr/bin/python2.7
+Security setup options...
+===========================================================================
+Choose one of the following options:
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 3
+Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
+Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
+Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
+Ambari Server 'setup-security' completed successfully.
+```
+
+- Restart Ambari to changes to take affect
+```
+sudo ambari-server restart
+sudo ambari-server restart
+sudo ambari-agent restart
+```
+
+- Other Ambari security options are provided [here]()
+
 ## Ranger prereqs
 
 ##### Manually install missing components
@@ -530,51 +576,12 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
 
-## Secured Ambari
+## Other Security features for Ambari
 
 - (Optional) SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
 - Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
-- Setup kerberos for Ambari: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
-```
-# run on Ambari node to start security setup guide
-cd /etc/security/keytabs/
-sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
-sudo chown ambari:hadoop ambari.keytab
-sudo chmod 400 ambari.keytab
-sudo ambari-server stop
-sudo ambari-server setup-security
-```
-- Enter below when prompted (sample output shown below):
-  - choice: `3`
-  - principal: `ambari@LAB.HORTONWORKS.NET`
-  - keytab path: `/etc/security/keytabs/ambari.keytab`
-```
-Using python  /usr/bin/python2.7
-Security setup options...
-===========================================================================
-Choose one of the following options:
-  [1] Enable HTTPS for Ambari server.
-  [2] Encrypt passwords stored in ambari.properties file.
-  [3] Setup Ambari kerberos JAAS configuration.
-  [4] Setup truststore.
-  [5] Import certificate to truststore.
-===========================================================================
-Enter choice, (1-5): 3
-Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
-Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
-Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
-Ambari Server 'setup-security' completed successfully.
-```
-
-- Restart Ambari to changes to take affect
-```
-sudo ambari-server restart
-sudo ambari-server restart
-sudo ambari-agent restart
-```
-- Setup http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
-
-- Automation to install views
+- Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
+  - Automation to install views
 ```
 sudo git clone https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap/extras/
