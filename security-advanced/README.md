@@ -501,13 +501,14 @@ SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
 
-# only needs to be run once
+# create ZK dir - only needs to be run on one Solr node
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 
-# skip this step to start_solr if you installed Solr via Ambari
+# if you installed Solr via Ambari, skip this step that starts solr 
+# otherwise, run on each Solr node to start it in Cloud mode
 sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
-# only needs to be run once
+# create collection - only needs to be run one Solr node
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
