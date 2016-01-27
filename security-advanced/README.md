@@ -393,8 +393,8 @@ sudo ambari-server restart
 sudo ambari-agent restart
 ```
 
-- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
-- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
+- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
+- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
 
 - Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
 
