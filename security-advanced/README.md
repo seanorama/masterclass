@@ -115,7 +115,8 @@ openssl s_client -connect ad01:636 </dev/null
 
 ### Setup Ambari/AD sync
 
-Run below on only Ambari node
+Run below on only Ambari node:
+
 1. Add your AD properties as defaults for Ambari LDAP sync  
 
   ```
