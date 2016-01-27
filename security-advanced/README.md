@@ -392,10 +392,10 @@ ls /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
 sudo ambari-server restart
 ```
 - Install Solr by starting the 'Add service wizard' and choosing Solr. Pick the defaults in the wizard except:
-  - On the screen where you choose where to put Solr, use the + button to add Solr to *each host that has a Zookeeper*
+  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
   
-  - On the screen to configure the service
+  - On the screen to configure the Solr service
     - under 'Advanced solr-config':
       - set `solr.download.location` to `HDPSEARCH`
       - set `solr.znode` to `/ranger_audits`
