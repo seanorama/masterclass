@@ -117,6 +117,7 @@ openssl s_client -connect ad01:636 </dev/null
 
 Run below on only Ambari node
 1. Add your AD properties as defaults for Ambari LDAP sync  
+
   ```
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
@@ -138,24 +139,24 @@ EOF
 
   ```
   
-1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end: BadPass#1
+2. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end: BadPass#1
   ```
   sudo ambari-server setup-ldap
   ```
 
-2. Reestart Ambari server and agents
+3. Reestart Ambari server and agents
   ```
    sudo ambari-server restart
    sudo ambari-agent restart
   ```
-3. Run LDAP sync
+4. Run LDAP sync
   - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
   ```
 
-4. Give 'hadoop-admins' permissions to manage the cluster
+5. Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
   - Grant 'hadoopadmin' user permissions to manage the cluster:
     - Click the dropdown on top right of Ambari UI
@@ -164,7 +165,7 @@ EOF
     - Change 'Ambari Admin' to Yes 
   - Logout and log back into Ambari as 'hadoopadmin' and verify the user has rights to manage the cluster
 
-5. (optional) Disable local 'admin' user
+6. (optional) Disable local 'admin' user
  
 ## Kerberize the Cluster
 
