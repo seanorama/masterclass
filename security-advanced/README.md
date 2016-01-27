@@ -376,7 +376,7 @@ exit
 
 ###### Option 1: Install Solr manually
 
-- Install Solr *on each node where Zookeeper is running* manually.
+- Manually install Solr *on each node where Zookeeper is running*
 ```
 export JAVA_HOME=/usr/java/default   
 sudo yum -y install lucidworks-hdpsearch
