@@ -465,7 +465,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ## Ranger install
 
-##### Install Ranger via Ambari 2.1.3
+##### Install Ranger via Ambari 2.2
 
 - Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
 
@@ -494,19 +494,46 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 7.Advanced tab
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
+- Click Next and install Ranger
+
+- Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
+
+##### Check Ranger
+
+- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080
+- Confirm users/group sync from AD are working by clicking 'Settings' > 'Users/Groups tab' and noticing AD users/groups are present
+- Confirm that repos for HDFS, YARN, Hive etc appear under 'Access Manager tab'
+- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Plugins' tab 
+- Confirm that audits appear under 'Audit' tab
+- Confirm HDFS audits working by querying the audits dir in HDFS:
+```
+sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
+```
+- Confirm Solr audits working by querying Solr REST API
+```
+curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
+```
+
 
 ## Secured Ambari
+
 - (Optional) SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
 - Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
 - Setup kerberos for Ambari: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
 ```
+# run on Ambari node to start security setup guide
 cd /etc/security/keytabs/
 sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
 sudo chown ambari:hadoop ambari.keytab
 sudo chmod 400 ambari.keytab
-
 sudo ambari-server stop
-centos@ip-172-31-4-234 keytabs]$ sudo ambari-server setup-security
+sudo ambari-server setup-security
+```
+- Enter below when prompted (sample output shown below):
+  - choice: `3`
+  - principal: `ambari@LAB.HORTONWORKS.NET`
+  - keytab path: `/etc/security/keytabs/ambari.keytab`
+```
 Using python  /usr/bin/python2.7
 Security setup options...
 ===========================================================================
@@ -522,8 +549,11 @@ Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons..
 Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
 Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
 Ambari Server 'setup-security' completed successfully.
-sudo ambari-server restart
+```
 
+- Restart Ambari to changes to take affect
+```
+sudo ambari-server restart
 sudo ambari-server restart
 sudo ambari-agent restart
 ```
@@ -531,12 +561,11 @@ sudo ambari-agent restart
 
 - Automation to install views
 ```
-git clone https://github.com/seanorama/ambari-bootstrap
+sudo git clone https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap/extras/
-grep pass ambari_functions.sh
 export ambari_pass=BadPass#1
 source ambari_functions.sh
-./ambari-views/create-views.sh
+sudo ./ambari-views/create-views.sh
    
 ```
 #### HDFS Exercise
