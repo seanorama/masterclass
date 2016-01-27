@@ -190,10 +190,10 @@ Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). Ent
 - Why? 
   - Currently your hadoop nodes do not recognize users/groups.
   - You can check this by running below:
-```
-id it1
-groups it1
-```
+  ```
+  id it1
+  groups it1
+  ```
 -  Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
 - Run below **on each node**
