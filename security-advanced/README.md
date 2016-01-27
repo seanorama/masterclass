@@ -393,7 +393,10 @@ sudo ambari-server restart
 sudo ambari-agent restart
 ```
 
-- Other Ambari security options are provided [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
+- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
+- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
+
+- Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
 
 ## Ranger prereqs
 
@@ -670,8 +673,6 @@ hdfs dfs -chmod -R 000 /apps/hive/warehouse
 
 ## Other Security features for Ambari
 
-- (Optional) SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
-- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
 - Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
   - Automation to install views
 ```
