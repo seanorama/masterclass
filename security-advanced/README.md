@@ -277,7 +277,7 @@ groups sales1
 
 ### Refresh HDFS User-Group mappings
 
-- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN.
+- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
 
 - Execute the following on the Ambari node:
 ```
@@ -469,8 +469,8 @@ sudo ambari-server restart
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
 
+- Run on all nodes where Solr was installed
 ```
-# change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
 
@@ -497,6 +497,11 @@ SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
+```
+
+- Only need to be run *once* (from one of nodes where Solr was installed)
+
+```
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 
 # skip this step to start_solr if you installed Solr via Ambari
