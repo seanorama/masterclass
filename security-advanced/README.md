@@ -413,6 +413,10 @@ sudo ambari-server restart
       - set `solr.port` to `6083`
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
 
+- Under Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+
 - Then go through the rest of the install wizard by clicking Next to complete installation of Solr
 
 ###### Setup Solr for Ranger audit 
