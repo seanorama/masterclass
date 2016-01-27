@@ -138,7 +138,7 @@ EOF
 
   ```
   
-1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
+1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end: BadPass#1
   ```
   sudo ambari-server setup-ldap
   ```
@@ -373,14 +373,45 @@ exit
 
 ###### install SolrCloud from HDPSearch for Audits
 
-- install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Install Solr Cloud *on each node*. Note that Zookeeper must be running on nodes where this is setup
+####### Option 1: Install Solr manually
+
+- Install Solr *on each node where Zookeeper is running* manually.
+```
+export JAVA_HOME=/usr/java/default   
+sudo yum -y install lucidworks-hdpsearch
+```
+
+####### Option 2: Use Ambari service for Solr
+
+- Install Ambari service for Solr
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+ls /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+sudo ambari-server restart
+```
+- Installing Solr by starting the 'Add service wizard' and choosing Solr. Pick the defaults in the wizard except:
+  - On the screen where you choose where to put Solr, use the + button to add Solr to *each host that has a Zookeeper*
+  - On the screen to configure the service
+    - under 'Advanced solr-config':
+      - modify solr.download.location to `HDPSEARCH`
+      - modify solr.znode to `/ranger_audits`
+    - under 'Advanced solr-env':
+      - modify solr.port to `6083`
+    
+
+
+
+####### Setup Solr for Ranger audit 
+
+- Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html
+
 ```
 # change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
-export JAVA_HOME=/usr/java/default   
+export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
-sudo yum -y install lucidworks-hdpsearch
+
 sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
 cd /usr/local
 sudo tar xvf solr_for_audit_setup_v3.tgz
@@ -405,6 +436,8 @@ SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+
+# not needed if installing Solr via Ambari
 sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
