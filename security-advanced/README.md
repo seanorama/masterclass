@@ -514,9 +514,11 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 
 ```
 
-- Now you should access Solr webui at http://hostname:6083/solr
+- Now you should access Solr webui at http://publicIP:6083/solr
+  - Click the Cloud > Graph tab to find the leader host (172.30.0.242 in below example)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
 
-- (Optional) - install banana dashboard to visualize audits in Solr
+- (Optional) - On the leader node, install banana dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
