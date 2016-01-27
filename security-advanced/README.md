@@ -404,7 +404,7 @@ sudo ambari-server restart
   - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
   
-  - On the screen to configure the Solr service
+  - On the screen to Customize the Solr service
     - under 'Advanced solr-config':
       - set `solr.datadir` to `/opt/ranger_audit_server`    
       - set `solr.download.location` to `HDPSEARCH`
