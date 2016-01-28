@@ -1,0 +1,837 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Conditions": {
+        "AmbariUseEBSBool": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AmbariUseEBS"
+                },
+                "yes"
+            ]
+        }
+    },
+    "Description": "CloudFormation template to Deploy Hortonworks Data Platform on VPC with a public subnet",
+    "Mappings": {
+        "CENTOS7": {
+            "ap-northeast-1": {
+                "AMI": "ami-b80b6db8"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-2a7b6b78"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-d38dc6e9"
+            },
+            "eu-central-1": {
+                "AMI": "ami-e68f82fb"
+            },
+            "eu-west-1": {
+                "AMI": "ami-33734044"
+            },
+            "sa-east-1": {
+                "AMI": "ami-fd0197e0"
+            },
+            "us-east-1": {
+                "AMI": "ami-61bbf104"
+            },
+            "us-west-1": {
+                "AMI": "ami-f77fbeb3"
+            },
+            "us-west-2": {
+                "AMI": "ami-d440a6e7"
+            }
+        },
+        "SubnetConfig": {
+            "Public": {
+                "CIDR": "10.0.0.0/24"
+            },
+            "VPC": {
+                "CIDR": "10.0.0.0/16"
+            }
+        }
+    },
+    "Outputs": {
+        "AmbariSSH": {
+            "Description": "SSH to the Ambari Node",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "ssh centos@",
+                        {
+                            "Fn::GetAtt": [
+                                "AmbariNode",
+                                "PublicDnsName"
+                            ]
+                        }
+                    ]
+                ]
+            }
+        },
+        "AmbariServiceInstanceId": {
+            "Description": "The Ambari Servers Instance-Id",
+            "Value": {
+                "Ref": "AmbariNode"
+            }
+        },
+        "AmbariURL": {
+            "Description": "URL of Ambari UI",
+            "Value": {
+                "Fn::Join": [
+                    "",
+                    [
+                        "http://",
+                        {
+                            "Fn::GetAtt": [
+                                "AmbariNode",
+                                "PublicDnsName"
+                            ]
+                        },
+                        ":8080"
+                    ]
+                ]
+            }
+        },
+        "Region": {
+            "Description": "AWS Region",
+            "Value": {
+                "Ref": "AWS::Region"
+            }
+        }
+    },
+    "Parameters": {
+        "AmbariAccessLocation": {
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "Must be a valid CIDR range.",
+            "Default": "0.0.0.0/0",
+            "Description": "IPs which can access Ambari. Must be CIDR notation.",
+            "MaxLength": "18",
+            "MinLength": "9",
+            "Type": "String"
+        },
+        "AmbariPass": {
+            "AllowedPattern": "(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*",
+            "Default": "BadPass#1",
+            "Description": "Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
+            "MaxLength": 32,
+            "MinLength": 8,
+            "NoEcho": true,
+            "Type": "String"
+        },
+        "AmbariServices": {
+            "Default": "ACCUMULO AMBARI_METRICS FALCON FLUME HBASE HDFS HIVE KAFKA KNOX MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP STORM TEZ YARN ZOOKEEPER",
+            "Description": "HDP Services to deploy",
+            "Type": "String"
+        },
+        "AmbariUseEBS": {
+            "AllowedValues": [
+                "yes",
+                "no"
+            ],
+            "ConstraintDescription": "Must be yes or no only.",
+            "Default": "no",
+            "Description": "Use EBS Volumes for the Ambari Node",
+            "Type": "String"
+        },
+        "DeployCluster": {
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "Default": "true",
+            "Description": "Deploy cluster with Ambari? If false, then Ambari is installed without cluster deployment.",
+            "Type": "String"
+        },
+        "InstanceType": {
+            "ConstraintDescription": "Must be a valid EC2 instance type.",
+            "Default": "m4.4xlarge",
+            "Description": "Instance type",
+            "Type": "String"
+        },
+        "JavaProvider": {
+            "AllowedValues": [
+                "open",
+                "oracle"
+            ],
+            "ConstraintDescription": "open or oracle",
+            "Default": "open",
+            "Description": "Provider of Java packages: open or oracle",
+            "Type": "String"
+        },
+        "JavaVersion": {
+            "AllowedValues": [
+                "7",
+                "8"
+            ],
+            "ConstraintDescription": "7 or 8",
+            "Default": "8",
+            "Description": "Version number of Java",
+            "Type": "String"
+        },
+        "KeyName": {
+            "ConstraintDescription": "Can contain only ASCII characters.",
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+            "Type": "AWS::EC2::KeyPair::KeyName"
+        },
+        "SSHLocation": {
+            "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+            "ConstraintDescription": "Must be a valid CIDR range.",
+            "Default": "0.0.0.0/0",
+            "Description": "SSH access for Ambari Node",
+            "MaxLength": "18",
+            "MinLength": "9",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "AmbariAccessRole": {
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Path": "/"
+            },
+            "Type": "AWS::IAM::Role"
+        },
+        "AmbariInstanceProfile": {
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "AmbariAccessRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::InstanceProfile"
+        },
+        "AmbariNode": {
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Count": 1,
+                    "Timeout": "PT15M"
+                }
+            },
+            "Properties": {
+                "BlockDeviceMappings": {
+                    "Fn::If": [
+                        "AmbariUseEBSBool",
+                        [
+                            {
+                                "DeviceName": "/dev/sda1",
+                                "Ebs": {
+                                    "VolumeSize": "100",
+                                    "VolumeType": "gp2"
+                                }
+                            },
+                            {
+                                "DeviceName": "/dev/sdb",
+                                "Ebs": {
+                                    "DeleteOnTermination": "true",
+                                    "VolumeSize": "500",
+                                    "VolumeType": "gp2"
+                                }
+                            },
+                            {
+                                "DeviceName": "/dev/sdc",
+                                "Ebs": {
+                                    "DeleteOnTermination": "true",
+                                    "VolumeSize": "500",
+                                    "VolumeType": "gp2"
+                                }
+                            }
+                        ],
+                        [
+                            {
+                                "DeviceName": "/dev/sda1",
+                                "Ebs": {
+                                    "VolumeSize": "100",
+                                    "VolumeType": "gp2"
+                                }
+                            },
+                            {
+                                "DeviceName": "/dev/sdb",
+                                "VirtualName": "ephemeral0"
+                            },
+                            {
+                                "DeviceName": "/dev/sdc",
+                                "VirtualName": "ephemeral1"
+                            },
+                            {
+                                "DeviceName": "/dev/sdd",
+                                "VirtualName": "ephemeral2"
+                            },
+                            {
+                                "DeviceName": "/dev/sde",
+                                "VirtualName": "ephemeral3"
+                            },
+                            {
+                                "DeviceName": "/dev/sdf",
+                                "VirtualName": "ephemeral4"
+                            },
+                            {
+                                "DeviceName": "/dev/sdg",
+                                "VirtualName": "ephemeral5"
+                            },
+                            {
+                                "DeviceName": "/dev/sdh",
+                                "VirtualName": "ephemeral6"
+                            },
+                            {
+                                "DeviceName": "/dev/sdi",
+                                "VirtualName": "ephemeral7"
+                            },
+                            {
+                                "DeviceName": "/dev/sdj",
+                                "VirtualName": "ephemeral8"
+                            },
+                            {
+                                "DeviceName": "/dev/sdk",
+                                "VirtualName": "ephemeral9"
+                            },
+                            {
+                                "DeviceName": "/dev/sdl",
+                                "VirtualName": "ephemeral10"
+                            },
+                            {
+                                "DeviceName": "/dev/sdm",
+                                "VirtualName": "ephemeral11"
+                            },
+                            {
+                                "DeviceName": "/dev/sdn",
+                                "VirtualName": "ephemeral12"
+                            },
+                            {
+                                "DeviceName": "/dev/sdo",
+                                "VirtualName": "ephemeral13"
+                            },
+                            {
+                                "DeviceName": "/dev/sdp",
+                                "VirtualName": "ephemeral14"
+                            },
+                            {
+                                "DeviceName": "/dev/sdq",
+                                "VirtualName": "ephemeral15"
+                            },
+                            {
+                                "DeviceName": "/dev/sdr",
+                                "VirtualName": "ephemeral16"
+                            },
+                            {
+                                "DeviceName": "/dev/sds",
+                                "VirtualName": "ephemeral17"
+                            },
+                            {
+                                "DeviceName": "/dev/sdt",
+                                "VirtualName": "ephemeral18"
+                            },
+                            {
+                                "DeviceName": "/dev/sdu",
+                                "VirtualName": "ephemeral19"
+                            },
+                            {
+                                "DeviceName": "/dev/sdv",
+                                "VirtualName": "ephemeral20"
+                            },
+                            {
+                                "DeviceName": "/dev/sdw",
+                                "VirtualName": "ephemeral21"
+                            },
+                            {
+                                "DeviceName": "/dev/sdx",
+                                "VirtualName": "ephemeral22"
+                            },
+                            {
+                                "DeviceName": "/dev/sdy",
+                                "VirtualName": "ephemeral23"
+                            }
+                        ]
+                    ]
+                },
+                "IamInstanceProfile": {
+                    "Ref": "AmbariInstanceProfile"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "CENTOS7",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "InstanceType"
+                },
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "NetworkInterfaces": [
+                    {
+                        "AssociatePublicIpAddress": "true",
+                        "DeleteOnTermination": "true",
+                        "DeviceIndex": "0",
+                        "GroupSet": [
+                            {
+                                "Ref": "AmbariSecurityGroup"
+                            }
+                        ],
+                        "SubnetId": {
+                            "Ref": "PublicSubnet"
+                        }
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": {
+                            "Ref": "AWS::StackName"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/usr/bin/env bash\n",
+                                "exec &> >(tee -a /root/cloudformation.log)\nset -o nounset\n",
+                                "set -o errexit\n",
+                                "set -o xtrace\n",
+                                "export region='",
+                                {
+                                    "Ref": "AWS::Region"
+                                },
+                                "'\n",
+                                "export stack='",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "'\n",
+                                "export resource='",
+                                "AmbariNode",
+                                "'\n",
+                                "export ambari_server='",
+                                "127.0.0.1",
+                                "'\n",
+                                "export java_provider=",
+                                {
+                                    "Ref": "JavaProvider"
+                                },
+                                "\n",
+                                "export java_version=",
+                                {
+                                    "Ref": "JavaVersion"
+                                },
+                                "\n",
+                                "export install_ambari_agent=",
+                                "true",
+                                "\n",
+                                "export install_ambari_server=",
+                                "true",
+                                "\n",
+                                "export ref_wait_ambari='",
+                                {
+                                    "Ref": "waitHandleAmbari"
+                                },
+                                "'\n",
+                                "export ambari_services='",
+                                {
+                                    "Ref": "AmbariServices"
+                                },
+                                "'\n",
+                                "export ambari_pass=",
+                                {
+                                    "Ref": "AmbariPass"
+                                },
+                                "\n",
+                                "export deploy=",
+                                {
+                                    "Ref": "DeployCluster"
+                                },
+                                "\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## trap errors\n",
+                                "error_exit() {\n",
+                                "  local line_no=$1\n",
+                                "  local exit_code=$2\n",
+                                "  cfn-signal -e ${exit_code} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "  exit ${exit_code}\n",
+                                "}\n",
+                                "trap 'error_exit ${LINENO} ${?}' ERR\n",
+                                "\n",
+                                "export TERM=xterm\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## Install and Update CloudFormation\n",
+                                "yum install -y epel-release\n",
+                                "/usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
+                                "\n",
+                                "########################################################################\n",
+                                "## AWS specific system modifications\n",
+                                "\n",
+                                "printf 'Defaults !requiretty\n",
+                                "' > /etc/sudoers.d/888-dont-requiretty\n",
+                                "\n",
+                                "## swappiness to 0\n",
+                                "sysctl -w vm.swappiness=0\n",
+                                "mkdir -p /etc/sysctl.d\n",
+                                "cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'\n",
+                                "## disable swapping\n",
+                                "vm.swappiness=0\n",
+                                "EOF\n",
+                                "\n",
+                                "## Signal node is up\n",
+                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "\n",
+                                "## Remove existing mount points\n",
+                                "if [ -e '/dev/xvdb' ]; then\n",
+                                "    sed '/^\\/dev\\/xvd[b-z]/d' -i /etc/fstab\n",
+                                "\n",
+                                "    ## Format ephemeral drives and create mounts\n",
+                                "    for drv in /dev/xvd[b-z]; do\n",
+                                "      umount ${drv} || true\n",
+                                "      mkdir -p /mnt${drv}\n",
+                                "      echo \"${drv} /mnt${drv} ext4 defaults,noatime,nodiratime 0 0\" >> /etc/fstab\n",
+                                "      nohup mkfs.ext4 -m 0 -T largefile4 $drv &\n",
+                                "    done\n",
+                                "    wait\n",
+                                "\n",
+                                "    for drv in /dev/xvd[b-z]; do\n",
+                                "      mount ${drv}\n",
+                                "    done\n",
+                                "fi\n",
+                                "\n",
+                                "export host_count=1\n",
+                                "curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/single-view/setup.sh | bash\n",
+                                "\n",
+                                "if [ \"${resource}\" = \"AmbariNode\" ]; then\n",
+                                "    echo ${ref_wait_ambari}\n",
+                                "    cfn-signal -e ${?} --region ${region} --stack ${stack} -r \"Ambari tasks are done\" ${ref_wait_ambari}\n",
+                                "fi\n",
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Type": "AWS::EC2::Instance"
+        },
+        "AmbariSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Access for the Ambari Nodes",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "Public",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "-1",
+                        "IpProtocol": "icmp",
+                        "ToPort": "-1"
+                    },
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "Public",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "0",
+                        "IpProtocol": "tcp",
+                        "ToPort": "65535"
+                    },
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "Public",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "0",
+                        "IpProtocol": "udp",
+                        "ToPort": "65535"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "SSHLocation"
+                        },
+                        "FromPort": "22",
+                        "IpProtocol": "tcp",
+                        "ToPort": "22"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "AmbariAccessLocation"
+                        },
+                        "FromPort": "8080",
+                        "IpProtocol": "tcp",
+                        "ToPort": "8080"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "AttachGateway": {
+            "Properties": {
+                "InternetGatewayId": {
+                    "Ref": "InternetGateway"
+                },
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::VPCGatewayAttachment"
+        },
+        "CFNRolePolicies": {
+            "Properties": {
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": "cloudformation:Describe*",
+                            "Effect": "Allow",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "PolicyName": "CFNaccess",
+                "Roles": [
+                    {
+                        "Ref": "AmbariAccessRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Policy"
+        },
+        "DefaultSecurityGroup": {
+            "Properties": {
+                "GroupDescription": "Default Security group for all the Nodes",
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "VPC",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "-1",
+                        "IpProtocol": "icmp",
+                        "ToPort": "-1"
+                    },
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "VPC",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "0",
+                        "IpProtocol": "tcp",
+                        "ToPort": "65535"
+                    },
+                    {
+                        "CidrIp": {
+                            "Fn::FindInMap": [
+                                "SubnetConfig",
+                                "VPC",
+                                "CIDR"
+                            ]
+                        },
+                        "FromPort": "0",
+                        "IpProtocol": "udp",
+                        "ToPort": "65535"
+                    },
+                    {
+                        "CidrIp": {
+                            "Ref": "SSHLocation"
+                        },
+                        "FromPort": "22",
+                        "IpProtocol": "tcp",
+                        "ToPort": "22"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::SecurityGroup"
+        },
+        "EC2RolePolicies": {
+            "Properties": {
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "ec2:Describe*"
+                            ],
+                            "Effect": "Allow",
+                            "Resource": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "PolicyName": "EC2Access",
+                "Roles": [
+                    {
+                        "Ref": "AmbariAccessRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Policy"
+        },
+        "InternetGateway": {
+            "Type": "AWS::EC2::InternetGateway"
+        },
+        "NodeAccessRole": {
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": [
+                                "sts:AssumeRole"
+                            ],
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "Path": "/"
+            },
+            "Type": "AWS::IAM::Role"
+        },
+        "NodeInstanceProfile": {
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "NodeAccessRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::InstanceProfile"
+        },
+        "PublicRoute": {
+            "DependsOn": "AttachGateway",
+            "Properties": {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRouteTable"
+                }
+            },
+            "Type": "AWS::EC2::Route"
+        },
+        "PublicRouteTable": {
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::RouteTable"
+        },
+        "PublicSubnet": {
+            "Properties": {
+                "CidrBlock": {
+                    "Fn::FindInMap": [
+                        "SubnetConfig",
+                        "Public",
+                        "CIDR"
+                    ]
+                },
+                "VpcId": {
+                    "Ref": "VPC"
+                }
+            },
+            "Type": "AWS::EC2::Subnet"
+        },
+        "PublicSubnetRouteTableAssociation": {
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PublicRouteTable"
+                },
+                "SubnetId": {
+                    "Ref": "PublicSubnet"
+                }
+            },
+            "Type": "AWS::EC2::SubnetRouteTableAssociation"
+        },
+        "S3RolePolicies": {
+            "Properties": {
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": "s3:*",
+                            "Effect": "Allow",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "PolicyName": "s3access",
+                "Roles": [
+                    {
+                        "Ref": "AmbariAccessRole"
+                    },
+                    {
+                        "Ref": "NodeAccessRole"
+                    }
+                ]
+            },
+            "Type": "AWS::IAM::Policy"
+        },
+        "VPC": {
+            "Properties": {
+                "CidrBlock": {
+                    "Fn::FindInMap": [
+                        "SubnetConfig",
+                        "VPC",
+                        "CIDR"
+                    ]
+                },
+                "EnableDnsHostnames": "true",
+                "EnableDnsSupport": "true"
+            },
+            "Type": "AWS::EC2::VPC"
+        },
+        "waitConditionAmbari": {
+            "Properties": {
+                "Handle": {
+                    "Ref": "waitHandleAmbari"
+                },
+                "Timeout": "2700"
+            },
+            "Type": "AWS::CloudFormation::WaitCondition"
+        },
+        "waitHandleAmbari": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        }
+    }
+}

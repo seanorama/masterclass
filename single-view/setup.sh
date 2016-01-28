@@ -25,18 +25,18 @@ sleep 10
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
-    bash -c "nohup ambari-server start" || true
+    git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/2.3/services/ZEPPELIN
+    sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/2.3/role_command_order.json
+    echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
+    service postgresql restart
+
+    git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/2.3/services/NIFI
+
+    bash -c "nohup ambari-server restart" || true
     yum -y -q install mysql-connector-java jq python-argparse python-configobj
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari-change-pass admin admin ${ambari_pass}
-
-    git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/2.3/services/ZEPPELIN
-    sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/2.3/role_command_order.json
-    git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/2.3/services/NIFI
-
-    service ambari-server restart
-    service ambari-agent restart
 
     if [ "${deploy}" = "true" ]; then
         sleep 60
@@ -45,7 +45,7 @@ if [ "${install_ambari_server}" = "true" ]; then
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
 
-        export ambari_services="AMBARI_METRICS FLUME HBASE HDFS HIVE MAHOUT MAPREDUCE2 OOZIE PIG SLIDER SPARK SQOOP TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
+        export ambari_services="AMBARI_METRICS HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK SQOOP TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
@@ -53,8 +53,25 @@ if [ "${install_ambari_server}" = "true" ]; then
         source ~/ambari-bootstrap/extras/ambari_functions.sh
         ambari-configs
         ambari_wait_request_complete 1
+
+        useradd admin
+        usermod -a -G users admin
+
+        config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
+        echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+        curl -sSL https://raw.githubusercontent.com/hortonworks-gallery/zeppelin-notebooks/master/update_all_notebooks.sh | sudo -u zeppelin -E sh
+
+        yum install -y lucidworks-hdpsearch
+        sudo -u hdfs hadoop fs -mkdir /user/solr
+        sudo -u hdfs hadoop fs -chown solr /user/solr
+        chown -R solr:solr /opt/lucidworks-hdpsearch/solr
+
+        ${ambari_config_set} hive-site hive.support.concurrency "true"
+        ${ambari_config_set} hive-site hive.enforce.bucketing "true"
+        ${ambari_config_set} hive-site hive.exec.dynamic.partition.mode "nonstrict"
+        ${ambari_config_set} hive-site hive.txn.manager "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
+        ${ambari_config_set} hive-site hive.compactor.initiator.on "true"
     fi
 fi
 
 exit 0
-
