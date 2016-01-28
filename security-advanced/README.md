@@ -604,6 +604,26 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 
+- In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=RANGER
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#attempt to unregister the service
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
+#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+
+#restart agents on all nodes
+sudo service ambari-agent restart
+```
+
 ##### Check Ranger
 
 - Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080
@@ -620,6 +640,29 @@ sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
+#### Install Ranger KMS
+
+- Start 'Add service' wizard and select 'Ranger KMS'.
+- Keep the default configs except for below properties 
+  - KMS_MASTER_KEY_PASSWORD = BadPass#1
+  - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
+  - REPOSIORY_CONFIG_PASSWORD = BadPass#1
+  - db_host = FQDN of MySQL node
+  - db_password = BadPass#1
+  - db_root_password = BadPass#1
+
+- On Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+
+- Once installed, several services will need to be restarted (e.g. HDFS, Mapreduce, YARN)
+- Also restart Ranger and RangerKMS services
+
+
+- HDFS > Configs > Custom core-site:
+  - hadoop.proxyuser.kms.groups = *
+
+- Restart Ranger KMS and HDFS
 
 #### HDFS Exercise
 
