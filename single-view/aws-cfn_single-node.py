@@ -174,26 +174,6 @@ PublicSubnet = t.add_resource(ec2.Subnet(
     CidrBlock=FindInMap("SubnetConfig", "Public", "CIDR"),
 ))
 
-CFNRolePolicies = t.add_resource(iam.PolicyType(
-    "CFNRolePolicies",
-    PolicyName="CFNaccess",
-    PolicyDocument={ "Statement": [{ "Action": "cloudformation:Describe*", "Resource": "*", "Effect": "Allow" }] },
-    Roles=[Ref("AmbariAccessRole")],
-))
-
-AmbariInstanceProfile = t.add_resource(iam.InstanceProfile(
-    "AmbariInstanceProfile",
-    Path="/",
-    Roles=[Ref("AmbariAccessRole")],
-))
-
-NodeAccessRole = t.add_resource(iam.Role(
-    "NodeAccessRole",
-    Path="/",
-    AssumeRolePolicyDocument={ "Statement": [{ "Action": ["sts:AssumeRole"], "Effect": "Allow", "Principal": { "Service": ["ec2.amazonaws.com"] } }] },
-))
-
-
 PublicRouteTable = t.add_resource(ec2.RouteTable(
     "PublicRouteTable",
     VpcId=Ref(VPC),
@@ -227,12 +207,6 @@ PublicRoute = t.add_resource(ec2.Route(
     DependsOn="AttachGateway",
 ))
 
-AmbariAccessRole = t.add_resource(iam.Role(
-    "AmbariAccessRole",
-    Path="/",
-    AssumeRolePolicyDocument={ "Statement": [{ "Action": ["sts:AssumeRole"], "Effect": "Allow", "Principal": { "Service": ["ec2.amazonaws.com"] } }] },
-))
-
 PublicSubnetRouteTableAssociation = t.add_resource(ec2.SubnetRouteTableAssociation(
     "PublicSubnetRouteTableAssociation",
     SubnetId=Ref(PublicSubnet),
@@ -250,18 +224,6 @@ waitConditionAmbari = t.add_resource(
         Timeout="2700",
     )
 )
-S3RolePolicies = t.add_resource(iam.PolicyType(
-    "S3RolePolicies",
-    PolicyName="s3access",
-    PolicyDocument={ "Statement": [{ "Action": "s3:*", "Resource": "*", "Effect": "Allow" }] },
-    Roles=[Ref(AmbariAccessRole), Ref(NodeAccessRole)],
-))
-
-NodeInstanceProfile = t.add_resource(iam.InstanceProfile(
-    "NodeInstanceProfile",
-    Path="/",
-    Roles=[Ref(NodeAccessRole)],
-))
 
 
 AmbariSecurityGroup = t.add_resource(ec2.SecurityGroup(
@@ -293,12 +255,6 @@ AttachGateway = t.add_resource(ec2.VPCGatewayAttachment(
     InternetGatewayId=Ref(InternetGateway),
 ))
 
-EC2RolePolicies = t.add_resource(iam.PolicyType(
-    "EC2RolePolicies",
-    PolicyName="EC2Access",
-    PolicyDocument={ "Statement": [{ "Action": ["ec2:Describe*"], "Resource": ["*"], "Effect": "Allow" }] },
-    Roles=[Ref(AmbariAccessRole)],
-))
 
 ## Functions to generate blockdevicemappings
 ##   count: the number of devices to map
@@ -435,7 +391,6 @@ AmbariNode = t.add_resource(ec2.Instance(
         Name=ref_stack_name,
     ),
     KeyName=Ref(KeyName),
-    IamInstanceProfile=Ref(AmbariInstanceProfile),
     InstanceType=Ref(InstanceType),
     NetworkInterfaces=[
     ec2.NetworkInterfaceProperty(
