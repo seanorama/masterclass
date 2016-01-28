@@ -656,20 +656,9 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 
   - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
     - Custom kms-site
-    
-    
-- On Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
-  - Admin password: BadPass#1
+        
+- Make sure to restart Ranger KMS and HDFS as mentioned in the doc
 
-- Once installed, several services will need to be restarted (e.g. HDFS, Mapreduce, YARN)
-- Also restart Ranger and RangerKMS services
-
-
-- HDFS > Configs > Custom core-site:
-  - hadoop.proxyuser.kms.groups = *
-
-- Restart Ranger KMS and HDFS
 
 #### HDFS Exercise
 
