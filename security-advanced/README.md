@@ -1,20 +1,82 @@
 # Environment notes
 
+## AD overview
+
+- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
+  - CorpUsers OU, which contains:
+    - business users and groups (e.g. it1, hr1, legal1) and 
+    - hadoopadmin: Admin user (for AD, Ambari, ...)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
+  
+  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
+  
+  - HadoopServices OU: hadoop service principals (will be created by Ambari)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
+  
+  - HadoopNodes OU: list of nodes registered with AD
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
+
+- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
+  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
+  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
+  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
+  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
+
+
+- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/cc780336(v=ws.10).aspx) 
+
 ## Accessing your Cluster
 
-Credentials will be provided for these services:
+Credentials will be provided for these services by the instructor:
 
 * SSH
 * Ambari
 
 ## Use your Cluster
 
+### To connect using Putty from Windows laptop
+
+- Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
+- Use putty to connect to your nodes
+
+### To connect from Linux/MacOSX laptop
+
+- SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
+```
+ssh -i training-keypair.pem.cer centos@IPADDRESS
+```
+- To change user to root you can:
+```
+sudo su -
+```
+
+### Why is security needed?
+
+- On your unsecured cluster try to access a restricted dir in HDFS
+```
+hdfs dfs -ls /tmp/hive   
+## this should fail with Permission Denied
+```
+
+- Now try again after setting HADOOP_USER_NAME
+```
+export HADOOP_USER_NAME=hdfs
+hdfs dfs -ls /tmp/hive   
+## this shows the file listing
+```
+
+- This should tell you why kerberos is needed on Hadoop :)
+
+
 ### Configure name resolution & certificate to Active Directory
 
+**Run below on all nodes**
+
 1. Add your Active Directory to /etc/hosts (if not in DNS)
-  - **Change the IP to match your AD**
+  - **Change the IP to match your ADs internal IP**
    ```
-ad_ip=172.30.0.88
+ad_ip=172.30.0.49
 echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
@@ -41,7 +103,7 @@ URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
 BASE dc=lab,dc=hortonworks,dc=net
 EOF
 
-## test with
+## test by running below (LDAP password is: BadPass#1)
 ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 openssl s_client -connect ad01:636 </dev/null
@@ -53,8 +115,10 @@ openssl s_client -connect ad01:636 </dev/null
 
 ### Setup Ambari/AD sync
 
-Run below on only Ambari node
+Run below on only Ambari node:
+
 1. Add your AD properties as defaults for Ambari LDAP sync  
+
   ```
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
@@ -76,35 +140,39 @@ EOF
 
   ```
   
-1. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end
+2. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end: BadPass#1
   ```
   sudo ambari-server setup-ldap
   ```
 
-2. Reestart Ambari server and agents
+3. Reestart Ambari server and agents
   ```
    sudo ambari-server restart
    sudo ambari-agent restart
   ```
-3. Run LDAP sync
-  - Use the local Ambari admin credentials
+4. Run LDAP sync
+  - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
   sudo ambari-server sync-ldap --groups groups.txt
   ```
 
-4. Give 'hadoop-admins' permissions to manage the cluster
-  - Login to Ambari as your local 'admin' user
-  - Manage Ambari -> Grant 'hadoop-admins' permissions to manage the cluster
-  - Login to Ambari as 'hadoopadmin' and verify rights to manage the cluster
+5. Give 'hadoop-admins' permissions to manage the cluster
+  - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
+  - Grant 'hadoopadmin' user permissions to manage the cluster:
+    - Click the dropdown on top right of Ambari UI
+    - Click 'Manage Ambari'
+    - Under 'Users', select 'hadoopadmin'
+    - Change 'Ambari Admin' to Yes 
+  - Logout and log back into Ambari as 'hadoopadmin' and verify the user has rights to manage the cluster
 
-5. (optional) Disable local 'admin' user
+6. (optional) Disable local 'admin' user
  
 ## Kerberize the Cluster
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
-Enable kerberos using Ambari security wizard 
+Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). Enter the below details:
 
 - KDC:
     - KDC host: ad01.lab.hortonworks.net
@@ -115,13 +183,23 @@ Enable kerberos using Ambari security wizard
 - Kadmin:
     - Kadmin host: ad01.lab.hortonworks.net
     - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
-    - Admin password:
+    - Admin password: BadPass#1
+
+- Then click Next on all the following screens to pick the default values
 
 ### Setup AD/OS integration via SSSD
-- Run below on each node
-```
-# Pre-req: give registersssd user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
+- Why? 
+  - Currently your hadoop nodes do not recognize users/groups defined in AD.
+  - You can check this by running below:
+  ```
+  id it1
+  groups it1
+  ```
+-  Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
+
+- Run below **on each node**
+```
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
 ad_dc="ad01.lab.hortonworks.net"
@@ -199,11 +277,17 @@ groups sales1
 
 ### Refresh HDFS User-Group mappings
 
-- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN.
+- Once the above is completed on all nodes you need to refresh the user group mappings in HDFS & YARN by running the below commands
 
 - Execute the following on the Ambari node:
 ```
-cluster=YOURCLUSTERNAME ## change to match the name of your cluster
+export PASSWORD=BadPass#1
+
+#detect name of cluster
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#refresh user and group mappings
 sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
@@ -265,14 +349,63 @@ Agenda:
   - Access webUIs via SPNEGO 
   - Manually setup Solr Ranger plugin(?)
 
+
+
+## Kerberos for Ambari
+
+- Setup kerberos for Ambari. Below steps as based on doc: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
+
+```
+# run on Ambari node to start security setup guide
+cd /etc/security/keytabs/
+sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
+sudo chown ambari:hadoop ambari.keytab
+sudo chmod 400 ambari.keytab
+sudo ambari-server stop
+sudo ambari-server setup-security
+```
+- Enter below when prompted (sample output shown below):
+  - choice: `3`
+  - principal: `ambari@LAB.HORTONWORKS.NET`
+  - keytab path: `/etc/security/keytabs/ambari.keytab`
+```
+Using python  /usr/bin/python2.7
+Security setup options...
+===========================================================================
+Choose one of the following options:
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 3
+Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
+Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
+Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
+Ambari Server 'setup-security' completed successfully.
+```
+
+- Restart Ambari to changes to take affect
+```
+sudo ambari-server restart
+sudo ambari-server restart
+sudo ambari-agent restart
+```
+
+- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
+- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
+
+- Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
+
 ## Ranger prereqs
 
-###### Manually install missing components
+##### Manually install missing components
 
-- Use the 'Add Service' Wizard to install Kafka 
+- (Optional) Use the 'Add Service' Wizard to install Knox, Hbase, Kafka, Storm 
 
 
-###### Create & confirm MySQL user 'root'
+##### Create & confirm MySQL user 'root'
 
 Prepare MySQL DB for Ranger use. Run these steps on MySQL 
 - `sudo mysql`
@@ -290,22 +423,80 @@ exit
 - Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
   - Output should be a simple count. Check the last step if there are errors.
 
-###### Prepare Ambari for MySQL *(or the database you want to use)*
+##### Prepare Ambari for MySQL *(or the database you want to use)*
 - Run this on Ambari node
 - Add MySQL JAR to Ambari:
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
     - If the file is not present, it is available on RHEL/CentOS with: `sudo yum -y install mysql-connector-java`
 
-###### install SolrCloud from HDPSearch for Audits
+##### Install SolrCloud from HDPSearch for Audits
 
-- install Solr from HDPSearch for Audits (steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_standalone.html)
 
-- Install Solr Cloud *on each node*. Note that Zookeeper must be running on nodes where this is setup
+###### Option 1: Install Solr manually
+
+- Manually install Solr *on each node where Zookeeper is running*
 ```
-# change JAVA_HOME, SOLR_ZK and SOLR_RANGER_HOME as needed
 export JAVA_HOME=/usr/java/default   
-export host=$(curl -4 icanhazip.com)
 sudo yum -y install lucidworks-hdpsearch
+```
+
+###### Option 2: Use Ambari service for Solr
+
+- Install Ambari service for Solr
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+sudo ambari-server restart
+```
+- Login to Ambari as hadoopadmin and wait for all the services to turn green
+- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
+  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
+  
+  - On the screen to Customize the Solr service
+    - under 'Advanced solr-config':
+      - set `solr.datadir` to `/opt/ranger_audit_server`    
+      - set `solr.download.location` to `HDPSEARCH`
+      - set `solr.znode` to `/ranger_audits`
+    - under 'Advanced solr-env':
+      - set `solr.port` to `6083`
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
+
+- Under Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+
+- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
+
+- In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=SOLR
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#attempt to unregister the service
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
+#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+
+#restart agents on all nodes
+sudo service ambari-agent restart
+```
+
+###### Setup Solr for Ranger audit 
+
+- Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
+
+- Run on all nodes where Solr was installed
+```
+export JAVA_HOME=/usr/java/default
+export host=$(curl -4 icanhazip.com)
+
 sudo wget https://issues.apache.org/jira/secure/attachment/12761323/solr_for_audit_setup_v3.tgz -O /usr/local/solr_for_audit_setup_v3.tgz
 cd /usr/local
 sudo tar xvf solr_for_audit_setup_v3.tgz
@@ -329,16 +520,26 @@ SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
+
+# create ZK dir - only needs to be run from one of the Solr nodes
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+
+# if you installed Solr via Ambari, skip this step that starts solr 
+# otherwise, run on each Solr node to start it in Cloud mode
 sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
+# create collection - only needs to be run from one of the Solr nodes
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
-# access Solr webui at http://hostname:6083/solr
+
 ```
 
-- optional - install banana dashboard
+- Now you should access Solr webui at http://publicIP:6083/solr
+  - Click the Cloud > Graph tab to find the leader host (172.30.0.242 in below example)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
+
+- (Optional) - On the leader node, install banana dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
@@ -355,82 +556,110 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ## Ranger install
 
-###### Install Ranger via Ambari 2.1.3
+##### Install Ranger via Ambari 2.2
 
-- Install Ranger using Amabris 'Add Service' wizard on the same node as Mysql. Set the below configs for below tabs:
+- Using Amabris 'Add Service' wizard, install Ranger on any node you like. Set the below configs for below tabs:
 
-1. Ranger Admin tab
+1. Ranger Admin tab:
+  - Ranger DB Host = FQDN of host where Mysql is running (e.g. ip-172-30-0-242.us-west-2.compute.internal)
+  - Enter passwords
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 
 2. Ranger User info tab - Common configs subtab
+  - Enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
 
 3. Ranger User info tab - User configs subtab
+  - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
+  - User Search Category = `(objectcategory=person)`
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
 
 4. Ranger User info tab - Group configs subtab
+  - No changes needed
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
+  - Enable all plugins
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-7.png)
 
 6. Ranger Audits tab 
-- add a prefix "/ranger" to the HDFS audits. 
-- For solr don't use the cloud option for now due to Ranger bug. Use Solr standlone and use internal IP of host where cloud running
+  - SolrCloud = ON
+  - Audit to DB = ON
+  - enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
+  - No changes needed
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
+- On Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+  
+- Click Next > Deploy to install Ranger
 
-## Secured Ambari
-- (Optional) SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
-- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.1.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
-- Setup kerberos for Ambari: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
-```
-cd /etc/security/keytabs/
-sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
-sudo chown ambari:hadoop ambari.keytab
-sudo chmod 400 ambari.keytab
+- Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 
-sudo ambari-server stop
-centos@ip-172-31-4-234 keytabs]$ sudo ambari-server setup-security
-Using python  /usr/bin/python2.7
-Security setup options...
-===========================================================================
-Choose one of the following options:
-  [1] Enable HTTPS for Ambari server.
-  [2] Encrypt passwords stored in ambari.properties file.
-  [3] Setup Ambari kerberos JAAS configuration.
-  [4] Setup truststore.
-  [5] Import certificate to truststore.
-===========================================================================
-Enter choice, (1-5): 3
-Setting up Ambari kerberos JAAS configuration to access secured Hadoop daemons...
-Enter ambari server's kerberos principal name (ambari@EXAMPLE.COM): ambari@LAB.HORTONWORKS.NET
-Enter keytab path for ambari server's kerberos principal: /etc/security/keytabs/ambari.keytab
-Ambari Server 'setup-security' completed successfully.
-sudo ambari-server restart
+- In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=RANGER
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
-sudo ambari-server restart
-sudo ambari-agent restart
-```
-- Setup http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
+#attempt to unregister the service
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
 
-- Automation to install views
+#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
+#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+
+#restart agents on all nodes
+sudo service ambari-agent restart
 ```
-git clone https://github.com/seanorama/ambari-bootstrap
-cd ambari-bootstrap/extras/
-grep pass ambari_functions.sh
-export ambari_pass=BadPass#1
-source ambari_functions.sh
-./ambari-views/create-views.sh
-   
+
+##### Check Ranger
+
+- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080
+- Confirm users/group sync from AD are working by clicking 'Settings' > 'Users/Groups tab' and noticing AD users/groups are present
+- Confirm that repos for HDFS, YARN, Hive etc appear under 'Access Manager tab'
+- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Plugins' tab 
+- Confirm that audits appear under 'Audit' tab
+- Confirm HDFS audits working by querying the audits dir in HDFS:
 ```
+sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
+```
+- Confirm Solr audits working by querying Solr REST API
+```
+curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
+```
+
+## Ranger KMS/Data encryption setup
+
+
+
+- Start 'Add service' wizard and select 'Ranger KMS'.
+- Keep the default configs except for below properties 
+  - Advanced kms-properties
+    - KMS_MASTER_KEY_PASSWORD = BadPass#1
+    - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
+    - REPOSIORY_CONFIG_PASSWORD = BadPass#1
+    - db_host = FQDN of MySQL node
+    - db_password = BadPass#1
+    - db_root_password = BadPass#1
+
+  - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
+    - Custom kms-site
+        
+- Make sure to restart Ranger KMS and HDFS as mentioned in the doc
+
+
 #### HDFS Exercise
 
 - Import data
@@ -516,6 +745,19 @@ hdfs dfs -ls /user/sales1
 ```
 hdfs dfs -chown -R hdfs /apps/hive/warehouse
 hdfs dfs -chmod -R 000 /apps/hive/warehouse
+```
+
+
+## Other Security features for Ambari
+
+- Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
+  - Automation to install views
+```
+sudo git clone https://github.com/seanorama/ambari-bootstrap
+cd ambari-bootstrap/extras/
+export ambari_pass=BadPass#1
+source ambari_functions.sh
+sudo ./ambari-views/create-views.sh
 ```
 
 ## Day 3
@@ -700,15 +942,11 @@ unset knoxpass
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
-## Ranger KMS/Data encryption setup
-
-- Follow the docs: http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html
-- Note that when the Ranger repo is created you need to ensure that it uses principal name (e.g. keyadmin@LAB.HORTONWORKS.NET) instead of username
 
 
 ## Appendix
 
-###### Install Ranger via Ambari 2.1.2 (current GA version)
+##### Install Ranger via Ambari 2.1.2 (current GA version)
 
 1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
   - Ranger Admin
@@ -723,7 +961,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 **TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
 
-###### Setup Ranger/AD user/group sync
+##### Setup Ranger/AD user/group sync
 
 1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger to sync AD users/groups
 ```
@@ -746,7 +984,7 @@ ranger.usersync.group.objectclass group
 tail -f /var/log/ranger/usersync/usersync.log
 ```
 
-###### Setup Ranger/AD auth
+##### Setup Ranger/AD auth
 
 1. Enable AD users to login to Ranger by making below changes in Ambari > Ranger > Config > ranger-admin-site
 ```
@@ -759,7 +997,7 @@ ranger.ldap.ad.referral follow
 ranger.ldap.ad.bind.password "BadPass#1"
 ```
 
-###### Setup Ranger HDFS plugin
+##### Setup Ranger HDFS plugin
 
 In Ambari > HDFS > Config > ranger-hdfs-audit:
 ```
@@ -782,7 +1020,7 @@ common.name.for.certificate " "
 hadoop.rpc.protection " "
 ```
 
-###### Setup Ranger Hive plugin
+##### Setup Ranger Hive plugin
 
 - In Ambari > HIVE > Config > Settings
   - Under Security > 'Choose authorization' > Ranger
