@@ -32,10 +32,7 @@ if [ "${install_ambari_server}" = "true" ]; then
 
     git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/2.3/services/NIFI
 
-    nohup sh -c "ambari-server stop 2>&1 > /dev/null"
-    sleep 5
-    nohup sh -c "ambari-server start 2>&1 > /dev/null"
-    sleep 5
+    nohup service ambari-server restart
 
     yum -y -q install mysql-connector-java jq python-argparse python-configobj
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
