@@ -643,6 +643,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ## Ranger KMS/Data encryption setup
 
 
+- Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html):
 
 - Start 'Add service' wizard and select 'Ranger KMS'.
 - Keep the default configs except for below properties 
@@ -653,11 +654,27 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
     - db_host = FQDN of MySQL node
     - db_password = BadPass#1
     - db_root_password = BadPass#1
-
-  - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
-    - Custom kms-site
+  - advanced kms-site:
+    - hadoop.kms.authentication.type=kerberos
+    - hadoop.kms.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
+    - hadoop.kms.authentication.kerberos.principal=*  
+    
+  - Custom kms-site:
+      - hadoop.kms.proxyuser.hive.users
+      - hadoop.kms.proxyuser.oozie.users
+      - hadoop.kms.proxyuser.HTTP.users
+      - hadoop.kms.proxyuser.ambari.users
+      - hadoop.kms.proxyuser.yarn.users
+      - hadoop.kms.proxyuser.hive.hosts
+      - hadoop.kms.proxyuser.oozie.hosts
+      - hadoop.kms.proxyuser.HTTP.hosts
+      - hadoop.kms.proxyuser.ambari.hosts
+      - hadoop.kms.proxyuser.yarn.hosts    
+      - hadoop.kms.proxyuser.keyadmin.groups=*
+      - hadoop.kms.proxyuser.keyadmin.hosts=*
+      - hadoop.kms.proxyuser.keyadmin.users=*      
         
-- Make sure to restart Ranger KMS and HDFS as mentioned in the doc
+- Make sure to restart Ranger and KMS Ranger KMS and HDFS as mentioned in the doc
 
 
 #### HDFS Exercise
@@ -934,7 +951,15 @@ unset knoxpass
             </service>
         </topology>
 ```
-- Login to Ranger and setup a Knox policy for sales group for WEBHDFS
+
+- Setup a Knox policy for sales group for WEBHDFS by:
+- Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
+  - Policy name: webhdfs
+  - Topology name: default
+  - Service name: WEBHDFS
+  - Group permissions: sales 
+  - Permission: check Allow
+  - Save > OK
 
 - Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl reuqest to 8443 port where Knox is running:
 ```
