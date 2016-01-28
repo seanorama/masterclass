@@ -821,10 +821,10 @@ unset knoxpass
     <value>$ldapContextFactory</value>
 </param>
 
-                    <param>
-                        <name>main.ldapRealm.contextFactory.url</name>
-                        <value>ldap://ad01.lab.hortonworks.net:389</value> 
-                    </param>
+<param>
+    <name>main.ldapRealm.contextFactory.url</name>
+    <value>ldap://ad01.lab.hortonworks.net:389</value> 
+</param>
 
 <param>
     <name>main.ldapRealm.contextFactory.systemUsername</name>
