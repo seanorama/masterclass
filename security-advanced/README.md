@@ -640,17 +640,24 @@ sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 
-#### Install Ranger KMS
+## Ranger KMS/Data encryption setup
+
+
 
 - Start 'Add service' wizard and select 'Ranger KMS'.
 - Keep the default configs except for below properties 
-  - KMS_MASTER_KEY_PASSWORD = BadPass#1
-  - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
-  - REPOSIORY_CONFIG_PASSWORD = BadPass#1
-  - db_host = FQDN of MySQL node
-  - db_password = BadPass#1
-  - db_root_password = BadPass#1
+  - Advanced kms-properties
+    - KMS_MASTER_KEY_PASSWORD = BadPass#1
+    - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
+    - REPOSIORY_CONFIG_PASSWORD = BadPass#1
+    - db_host = FQDN of MySQL node
+    - db_password = BadPass#1
+    - db_root_password = BadPass#1
 
+  - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
+    - Custom kms-site
+    
+    
 - On Configure Identities page, you will have to enter your AD admin credentials:
   - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
   - Admin password: BadPass#1
@@ -946,10 +953,6 @@ unset knoxpass
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
-## Ranger KMS/Data encryption setup
-
-- Follow the docs: http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html
-- Note that when the Ranger repo is created you need to ensure that it uses principal name (e.g. keyadmin@LAB.HORTONWORKS.NET) instead of username
 
 
 ## Appendix
