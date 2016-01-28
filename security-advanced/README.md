@@ -805,7 +805,8 @@ read -s -p "Password: " knoxpass
 sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
 unset knoxpass
    ```
-- Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal
+- Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal then restart HDFS 
+
 - Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
 ```
         <topology>
@@ -961,7 +962,7 @@ unset knoxpass
   - Permission: check Allow
   - Save > OK
 
-- Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl reuqest to 8443 port where Knox is running:
+- Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl request to 8443 port where Knox is running:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
