@@ -654,7 +654,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
     - db_password = BadPass#1
     - db_root_password = BadPass#1
 
-  - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
+  - Follow the [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html) to make config changes to other sections:
     - Custom kms-site
         
 - Make sure to restart Ranger KMS and HDFS as mentioned in the doc
