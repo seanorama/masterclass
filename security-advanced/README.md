@@ -805,7 +805,6 @@ unset knoxpass
                     </param>
                     <param>
                         <name>main.ldapRealm</name>
-                        <!-- <value>org.apache.shiro.realm.ldap.JndiLdapRealm</value> -->
                         <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value> 
                     </param>
 
