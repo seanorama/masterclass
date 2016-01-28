@@ -68,6 +68,11 @@ hdfs dfs -ls /tmp/hive
 
 - This should tell you why kerberos is needed on Hadoop :)
 
+##### Manually install missing components
+
+- (Optional) Use the 'Add Service' Wizard to install Knox (and optionally Hbase, Kafka, Storm)
+
+
 
 ### Configure name resolution & certificate to Active Directory
 
@@ -400,9 +405,6 @@ sudo ambari-agent restart
 
 ## Ranger prereqs
 
-##### Manually install missing components
-
-- (Optional) Use the 'Add Service' Wizard to install Knox, Hbase, Kafka, Storm 
 
 
 ##### Create & confirm MySQL user 'root'
