@@ -653,7 +653,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
     - KMS_MASTER_KEY_PASSWORD = BadPass#1
     - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
     - REPOSIORY_CONFIG_PASSWORD = BadPass#1
-    - db_host = FQDN of MySQL node
+    - db_host = Internal FQDN of MySQL node
     - db_password = BadPass#1
     - db_root_password = BadPass#1
   - advanced kms-site:
@@ -662,22 +662,86 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
     - hadoop.kms.authentication.kerberos.principal=*  
     
   - Custom kms-site:
-      - hadoop.kms.proxyuser.hive.users
-      - hadoop.kms.proxyuser.oozie.users
-      - hadoop.kms.proxyuser.HTTP.users
-      - hadoop.kms.proxyuser.ambari.users
-      - hadoop.kms.proxyuser.yarn.users
-      - hadoop.kms.proxyuser.hive.hosts
-      - hadoop.kms.proxyuser.oozie.hosts
-      - hadoop.kms.proxyuser.HTTP.hosts
-      - hadoop.kms.proxyuser.ambari.hosts
-      - hadoop.kms.proxyuser.yarn.hosts    
+      - hadoop.kms.proxyuser.hive.users=*
+      - hadoop.kms.proxyuser.oozie.users=*
+      - hadoop.kms.proxyuser.HTTP.users=*
+      - hadoop.kms.proxyuser.ambari.users=*
+      - hadoop.kms.proxyuser.yarn.users=*
+      - hadoop.kms.proxyuser.hive.hosts=*
+      - hadoop.kms.proxyuser.oozie.hosts=*
+      - hadoop.kms.proxyuser.HTTP.hosts=*
+      - hadoop.kms.proxyuser.ambari.hosts=*
+      - hadoop.kms.proxyuser.yarn.hosts=*    
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
         
-- Make sure to restart Ranger and KMS Ranger KMS and HDFS as mentioned in the doc
+- Restart Ranger and  Ranger KMS as mentioned in the doc (hold off on restarting HDFS for now)
 
+- Create symlink to core-site.xml
+```
+sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
+```
+
+- Confirm these properties got populated to kms://http@<kmshostname>:9292/kms
+  - HDFS > Configs > Advanced core-site:
+    - hadoop.security.key.provider.path
+  - HDFS > Configs > Advanced hdfs-site:
+    - dfs.encryption.key.provider.uri  
+    
+- Set the KMS proxy user
+  - HDFS > Configs > Custom core-site:
+    - hadoop.proxyuser.kms.groups = *   
+
+- Restart the HDFS and Ranger KMS service.
+
+- Setup audits to Solr/HDFS
+  - Ranger KMS > Advanced ranger-kms-audit:
+    - Audit to Solr
+    - Audit to HDFS
+
+- Login to Ranger as admin/admin and 
+  - create add hadoopadmin to global HDFS policy     
+  - create new user nn
+- Login to Ranger as keyadmin/keyadmin and create a key called testkey - see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+- Add user hadoopadmin and nn to default key policy
+- Run below to create a zone using the key
+```
+#as hadoopadmin create dir
+sudo -u hadoopadmin kinit
+sudo -u sales1 kinit
+sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
+
+#as hdfs create/list EZ
+sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /zone_encr
+sudo -u hdfs hdfs crypto -listZones  
+
+#create test file
+sudo -u hadoopadmin echo "My test file1" > /tmp/test1.log
+sudo -u hadoopadmin echo "My test file2" > /tmp/test2.log
+
+#copy file to EZ
+sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test1.log /zone_encr
+sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr
+
+#hadoopadmin allowed to decrypt EEK but not sales user
+sudo -u hadoopadmin hdfs dfs -cat /zone_encr/test1.log
+sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
+
+#delete a file from EZ
+sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
+
+#View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
+sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
+
+#Prevent user hdfs from reading the file by setting security.hdfs.unreadable.by.superuser attribute. Note that this attribute can only be set on files and can never be removed.
+sudo -u hdfs hdfs dfs -setfattr -n security.hdfs.unreadable.by.superuser  /.reserved/raw/zone_encr/test1.log
+
+# Now as hdfs super user, try to read the files or the contents of the raw file
+sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
+##cat: Access is denied for hdfs since the superuser is not allowed to perform this operation.
+
+```
 
 #### HDFS Exercise
 
