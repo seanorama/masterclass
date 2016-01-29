@@ -756,6 +756,8 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 #### HDFS Exercise
 
+Simple exercise to show why to set dir permission to 000 for dirs whose authorization is to be managed be Ranger
+
 - Import data
 ```
 cd /tmp
