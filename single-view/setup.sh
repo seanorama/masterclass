@@ -45,7 +45,7 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
-        echo "ambari-server restart; ambari-agent restart" | bash -il
+        su -c "ambari-server restart; ambari-agent restart" || true
         #script /dev/null
         #screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
         #script -c "ambari-server restart; ambari-agent restart" /dev/null
