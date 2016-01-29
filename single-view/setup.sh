@@ -45,7 +45,8 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
-        screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
+        #screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
+        script -c "ambari-server restart; ambari-agent restart" /dev/null
 
         sleep 60
         export ambari_password="${ambari_pass}"
