@@ -16,6 +16,7 @@ lab_batch=${lab_batch:-20} ## how many cluster to deploy at a time
 lab_batch_delay=${lab_batch_delay:-300} ## seconds to wait between batches
 cfn_parameters=${cfn_parameters:-}
 cfn_switches=${cfn_switches:-}
+cfn_file="${cfn_file:-cloudformation.json}"
 
 clusters=$(seq -w ${lab_first} $((lab_first+lab_count-1)))
 clusters=$(for cluster in ${clusters}; do echo ${lab_prefix}${cluster}; done)
@@ -43,7 +44,7 @@ do
   ((batchcounter++))
   aws cloudformation create-stack --stack-name ${cluster} \
     --capabilities CAPABILITY_IAM \
-    --template-body file://./cloudformation.json \
+    --template-body "file://./${cfn_file}" \
     --parameters "${cfn_parameters}" \
         ${cfn_switches}
 
