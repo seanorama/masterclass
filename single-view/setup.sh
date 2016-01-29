@@ -2,6 +2,7 @@
 set -o xtrace
 
 export TERM=xterm
+export ambari_pass=${ambari_pass:-BadPass#1}
 
 yum makecache
 yum -y -q install git epel-release ntpd
@@ -25,14 +26,6 @@ sleep 10
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
-    git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/2.3/services/ZEPPELIN
-    sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/2.3/role_command_order.json
-    echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
-    service postgresql restart
-
-    git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/2.3/services/NIFI
-
-    nohup service ambari-server restart
 
     yum -y -q install mysql-connector-java jq python-argparse python-configobj
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
@@ -40,13 +33,27 @@ if [ "${install_ambari_server}" = "true" ]; then
     ambari-change-pass admin admin ${ambari_pass}
 
     if [ "${deploy}" = "true" ]; then
+        #hdp_version=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+        hdp_version=2.3
+        git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/ZEPPELIN
+        sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
+        echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
+        service postgresql restart
+
+        git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
+        sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
+
+        git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
+
+        nohup service ambari-server restart
+
         sleep 60
         export ambari_password="${ambari_pass}"
-        export cluster_name=${stack}
+        export cluster_name=${stack:-hdf}
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
 
-        export ambari_services="AMBARI_METRICS HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK SQOOP TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
+        export ambari_services="AMBARI_METRICS HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK SQOOP TEZ YARN ZOOKEEPER ZEPPELIN NIFI SOLR"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
