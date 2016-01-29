@@ -40,15 +40,19 @@ if [ "${install_ambari_server}" = "true" ]; then
         echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
         service postgresql restart
 
-        git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
-        sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
+        #git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
+        #sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
-        su -c "ambari-server restart; ambari-agent restart" || true
-        #script /dev/null
-        #screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
-        #script -c "ambari-server restart; ambari-agent restart" /dev/null
+        ps aux | grep ambari-server | grep java | awk '{print $2}' | xargs kill
+        sleep 5
+        if ! nohup sh -c "ambari-server start 2>&1 > /dev/null"; then
+            printf 'Ambari Server failed to start\n' >&2
+        fi
+        if ! nohup sh -c "ambari-agent restart 2>&1 > /dev/null"; then
+            printf 'Ambari Agent failed to start\n' >&2
+        fi
 
         sleep 60
         export ambari_password="${ambari_pass}"
