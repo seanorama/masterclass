@@ -703,15 +703,24 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 ## Ranger KMS/Data encryption exercise
 
 - Login to Ranger as admin/admin and 
-  - create add hadoopadmin to global HDFS policy     
+  - add hadoopadmin to global HDFS policy     
   - create new user nn
 - Login to Ranger as keyadmin/keyadmin and create a key called testkey - see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
 - Add user hadoopadmin and nn to default key policy
 - Run below to create a zone using the key
 ```
-#as hadoopadmin create dir
+
+#run kinit as different users: hdfs, hadoopadmin, sales1
+
+#to kinit as hdfs find the principal name then kinit using the keytab
+sudo -u hdfs klist -kt /etc/security/keytabs/hdfs.headless.keytab
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab <your principal name>@LAB.HORTONWORKS.NET
+
+#kinit as hadoopadmin and sales using BadPass#1 
 sudo -u hadoopadmin kinit
 sudo -u sales1 kinit
+
+#as hadoopadmin create dir
 sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
 
 #as hdfs create/list EZ
