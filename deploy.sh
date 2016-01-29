@@ -5,7 +5,7 @@ export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 
 yum makecache
-yum -y -q install git epel-release ntpd
+yum -y -q install git epel-release ntpd screen
 
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in

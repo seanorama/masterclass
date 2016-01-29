@@ -5,7 +5,7 @@ export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 
 yum makecache
-yum -y -q install git epel-release ntpd
+yum -y -q install git epel-release ntpd screen
 
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
@@ -45,15 +45,15 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
-        nohup service ambari-server restart
+        screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
 
         sleep 60
         export ambari_password="${ambari_pass}"
-        export cluster_name=${stack:-hdf}
+        export cluster_name=${stack:-mycluster}
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
 
-        export ambari_services="AMBARI_METRICS HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK SQOOP TEZ YARN ZOOKEEPER ZEPPELIN NIFI SOLR"
+        export ambari_services="HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
@@ -64,21 +64,26 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         useradd admin
         usermod -a -G users admin
+        sudo -u hdfs hadoop fs -mkdir /user/admin
+        sudo -u hdfs hadoop fs -chown /user/admin
 
         config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
-        echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-        curl -sSL https://raw.githubusercontent.com/hortonworks-gallery/zeppelin-notebooks/master/update_all_notebooks.sh | sudo -u zeppelin -E sh
 
         yum install -y lucidworks-hdpsearch
         sudo -u hdfs hadoop fs -mkdir /user/solr
         sudo -u hdfs hadoop fs -chown solr /user/solr
         chown -R solr:solr /opt/lucidworks-hdpsearch/solr
+        echo ZK_HOST="localhost:2181" >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
+        echo SOLR_MODE=solrcloud >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
+        service solr start
+        chkconfig solr on
 
         ${ambari_config_set} hive-site hive.support.concurrency "true"
         ${ambari_config_set} hive-site hive.enforce.bucketing "true"
         ${ambari_config_set} hive-site hive.exec.dynamic.partition.mode "nonstrict"
         ${ambari_config_set} hive-site hive.txn.manager "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
         ${ambari_config_set} hive-site hive.compactor.initiator.on "true"
+        ${ambari_config_set} hive-site hive.compactor.worker.threads "1"
     fi
 fi
 
