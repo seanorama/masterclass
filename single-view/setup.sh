@@ -45,8 +45,10 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
+        bash -i -c "ambari-server refresh-stack-hash"
+        #script /dev/null
         #screen -m -S ambari bash -c "ambari-server restart; ambari-agent restart"
-        script -c "ambari-server restart; ambari-agent restart" /dev/null
+        #script -c "ambari-server restart; ambari-agent restart" /dev/null
 
         sleep 60
         export ambari_password="${ambari_pass}"
@@ -54,7 +56,7 @@ if [ "${install_ambari_server}" = "true" ]; then
         export host_count=${host_count:-skip}
         cd ~/ambari-bootstrap/deploy
 
-        export ambari_services="HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
+        #export ambari_services="HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
