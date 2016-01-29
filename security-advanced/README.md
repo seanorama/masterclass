@@ -700,6 +700,8 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Audit to Solr
     - Audit to HDFS
 
+## Ranger KMS/Data encryption exercise
+
 - Login to Ranger as admin/admin and 
   - create add hadoopadmin to global HDFS policy     
   - create new user nn
