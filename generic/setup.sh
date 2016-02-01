@@ -110,7 +110,6 @@ EOF
 
         sleep 60
 
-        #export ambari_services="HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
@@ -121,22 +120,6 @@ EOF
 
         usermod -a -G users ${USER}
         ~/ambari-bootstrap/extras/onboarding.sh
-
-        #useradd admin
-        #usermod -a -G users admin
-        #sudo -u hdfs hadoop fs -mkdir /user/admin
-        #sudo -u hdfs hadoop fs -chown /user/admin
-
-        #config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
-
-        #yum install -y lucidworks-hdpsearch
-        #sudo -u hdfs hadoop fs -mkdir /user/solr
-        #sudo -u hdfs hadoop fs -chown solr /user/solr
-        #chown -R solr:solr /opt/lucidworks-hdpsearch/solr
-        #echo ZK_HOST="localhost:2181" >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
-        #echo SOLR_MODE=solrcloud >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
-        #service solr start
-        #chkconfig solr on
 
     fi
 fi
