@@ -3,18 +3,18 @@
 
 These instructions will create lab environments for:
 
-a. HDP Cluster: 1 node with HDFS, YARN, HIVE, NIFI, SOLR, SPARK, ZEPPELIN
-b. Nifi: 1 node with NiFi
+  - a. HDP Cluster: 1 node with HDFS, YARN, HIVE, NIFI, SOLR, SPARK, ZEPPELIN
+  - b. Nifi: 1 node with nifi
 
-You will want to have 2 separate shells open for deploying each environment. This is due to the management scripts depending on environment variables.
+You should **open 2 separate shells** for deploying each environment. This is due to the management scripts depending on environment variables.
 
 ## Before you start
 
 See ../README.md for instructions on using the cluster management scripts (step 3 in the processes below):
 
-    - ../bin/cluster-create.sh
-    - ../bin/cluster-report.sh
-    - ../bin/cluster-terminate.sh
+  - ../bin/cluster-create.sh
+  - ../bin/cluster-report.sh
+  - ../bin/cluster-terminate.sh
 
 ## Deploy clusters
 Open 2 clean shell environments on a host where the AWS CLI has been configured.
