@@ -504,7 +504,7 @@ sudo ambari-server restart
 
 - Then go through the rest of the install wizard by clicking Next to complete installation of Solr
 
-- In case of failure, run below from Ambari node to delete the service so you can try again:
+- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
 ```
 export SERVICE=SOLR
 export AMBARI_HOST=localhost
@@ -587,7 +587,8 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ```
 - At this point you should be able to: 
   - access Solr webui at http://hostname:6083/solr
-  - access banana dashboard at http://hostname:6083/solr/banana/index.html (if installed)
+  - access banana dashboard (if installed earlier) at http://hostname:6083/solr/banana/index.html 
+    - this will currently not have any audit data  
 
 
 ## Ranger install
