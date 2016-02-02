@@ -594,7 +594,7 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
   - Click the Cloud > Graph tab to find the leader host (172.30.0.242 in below example)
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
 
-- (Optional) - On the leader node, install banana dashboard to visualize audits in Solr
+- (Optional) - On the leader node, install SILK (banana) dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
@@ -698,6 +698,8 @@ sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
+- Confirm Banana dashboard has start to show HDFS audits
+http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
 ## Ranger KMS/Data encryption setup
 
