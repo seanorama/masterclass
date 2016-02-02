@@ -42,7 +42,7 @@ Credentials will be provided for these services by the instructor:
 
 ### To connect from Linux/MacOSX laptop
 
-- SSH into Ambari node of your cluster 
+- SSH into Ambari node of your cluster using below steps:
   - Right click [this pem key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem)  > Save link as > save to Downloads folder
   - Copy pem key to ~/.ssh dir and correct permissions
   ```
