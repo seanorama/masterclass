@@ -43,9 +43,16 @@ Credentials will be provided for these services by the instructor:
 ### To connect from Linux/MacOSX laptop
 
 - SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem) replacing IPADDRESS below
-```
-ssh -i training-keypair.pem centos@IPADDRESS
-```
+  - Right click on link to the key above > Save link as > save to Downloads
+  -Copy to ~/.ssh dir and correct permissions
+  ```
+  cp ~/Downloads/training-keypair.pem ~/.ssh/
+  chmod 400 ~/.ssh/training-keypair.pem
+  ```
+ - Login to the Ambari node of the cluster you have been assigned (your instructor will provide this)   
+  ```
+  ssh -i  ~/.ssh/training-keypair.pem centos@IP_ADDRESS_OF_AMBARI_NODE
+  ```
 - To change user to root you can:
 ```
 sudo su -
