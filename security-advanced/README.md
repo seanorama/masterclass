@@ -127,6 +127,8 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 openssl s_client -connect ad01:636 </dev/null
    ```
 
+**Now repeat above steps on all nodes**
+
 ## Secure Ambari
 
 ### Create Ambari Keystore
