@@ -99,7 +99,7 @@ echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
 2. Add your CA certificate (if using self-signed & not already configured)
-  - **Change the URL to where you've placed your CA cert**
+  - In this case we have pre-exported the CA cert from our AD and made available for download. 
    ```
 cert_url=https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/extras/ca.crt
 sudo yum -y install openldap-clients ca-certificates
