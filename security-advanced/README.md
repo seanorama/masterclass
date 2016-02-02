@@ -170,7 +170,7 @@ EOF
    sudo ambari-server restart
    sudo ambari-agent restart
   ```
-4. Run LDAP sync
+4. Run LDAPsync to sync only the groups we want
   - When prompted for user/password, use the *local* Ambari admin credentials (i.e. admin/BadPass#1)
   ```
   echo hadoop-users,hr,sales,legal,hadoop-admins > groups.txt
