@@ -66,14 +66,19 @@ hdfs dfs -ls /tmp/hive
 ## this should fail with Permission Denied
 ```
 
-- Now try again after setting HADOOP_USER_NAME
+- Now try again after setting HADOOP_USER_NAME env var
 ```
 export HADOOP_USER_NAME=hdfs
 hdfs dfs -ls /tmp/hive   
-## this shows the file listing
+## this shows the file listing!
 ```
-
+- Unset the env var
+```
+unset HADOOP_USER_NAME
+hdfs dfs -ls /tmp/hive  
+```
 - This should tell you why kerberos is needed on Hadoop :)
+
 
 ##### Manually install missing components
 
