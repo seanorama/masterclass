@@ -622,19 +622,23 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-1.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 
-2. Ranger User info tab - Common configs subtab
-  - Enter password
+2. Ranger User info tab
+  - 'Sync Source' = AD/LDAP 
+  - Common configs subtab
+    - Enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
 
-3. Ranger User info tab - User configs subtab
-  - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
-  - User Search Category = `(objectcategory=person)`
+3. Ranger User info tab 
+  - User configs subtab
+    - User Search Base = `ou=CorpUsers,dc=lab,dc=hortonworks,dc=net`
+    - User Search Filter = `(objectcategory=person)`
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-4.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-5.png)
 
-4. Ranger User info tab - Group configs subtab
-  - No changes needed
+4. Ranger User info tab 
+  - Group configs subtab
+    - No changes needed
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-6.png)
 
 5. Ranger plugins tab
@@ -643,7 +647,6 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 6. Ranger Audits tab 
   - SolrCloud = ON
-  - Audit to DB = ON
   - enter password
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
@@ -660,7 +663,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 - Once installed, restart components that require restart (e.g. HDFS, YARN, Hive etc)
 
-- In case of failure, run below from Ambari node to delete the service so you can try again:
+- (Optional) In case of failure (usually caused by incorrectly entering the Mysql nodes FQDN in the config above), run below from Ambari node to delete the service so you can try again:
 ```
 export SERVICE=RANGER
 export AMBARI_HOST=localhost
