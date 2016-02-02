@@ -70,7 +70,8 @@ hdfs dfs -ls /tmp/hive
 
 ##### Manually install missing components
 
-- (Optional) Use the 'Add Service' Wizard to install Knox (and optionally Hbase, Kafka, Storm)
+- (Optional) Use the 'Add Service' Wizard to install Knox (and Hbase, if not already installed)
+  - When prompted for the Knox password, set it to `BadPass#1`
 
 
 
