@@ -177,6 +177,23 @@ EOF
   sudo ambari-server sync-ldap --groups groups.txt
   ```
 
+  - This should show a summary of what objects were created
+  ```
+  Completed LDAP Sync.
+  Summary:
+    memberships:
+      removed = 0
+      created = 25
+    users:
+      updated = 0
+      removed = 0
+      created = 15
+    groups:
+      updated = 0
+      removed = 0
+      created = 5
+  ``` 
+  
 5. Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
   - Grant 'hadoopadmin' user permissions to manage the cluster:
