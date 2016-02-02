@@ -42,9 +42,9 @@ Credentials will be provided for these services by the instructor:
 
 ### To connect from Linux/MacOSX laptop
 
-- SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem.cer) replacing IPADDRESS below
+- SSH into your cluster using [this key](https://github.com/seanorama/masterclass/blob/master/security-advanced/training-keypair.pem) replacing IPADDRESS below
 ```
-ssh -i training-keypair.pem.cer centos@IPADDRESS
+ssh -i training-keypair.pem centos@IPADDRESS
 ```
 - To change user to root you can:
 ```
