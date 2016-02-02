@@ -53,7 +53,7 @@ Credentials will be provided for these services by the instructor:
   ```
   ssh -i  ~/.ssh/training-keypair.pem centos@IP_ADDRESS_OF_AMBARI_NODE
   ```
-- To change user to root you can:
+  - To change user to root you can:
   ```
   sudo su -
   ```
