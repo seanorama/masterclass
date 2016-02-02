@@ -19,7 +19,9 @@ esac
 
 cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
-#export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.1.3.0-291/ambaribn.repo
+
+~/ambari-bootstrap/extras/deploy/prep-hosts.sh
+
 #export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos${el_version}/2.x/BUILDS/2.2.0.0-1291/ambaribn.repo
 ~/ambari-bootstrap/ambari-bootstrap.sh
 sleep 10
@@ -40,8 +42,8 @@ if [ "${install_ambari_server}" = "true" ]; then
         echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
         service postgresql restart
 
-        #git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
-        #sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
+        git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
+        sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
 
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
@@ -54,13 +56,60 @@ if [ "${install_ambari_server}" = "true" ]; then
             printf 'Ambari Agent failed to start\n' >&2
         fi
 
-        sleep 60
+
+        cd ~/ambari-bootstrap/deploy
+
+cat << EOF > configuration-custom.json
+{
+  "configurations" : {
+    "hdfs-site": {
+        "dfs.replication": "1"
+    },
+    "yarn-site": {
+        "yarn.scheduler.minimum-allocation-vcores": "1",
+        "yarn.scheduler.maximum-allocation-vcores": "1",
+        "yarn.scheduler.minimum-allocation-mb": "256",
+        "yarn.scheduler.maximum-allocation-mb": "2048"
+    },
+    "hive-site": {
+        "hive.support.concurrency": "true",
+        "hive.enforce.bucketing": "true",
+        "hive.exec.dynamic.partition.mode": "nonstrict",
+        "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager",
+        "hive.compactor.initiator.on": "true",
+        "hive.compactor.worker.threads": "1"
+    },
+    "solr-config": {
+        "solr.download.location": "HDPSEARCH",
+        "solr.znode": "/solr",
+        "solr.cloudmode": "true"
+    },
+    "core-site": {
+        "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.HTTP.hosts" : "*",
+        "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hbase.hosts" : "*",
+        "hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hcat.hosts" : "*",
+        "hadoop.proxyuser.hive.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hive.hosts" : "*",
+        "hadoop.proxyuser.knox.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.knox.hosts" : "*",
+        "hadoop.proxyuser.oozie.groups" : "users",
+        "hadoop.proxyuser.oozie.hosts" : "*",
+        "hadoop.proxyuser.root.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.root.hosts" : "*"
+    }
+  }
+}
+EOF
+
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack:-mycluster}
         export host_count=${host_count:-skip}
-        cd ~/ambari-bootstrap/deploy
 
-        #export ambari_services="HDFS HIVE MAPREDUCE2 PIG SLIDER SPARK TEZ YARN ZOOKEEPER ZEPPELIN NIFI"
+        sleep 60
+
         ./deploy-recommended-cluster.bash
         cd ~
         sleep 5
@@ -69,28 +118,9 @@ if [ "${install_ambari_server}" = "true" ]; then
         ambari-configs
         ambari_wait_request_complete 1
 
-        useradd admin
-        usermod -a -G users admin
-        sudo -u hdfs hadoop fs -mkdir /user/admin
-        sudo -u hdfs hadoop fs -chown /user/admin
+        usermod -a -G users ${USER}
+        ~/ambari-bootstrap/extras/onboarding.sh
 
-        config_proxyuser=true ~/ambari-bootstrap/extras/ambari-views/create-views.sh
-
-        yum install -y lucidworks-hdpsearch
-        sudo -u hdfs hadoop fs -mkdir /user/solr
-        sudo -u hdfs hadoop fs -chown solr /user/solr
-        chown -R solr:solr /opt/lucidworks-hdpsearch/solr
-        echo ZK_HOST="localhost:2181" >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
-        echo SOLR_MODE=solrcloud >> /opt/lucidworks-hdpsearch/solr/bin/solr.in.sh
-        service solr start
-        chkconfig solr on
-
-        ${ambari_config_set} hive-site hive.support.concurrency "true"
-        ${ambari_config_set} hive-site hive.enforce.bucketing "true"
-        ${ambari_config_set} hive-site hive.exec.dynamic.partition.mode "nonstrict"
-        ${ambari_config_set} hive-site hive.txn.manager "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
-        ${ambari_config_set} hive-site hive.compactor.initiator.on "true"
-        ${ambari_config_set} hive-site hive.compactor.worker.threads "1"
     fi
 fi
 
