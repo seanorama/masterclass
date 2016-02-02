@@ -79,10 +79,10 @@ hdfs dfs -ls /tmp/hive
 
 **Run below on all nodes**
 
-1. Add your Active Directory to /etc/hosts (if not in DNS)
+1. Add your Active Directory to /etc/hosts (if not in DNS). Make sure you replace the IP address of your AD from your instructor.
   - **Change the IP to match your ADs internal IP**
    ```
-ad_ip=172.30.0.49
+ad_ip=GET_THE_AD_IP_FROM_YOUR_INSTRUCTOR
 echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 
