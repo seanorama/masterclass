@@ -443,7 +443,7 @@ sudo ambari-agent restart
 
 ##### Create & confirm MySQL user 'root'
 
-Prepare MySQL DB for Ranger use. Run these steps on MySQL 
+Prepare MySQL DB for Ranger use. Run these steps on the node where MySQL is located
 - `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
