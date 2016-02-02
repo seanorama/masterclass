@@ -158,7 +158,9 @@ EOF
 
   ```
   
-2. Run Ambari LDAP sync. Press enter to accept all defaults and enter password at the end: BadPass#1
+2. Run Ambari LDAP sync. 
+ - Press enter at each prompt to accept the default value being displayed
+ - When prompted for 'Manager Password' at the end, enter password : BadPass#1
   ```
   sudo ambari-server setup-ldap
   ```
