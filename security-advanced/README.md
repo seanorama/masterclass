@@ -58,6 +58,19 @@ Credentials will be provided for these services by the instructor:
   sudo su -
   ```
 
+  - From SSH terminal, how can I find internal hostname (aka FQDN) of the node I'm logged into?
+  ```
+  $ hostname -f
+  ip-172-30-0-186.us-west-2.compute.internal  
+  ```
+
+  - From SSH terminal, how can I to find external (public) IP  of the node I'm logged into?
+  ```
+  $ curl icanhazip.com
+  54.68.246.157  
+  ```
+  
+  
 ### Why is security needed?
 
 - On your unsecured cluster try to access a restricted dir in HDFS
@@ -80,11 +93,17 @@ hdfs dfs -ls /tmp/hive
 - This should tell you why kerberos is needed on Hadoop :)
 
 
-##### Manually install missing components
+##### Open Ambari and Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 - Use the 'Add Service' Wizard to install Knox (and Hbase, if not already installed)
   - When prompted for the Knox password, set it to `BadPass#1`
+
+- From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
+  - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
+
+- From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager) is installed?
+  - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
 
 
 ### Configure name resolution & certificate to Active Directory
