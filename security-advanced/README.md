@@ -804,7 +804,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - click Save
   
   
-- Run below to create a zone using the key
+- Run below to create a zone using the key and perform basic exercises 
 ```
 
 #run kinit as different users: hdfs, hadoopadmin, sales1
