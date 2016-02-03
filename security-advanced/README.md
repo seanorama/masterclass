@@ -720,7 +720,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
     - hadoop.kms.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
     - hadoop.kms.authentication.kerberos.principal=*  
     
-  - Custom kms-site:
+  - Custom kms-site (to avoid adding one at a time, you can use 'bulk add' mode):
       - hadoop.kms.proxyuser.hive.users=*
       - hadoop.kms.proxyuser.oozie.users=*
       - hadoop.kms.proxyuser.HTTP.users=*
@@ -734,10 +734,24 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
-        
-- Restart Ranger and  Ranger KMS as mentioned in the doc (hold off on restarting HDFS for now)
+      
+  - Advanced ranger-kms-audit:
+    - Audit to Solr
+    - Audit to HDFS
+    - For xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
+      - xasecure.audit.destination.hdfs.dir = hdfs://ip-172-30-0-185.us-west-2.compute.internal:8020/ranger/audit
 
-- Create symlink to core-site.xml
+- Click Next to proceed with the wizard
+
+- On Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+  
+- Click Next > Deploy to install RangerKMS
+        
+- Restart Ranger and RangerKMS via Ambari (hold off on restarting HDFS for now)
+
+- On RangerKMS node, create symlink to core-site.xml
 ```
 sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 ```
@@ -752,28 +766,57 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - HDFS > Configs > Custom core-site:
     - hadoop.proxyuser.kms.groups = *   
 
-- Restart the HDFS and Ranger KMS service.
+- Restart the HDFS and Ranger and RangerKMS service.
 
-- Setup audits to Solr/HDFS
-  - Ranger KMS > Advanced ranger-kms-audit:
-    - Audit to Solr
-    - Audit to HDFS
 
 ## Ranger KMS/Data encryption exercise
 
 - Login to Ranger as admin/admin and 
   - add hadoopadmin to global HDFS policy     
   - create new user nn
-- Login to Ranger as keyadmin/keyadmin and create a key called testkey - see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+    - Settings > Users/Groups > Add new user
+      - username = nn
+      - password = BadPass#1
+      - First name = namenode
+      - Role: User
+      - Group: hadoop-admins
+- Logout of Ranger
+  - Top right > admin > Logout      
+- Login to Ranger as keyadmin/keyadmin
+- Confirm the KMS repo was setup correctly
+  - Under Service Manager > KMS > Click the Edit icon (next to the trash icon)
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: keyadmin@LAB.HORTONWORKS.NET
+    - Password: BadPass#1
+  - Click Save  
+- Create a key called testkey - see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+  - Select Encryption > Key Manager
+  - Select KMS service > pick your kms > Add new Key
+    - if an error is thrown, go back and test connection as described in previous step
+  - Create a key called `testkey` > Save
+  
 - Add user hadoopadmin and nn to default key policy
+  - Click Access Manager tab
+  - Click Service Manager > KMS > (clustername)_kms link
+  - Edit the default policy
+  - Under 'Select User', Add hadoopadmin and nn users
+  - click Save
+  
+  
 - Run below to create a zone using the key
 ```
 
 #run kinit as different users: hdfs, hadoopadmin, sales1
 
-#to kinit as hdfs find the principal name then kinit using the keytab
-sudo -u hdfs klist -kt /etc/security/keytabs/hdfs.headless.keytab
-sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab <your principal name>@LAB.HORTONWORKS.NET
+export PASSWORD=BadPass#1
+
+#detect name of cluster
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#then kinit using the keytab and the principal name returned by previous command
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 
 #kinit as hadoopadmin and sales using BadPass#1 
 sudo -u hadoopadmin kinit
@@ -784,6 +827,9 @@ sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
 
 #as hdfs create/list EZ
 sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /zone_encr
+# if you get 'RemoteException' error it means you have not added nn to the default KMS policy via Ranger
+
+#check it got created
 sudo -u hdfs hdfs crypto -listZones  
 
 #create test file
@@ -794,11 +840,15 @@ sudo -u hadoopadmin echo "My test file2" > /tmp/test2.log
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test1.log /zone_encr
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr
 
-#hadoopadmin allowed to decrypt EEK but not sales user
+#Notice that hadoopadmin allowed to decrypt EEK but not sales user
 sudo -u hadoopadmin hdfs dfs -cat /zone_encr/test1.log
-sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
+#this should work
 
-#delete a file from EZ
+sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
+## this should give you below error
+## cat: User:sales1 not allowed to do 'DECRYPT_EEK' on 'testkey'
+
+#delete a file from EZ - note the skipTrash option
 sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
 
 #View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
@@ -809,6 +859,8 @@ sudo -u hdfs hdfs dfs -setfattr -n security.hdfs.unreadable.by.superuser  /.rese
 
 # Now as hdfs super user, try to read the files or the contents of the raw file
 sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
+
+## You should get below error
 ##cat: Access is denied for hdfs since the superuser is not allowed to perform this operation.
 
 ```
