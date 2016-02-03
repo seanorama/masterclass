@@ -706,7 +706,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
 - Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html):
 
-- Start 'Add service' wizard and select 'Ranger KMS'.
+- Open Ambari >> start 'Add service' wizard >> select 'Ranger KMS'.
 - Keep the default configs except for below properties 
   - Advanced kms-properties
     - KMS_MASTER_KEY_PASSWORD = BadPass#1
