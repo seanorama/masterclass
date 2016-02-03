@@ -372,6 +372,32 @@ yarn rmadmin -getGroups hr1
 hr1@LAB.HORTONWORKS.NET : domain_users hadoop-users hr
 ```
 
+### Test OS/AD integration and Kerberos security
+
+- Login as sales1 user and try to access the same /tmp/hive HDFS dir
+```
+su - sales1
+
+hdfs dfs -ls /tmp/hive   
+## since we did not authenticate, this fails with GSSException: No valid credentials provided
+
+#authenticate
+kinit
+##enter BadPass#1
+
+klist
+## shows the principal for sales1
+
+hdfs dfs -ls /tmp/hive 
+## fails with Permission denied
+
+#Now try to get around security by setting the same env variable
+export HADOOP_USER_NAME=hdfs
+hdfs dfs -ls /tmp/hive 
+
+```
+- Notice that now that the cluster is kerborized, we were not able to circumvent security by setting the env var 
+
 ******************************
 
 ## Day two
@@ -815,7 +841,7 @@ export PASSWORD=BadPass#1
 output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
-#then kinit using the keytab and the principal name returned by previous command
+#then kinit using the keytab and the principal name
 sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 
 #kinit as hadoopadmin and sales using BadPass#1 
@@ -827,7 +853,7 @@ sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
 
 #as hdfs create/list EZ
 sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /zone_encr
-# if you get 'RemoteException' error it means you have not added nn to the default KMS policy via Ranger
+# if you get 'RemoteException' error it means you have not given namenode user permissions on testkey by creating a policy for KMS in Ranger
 
 #check it got created
 sudo -u hdfs hdfs crypto -listZones  
