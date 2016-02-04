@@ -1028,7 +1028,7 @@ Agenda:
   - hadoop.proxyuser.knox.hosts=*  (better would be to put the FQDNs of the hosts)
   - Now restart HDFS
   
-- Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
+- Now lets configure Knox to use our AD for authentication. Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
 ```
         <topology>
 
