@@ -59,6 +59,8 @@ if [ "${install_ambari_server}" = "true" ]; then
 
         cd ~/ambari-bootstrap/deploy
 
+
+        ## various configuration changes for demo environments, and fixes to defaults
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
@@ -83,6 +85,9 @@ cat << EOF > configuration-custom.json
         "solr.download.location": "HDPSEARCH",
         "solr.znode": "/solr",
         "solr.cloudmode": "true"
+    },
+    "kafka-broker": {
+        "listeners": "PLAINTEXT://0.0.0.0:6667"
     },
     "core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
