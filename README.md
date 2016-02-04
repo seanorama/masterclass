@@ -158,7 +158,8 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 * Example using cssh, csshX or tmux-cssh (you'll need to install it)
 
     ```
-../bin/clusters-report.sh | grep "^[0-9]" | xargs echo tmux-cssh -u masterclass
+## for Ambari nodes only:
+../bin/clusters-report.sh | awk '/^AmbariNode:/ {print $2}' | xargs echo tmux-cssh -u student
     ```
 
 * After executing you will get a terminal with small windows to all of the clusters.
