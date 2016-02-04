@@ -1029,7 +1029,7 @@ Agenda:
     - (better would be to put a comma separated list of the FQDNs of the hosts)
   - Now restart HDFS
   
-- Now lets configure Knox to use our AD for authentication. Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
+- Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. Then restart Knox
   - How to tell what configs were changed from defaults? 
     - Default configs remain indented below
     - Configurations that were added/modified are not indented
@@ -1191,10 +1191,23 @@ Agenda:
   - Permission: check Allow
   - Save > OK
 
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-policy.png)
+
+
 - Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl request to 8443 port where Knox is running:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
+
+-Try the same request as hr1 and notice it fails:
+```
+curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+```
+
+- Check in Ranger Audits to confirm the requests were audited:
+  - Ranger > Audit > Service type: KNOX
+
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-audit.png)
 
 
 
