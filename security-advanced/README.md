@@ -1025,10 +1025,14 @@ Agenda:
    ```
 - Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
   - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
-  - hadoop.proxyuser.knox.hosts=*  (better would be to put the FQDNs of the hosts)
+  - hadoop.proxyuser.knox.hosts=*
+    - (better would be to put a comma separated list of the FQDNs of the hosts)
   - Now restart HDFS
   
 - Now lets configure Knox to use our AD for authentication. Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
+  - How to tell what configs were changed from defaults? 
+    - Default configs remain indented below
+    - Configurations that were added/modified are not indented
 ```
         <topology>
 
@@ -1060,11 +1064,13 @@ Agenda:
     <value>$ldapContextFactory</value>
 </param>
 
+<!-- AD url -->
 <param>
     <name>main.ldapRealm.contextFactory.url</name>
     <value>ldap://ad01.lab.hortonworks.net:389</value> 
 </param>
 
+<!-- system user -->
 <param>
     <name>main.ldapRealm.contextFactory.systemUsername</name>
     <value>cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
@@ -1085,6 +1091,7 @@ Agenda:
                         <value>authcBasic</value> 
                     </param>
 
+<!--  AD groups of users to allow -->
 <param>
     <name>main.ldapRealm.searchBase</name>
     <value>ou=CorpUsers,dc=lab,dc=hortonworks,dc=net</value>
