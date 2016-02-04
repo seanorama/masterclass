@@ -1012,14 +1012,16 @@ Agenda:
 ## Knox 
 - Run these steps on the node where Knox was installed earlier
 - Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology) e.g. BadPass#1
-   - Read password for use in following command (this will prompt you for a password):
+   - Read password for use in following command (this will prompt you for a password and save it in knoxpass environment variable):
    ```
-read -s -p "Password: " knoxpass
+   read -s -p "Password: " knoxpass
    ```
+  - This is a handy way to set an env var without storing the command in your history
+
    - Create password alias
    ```
-sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
-unset knoxpass
+   sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
+   unset knoxpass
    ```
 - Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal then restart HDFS 
 
