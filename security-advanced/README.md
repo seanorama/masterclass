@@ -58,6 +58,8 @@ Credentials will be provided for these services by the instructor:
   sudo su -
   ```
 
+- Following are useful techniques you can use in future labs to find your cluster specific details:
+
   - From SSH terminal, how can I find internal hostname (aka FQDN) of the node I'm logged into?
   ```
   $ hostname -f
@@ -69,6 +71,12 @@ Credentials will be provided for these services by the instructor:
   $ curl icanhazip.com
   54.68.246.157  
   ```
+  
+  - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
+    - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
+
+  - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager) is installed?
+    - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
   
   
 ### Why is security needed?
@@ -85,11 +93,19 @@ export HADOOP_USER_NAME=hdfs
 hdfs dfs -ls /tmp/hive   
 ## this shows the file listing!
 ```
-- Unset the env var
+- Unset the env var and it will fail again
 ```
 unset HADOOP_USER_NAME
 hdfs dfs -ls /tmp/hive  
 ```
+
+- From node running NameNode, make a WebHDFS request using below command:
+```
+curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
+```
+
+- In the absence of Knox, notice it goes over HTTP (not HTTPS) on port 50070 and no credentials were needed
+
 - This should tell you why kerberos is needed on Hadoop :)
 
 
@@ -99,12 +115,7 @@ hdfs dfs -ls /tmp/hive
 - Use the 'Add Service' Wizard to install Knox (and Hbase, if not already installed)
   - When prompted for the Knox password, set it to `BadPass#1`
 
-- From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
-  - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
-
-- From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager) is installed?
-  - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
-
+- We will use Knox further in a later exercise.
 
 ### Configure name resolution & certificate to Active Directory
 
@@ -1023,11 +1034,15 @@ Agenda:
    sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
    unset knoxpass
    ```
-- Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
+- *Configre HDFS for Knox*: Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
   - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
   - hadoop.proxyuser.knox.hosts=*
     - (better would be to put a comma separated list of the FQDNs of the hosts)
   - Now restart HDFS
+  - Without this step you will see an error like below when you run the WebHDFS request later on:
+  ```
+   org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate sales1"
+  ```
   
 - Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. Then restart Knox
   - How to tell what configs were changed from defaults? 
