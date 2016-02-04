@@ -1225,3 +1225,31 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-audit.png)
 
+
+- Other things to access WebHDFS with Knox
+
+  - 1. Use cookie to make request without passing in credentials
+    - When you run the curl request it will list HTTP header as part of output. One of the headers will be 'Set Cookie'
+    - e.g. `Set-Cookie: JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly`
+    - You can pass in the value from your setup and make the request without passing in credentials:
+  ```
+  curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+  ```
+  
+  - 2. Use groovy scripts to access WebHDFS
+    - Edit the groovy script to set:
+      - gateway = "https://localhost:8443/gateway/default"
+      - username = "sales1"
+      - password = "BadPass#1"
+    ```
+    sudo vi /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
+    ```
+    - Run the script
+    ```
+    sudo java -jar /usr/hdp/current/knox-server/bin/shell.jar /usr/hdp/current/knox-server/samples/ExampleWebHdfsLs.groovy
+    ```
+    - Notice output show list of dirs in HDFS
+    ```
+    [app-logs, apps, ats, hdp, mapred, mr-history, ranger, tmp, user, zone_encr]
+    ```
+    
