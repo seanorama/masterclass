@@ -1023,8 +1023,11 @@ Agenda:
    sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
    unset knoxpass
    ```
-- Ambari > HDFS > Config > Custom core-site > hadoop.proxyuser.knox.groups=hadoop,sales,hr,legal then restart HDFS 
-
+- Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
+  - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
+  - hadoop.proxyuser.knox.hosts=*  (better would be to put the FQDNs of the hosts)
+  - Now restart HDFS
+  
 - Enter below in Ambari > Knox > Config > Advanced topology. Then restart Knox
 ```
         <topology>
