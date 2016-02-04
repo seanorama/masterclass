@@ -1189,7 +1189,7 @@ Agenda:
   - Service name: WEBHDFS
   - Group permissions: sales 
   - Permission: check Allow
-  - Save > OK
+  - Add
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-policy.png)
 
@@ -1199,7 +1199,8 @@ Agenda:
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
--Try the same request as hr1 and notice it fails:
+- Try the same request as hr1 and notice it fails with `Error 403 Forbidden` :
+  - This is expected since in the policy above, we only allowed sales group to access WebHDFS over Knox
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
