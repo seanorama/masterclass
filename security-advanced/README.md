@@ -596,7 +596,7 @@ SOLR_DEPLOYMENT=solrcloud
 SOLR_ZK=localhost:2181/ranger_audits
 SOLR_HOST_URL=http://$host:\${SOLR_RANGER_PORT}
 SOLR_SHARDS=1
-SOLR_REPLICATION=1
+SOLR_REPLICATION=2
 SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
@@ -1009,9 +1009,9 @@ Agenda:
 8. Ranger Logo
 
 
-## Knox
-
-- Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology)
+## Knox 
+- Run these steps on the node where Knox was installed earlier
+- Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology) e.g. BadPass#1
    - Read password for use in following command (this will prompt you for a password):
    ```
 read -s -p "Password: " knoxpass
