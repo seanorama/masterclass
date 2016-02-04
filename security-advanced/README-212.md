@@ -1210,3 +1210,103 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-audit.png)
 
+
+
+## Appendix
+
+##### Install Ranger via Ambari 2.1.2 (current GA version)
+
+1. Install Ranger using Amabris 'Add Service' wizard on the same node as MySQL. 
+  - Ranger Admin
+    - Ranger DB Host: mysqlnodeinternalhostname.us-west-2.compute.internal 
+    - passwords
+
+
+  - External URL: http://mysqlinternalhostname.compute.internal:6080
+  - ranger-admin-site: 
+    - ranger.audit.source.type solr
+    - ranger.audit.solr.urls http://localhost:6083/solr/ranger_audits
+
+**TODO** Need to fix focs for getting ranger.audit.solr.zookeepers working. For now don't change this property
+
+##### Setup Ranger/AD user/group sync
+
+1. Once Ranger is up, under Ambari > Ranger > Config, set the below and restart Ranger to sync AD users/groups
+```
+ranger.usersync.source.impl.class ldap
+ranger.usersync.ldap.searchBase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.user.searchbase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.group.searchbase dc=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.binddn cn=ldap-reader,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net
+ranger.usersync.ldap.ldapbindpassword BadPass#1
+ranger.usersync.ldap.url ldap://ad01.lab.hortonworks.net
+ranger.usersync.ldap.user.nameattribute sAMAccountName
+ranger.usersync.ldap.user.searchfilter (objectcategory=person)
+ranger.usersync.ldap.user.groupnameattribute memberof, ismemberof, msSFU30PosixMemberOf
+ranger.usersync.group.memberattributename member
+ranger.usersync.group.nameattribute cn
+ranger.usersync.group.objectclass group
+```
+2. Check the usersyc log and Ranger UI if users/groups got synced
+```
+tail -f /var/log/ranger/usersync/usersync.log
+```
+
+##### Setup Ranger/AD auth
+
+1. Enable AD users to login to Ranger by making below changes in Ambari > Ranger > Config > ranger-admin-site
+```
+ranger.authentication.method ACTIVE_DIRECTORY
+ranger.ldap.ad.domain lab.hortonworks.net
+ranger.ldap.ad.url "ldap://ad01.lab.hortonworks.net:389"
+ranger.ldap.ad.base.dn "dc=lab,dc=hortonworks,dc=net"
+ranger.ldap.ad.bind.dn "cn=ldap-reader,ou=ServiceUsers,ou=lab,dc=hortonworks,dc=net"
+ranger.ldap.ad.referral follow
+ranger.ldap.ad.bind.password "BadPass#1"
+```
+
+##### Setup Ranger HDFS plugin
+
+In Ambari > HDFS > Config > ranger-hdfs-audit:
+```
+xasecure.audit.provider.summary.enabled true
+xasecure.audit.destination.hdfs.dir hdfs://yournamenodehostname:8020/ranger/audit
+xasecure.audit.destination.db true
+xasecure.audit.destination.hdfs true
+xasecure.audit.destination.solr true
+xasecure.audit.is.enabled true
+```
+**TODO** Need to update docs on xasecure.audit.destination.solr.zookeepers. For now don't change this property
+
+In Ambari > HDFS > Config > ranger-hdfs-plugin-properties:
+```
+ranger-hdfs-plugin-enabled Yes
+REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
+REPOSITORY_CONFIG_PASSWORD "BadPass#1"
+policy_user "rangeradmin"
+common.name.for.certificate " "
+hadoop.rpc.protection " "
+```
+
+##### Setup Ranger Hive plugin
+
+- In Ambari > HIVE > Config > Settings
+  - Under Security > 'Choose authorization' > Ranger
+- In Ambari > HIVE > Config > Advanced > ranger-hdfs-audit
+```
+xasecure.audit.provider.summary.enabled true
+xasecure.audit.destination.hdfs.dir hdfs://yournamenodehostname:8020/ranger/audit
+xasecure.audit.destination.db true
+xasecure.audit.destination.hdfs true
+xasecure.audit.destination.solr true
+xasecure.audit.is.enabled true
+```
+- In Ambari > Hive > Config > ranger-hive-plugin-properties:
+```
+ranger-hdfs-plugin-enabled Yes
+REPOSITORY_CONFIG_USERNAME "rangeradmin@lab.hortonworks.net"
+REPOSITORY_CONFIG_PASSWORD "BadPass#1"
+policy_user "rangeradmin"
+common.name.for.certificate " "
+hadoop.rpc.protection " "
+```
