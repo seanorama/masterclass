@@ -1018,7 +1018,7 @@ Agenda:
    ```
   - This is a handy way to set an env var without storing the command in your history
 
-   - Create password alias
+   - Create password alias for Knox called knoxLdapSystemPassword
    ```
    sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
    unset knoxpass
@@ -1067,6 +1067,7 @@ Agenda:
     <value>cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net</value>
 </param>
 
+<!-- pass in the password using the alias created earlier -->
 <param>
     <name>main.ldapRealm.contextFactory.systemPassword</name>
     <value>${ALIAS=knoxLdapSystemPassword}</value>
