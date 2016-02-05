@@ -1235,7 +1235,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 - Other things to access WebHDFS with Knox
 
   - 1. Use cookie to make request without passing in credentials
-    - When you run the curl request it will list HTTP header as part of output. One of the headers will be 'Set Cookie'
+    - When you ran the previous curl request it would have listed HTTP headers as part of output. One of the headers will be 'Set Cookie'
     - e.g. `Set-Cookie: JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly`
     - You can pass in the value from your setup and make the request without passing in credentials:
   ```
@@ -1243,17 +1243,24 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
   ```
   
   - 2. Open file via WEBHDFS
-    - List files under /tmp:
+    - List files under /tmp and pick a text file to open:
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
-    - Open /tmp/idtest.ambari-qa.1454448964.64.in
+      - You can run below command to find a test file
+      ```
+      hdfs dfs -ls /tmp/idtest.ambari-qa.*.in
+      ```
+      - In our case this returned a file called `/tmp/idtest.ambari-qa.1454448964.64.in`
+      
+    - Open this file via WebHDFS 
     ```
     curl -ik -u sales1:BadPass#1 -X GET https://localhost:8443/gateway/default/webhdfs/v1/tmp/idtest.ambari-qa.1454448964.64.in?op=OPEN
     ```
-      - Look at value of Location header. This will contain a long url e.g. `https://localhost:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/idtest.ambari-qa.1454448964.64.in?_=AAAACAAAABAAAAEwiMM4FG2PJdWqlxpSBKQW3Xdw01nJsHwPB-Xc5-XVKoREvnTsXtRl4miAZJBPSWw8T1b0ocmslgaodQ-nmCWHIDF-1qByUlE5mnMO2DVLbaFuSI-WiaWBgtlq-zkG6TA4FPSWoeNbgZCYwYfZZwcarIskVtT6ZGZZrpS3uNBO4_sqzdCCFt-Iy2P_hGTgs-5tTLgeJTQPo1ulGE8GEKY-FKiS29WONoNHdcKtJ68f5tTpggmKzwuAU-vU4Gi6w_xMevE_enphQHMTW7aibfn9IZA6rBaJ1fSjM5T4ocdZ2Xa4n2cNBN3AVUfvLY7igynS6n7xsmfoST7mYcgTSfkFylnKo4bQjnDhUPq3hU0uU3PcLlz_55lYOm3evwYqBTLZxNyhO9z_Evuzi11E9w8DRtH2kipH65vI9bVRxXln3V4eMlF-NPN8AA`
-      
-    - List contents of file /tmp/idtest.ambari-qa.1454448964.64.in by passing the value from the above Location header
+      - Look at value of Location header. This will contain a long url 
+      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-location.png)
+            
+    - Access contents of file /tmp/idtest.ambari-qa.1454448964.64.in by passing the value from the above Location header
     ```
     curl -ik -u sales1:BadPass#1 -X GET '{https://localhost:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/idtest.ambari-qa.1454448964.64.in?_=AAAACAAAABAAAAEwvyZNDLGGNwahMYZKvaHHaxymBy1YEoe4UCQOqLC7o8fg0z6845kTvMQN_uULGUYGoINYhH5qafY_HjozUseNfkxyrEo313-Fwq8ISt6MKEvLqas1VEwC07-ihmK65Uac8wT-Cmj2BDab5b7EZx9QXv29BONUuzStCGzBYCqD_OIgesHLkhAM6VNOlkgpumr6EBTuTnPTt2mYN6YqBSTX6cc6OhX73WWE6atHy-lv7aSCJ2I98z2btp8XLWWHQDmwKWSmEvtQW6Aj-JGInJQzoDAMnU2eNosdcXaiYH856zC16IfEucdb7SA_mqAymZuhm8lUCvL25hd-bd8p6mn1AZlOn92VySGp2TaaVYGwX-6L9by73bC6sIdi9iKPl3Iv13GEQZEKsTm1a96Bh6ilScmrctk3zmY4vBYp2SjHG9JRJvQgr2XzgA}'
     ```
