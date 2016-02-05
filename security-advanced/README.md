@@ -99,7 +99,7 @@ sudo -u hdfs hadoop fs  -mkdir /user/hr1
 sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
   ```
   
-  - Now login to ambari as admin and run this via Hive view
+  - Now login to ambari as admin and run this via Hive view (one statement at a time)
 ```
 CREATE TABLE `sample_07` (
 `code` string ,
@@ -107,19 +107,20 @@ CREATE TABLE `sample_07` (
 `total_emp` int ,  
 `salary` int )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
-
+```
+```
 load data local inpath '/tmp/sample_07.csv' into table sample_07;
-
-
+```
+```
 CREATE TABLE `sample_08` (
 `code` string ,
 `description` string ,  
 `total_emp` int ,  
 `salary` int )
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
-
+```
+```
 load data local inpath '/tmp/sample_08.csv' into table sample_08;
-
 ```
 
   
