@@ -1021,6 +1021,7 @@ Agenda:
 
 
 ## Knox 
+
 - Run these steps on the node where Knox was installed earlier
 - Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology) e.g. BadPass#1
    - Read password for use in following command (this will prompt you for a password and save it in knoxpass environment variable):
@@ -1208,8 +1209,13 @@ Agenda:
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-policy.png)
 
+- Now we can post some requests to WebHDFS over Knox to check its working. We will use curl with following arguments:
+  - -i (aka –include): used to output HTTP response header information. This will be important when the content of the HTTP Location header is required for subsequent requests.
+  - -k (aka –insecure) is used to avoid any issues resulting from the use of demonstration SSL certificates.
+  - -u (aka –user) is used to provide the credentials to be used when the client is challenged by the gateway.
+  - Note that most of the samples do not use the cookie features of cURL for the sake of simplicity. Therefore we will pass in user credentials with each curl request to authenticate.
 
-- Now ensure WebHDFS working by opening terminal to host where Knox is running by sending curl request to 8443 port where Knox is running:
+- Opening terminal to host where Knox is running and send below curl request to 8443 port where Knox is running:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
