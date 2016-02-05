@@ -819,6 +819,8 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - First name = namenode
       - Role: User
       - Group: hadoop-admins
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-add-nn.png) 
+      
 - Logout of Ranger
   - Top right > admin > Logout      
 - Login to Ranger as keyadmin/keyadmin
