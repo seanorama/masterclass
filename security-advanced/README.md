@@ -771,7 +771,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.groups=*
       - hadoop.kms.proxyuser.keyadmin.hosts=*
       - hadoop.kms.proxyuser.keyadmin.users=*      
-      
+        ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-proxy.png) 
   - Advanced ranger-kms-audit:
     - Audit to Solr
     - Audit to HDFS
