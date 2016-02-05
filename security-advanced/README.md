@@ -1284,6 +1284,13 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
     [app-logs, apps, ats, hdp, mapred, mr-history, ranger, tmp, user, zone_encr]
     ```
     
-  - 4. Access via browser e.g. http://54.68.246.157:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
+  - 4. Access via browser 
+    - Take the same url and replace localhost with public IP of Knox node e.g. https://54.68.246.157:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
+    - Open the URL via browser
+    - Login as sales1/BadPass#1
+    
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser1.png)
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser2.png)
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser3.png)
       
     
