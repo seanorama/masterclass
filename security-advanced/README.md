@@ -180,8 +180,7 @@ echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
    ```
 cert_url=https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/extras/ca.crt
 sudo yum -y install openldap-clients ca-certificates
-sudo curl -sSL "${cert_url}" \
-    -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
+sudo curl -sSL "${cert_url}" -o /etc/pki/ca-trust/source/anchors/hortonworks-net.crt
 
 sudo update-ca-trust force-enable
 sudo update-ca-trust extract
@@ -333,6 +332,7 @@ sudo yum -y -q install epel-release ## epel is required for adcli
 sudo yum -y -q install sssd oddjob-mkhomedir authconfig sssd-krb5 sssd-ad sssd-tools
 sudo yum -y -q install adcli
 
+#copy next 7 lines together
 sudo adcli join -v \
   --domain-controller=${ad_dc} \
   --domain-ou="${ad_ou}" \
@@ -341,6 +341,7 @@ sudo adcli join -v \
   -v \
   --show-details
 
+#copy from next line until second EOF
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
