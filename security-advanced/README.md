@@ -154,10 +154,10 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 - This should tell you why kerberos is needed on Hadoop :)
 
 
-##### Open Ambari and Manually install missing components
+### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox (and Hbase, if not already installed)
+- Use the 'Add Service' Wizard to install Knox and Hbase, if not already installed
   - When prompted for the Knox password, set it to `BadPass#1`
 
 - We will use Knox further in a later exercise.
