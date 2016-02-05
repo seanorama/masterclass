@@ -1297,7 +1297,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
     ```
     
   - 4. Access via browser 
-    - Take the same url we have been hitting via curl and replace localhost with public IP of Knox node e.g. **https**://PUBLIC_IP_OF_KNOX_HOST:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
+    - Take the same url we have been hitting via curl and replace localhost with public IP of Knox node (remember to use https!) e.g. **https**://PUBLIC_IP_OF_KNOX_HOST:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
     - Open the URL via browser
     - Login as sales1/BadPass#1
     
