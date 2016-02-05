@@ -99,7 +99,7 @@ sudo -u hdfs hadoop fs  -mkdir /user/hr1
 sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
   ```
   
-  - Now login to ambari as admin and run this via Hive view (one statement at a time)
+  - Now create Hive table by logging into ambari as admin and run this via Hive view (one statement at a time) e.g. http://52.32.113.77:8080/#/main/views/HIVE/1.0.0/AUTO_HIVE_INSTANCE
 ```
 CREATE TABLE `sample_07` (
 `code` string ,
