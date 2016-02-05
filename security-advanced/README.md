@@ -689,7 +689,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
 
 7.Advanced tab
-  - No changes needed
+  - No changes needed (skipping configuring Ranger authentication against AD for now)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
 - On Configure Identities page, you will have to enter your AD admin credentials:
