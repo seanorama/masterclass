@@ -825,17 +825,20 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Top right > admin > Logout      
 - Login to Ranger as keyadmin/keyadmin
 - Confirm the KMS repo was setup correctly
-  - Under Service Manager > KMS > Click the Edit icon (next to the trash icon)
+  - Under Service Manager > KMS > Click the Edit icon (next to the trash icon) to edit the KMS repo
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-edit-repo.png) 
   - Click 'Test connection' 
   - if it fails re-enter below fields and re-try:
     - Username: keyadmin@LAB.HORTONWORKS.NET
     - Password: BadPass#1
-  - Click Save  
-- Create a key called testkey - see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
+  - Once the test passes, click Save  
+  
+- Create a key called testkey - for reference: see [doc](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_use_ranger_kms.html)
   - Select Encryption > Key Manager
   - Select KMS service > pick your kms > Add new Key
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-createkey.png)
   
 - Add user hadoopadmin and nn to default key policy
   - Click Access Manager tab
