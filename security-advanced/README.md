@@ -1248,6 +1248,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
     ```
       - You can run below command to find a test file
+      
       ```
       hdfs dfs -ls /tmp/idtest.ambari-qa.*.in
       ```
