@@ -74,9 +74,11 @@ Credentials will be provided for these services by the instructor:
   
   - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
     - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-RM-public-host.png)  
 
   - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager) is installed?
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
   
 ### Why is security needed?
