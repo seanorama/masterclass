@@ -843,13 +843,15 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 - Add user hadoopadmin and nn to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy.png)
+
   - Edit the default policy
   - Under 'Select User', Add hadoopadmin and nn users
   - click Save
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
   
   
-- Run below to create a zone using the key and perform basic exercises 
+- Run below to create a zone using the key and perform basic key and EZ exercises 
 ```
 
 #run kinit as different users: hdfs, hadoopadmin, sales1
