@@ -853,6 +853,13 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   
   
 - Run below to create a zone using the key and perform basic key and EZ exercises 
+  - Create EZ using key
+  - Copy file to EZ
+  - Delete file from EZ
+  - View contents for raw file
+  - Prevent access to raw file
+  - **TODO** copy file across EZs
+  
 ```
 
 #run kinit as different users: hdfs, hadoopadmin, sales1
