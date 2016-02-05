@@ -80,6 +80,48 @@ Credentials will be provided for these services by the instructor:
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
+
+- Import data for later use
+```
+cd /tmp
+wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
+wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+```
+  - Create user dir for admin
+  ```
+   sudo -u hdfs hadoop fs  -mkdir /user/admin
+   sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
+
+   sudo -u hdfs hadoop fs  -mkdir /user/sales1
+   sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
+   
+sudo -u hdfs hadoop fs  -mkdir /user/hr1
+sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
+  ```
+  
+  - Now login to ambari as admin and run this via Hive view
+```
+CREATE TABLE `sample_07` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+load data local inpath '/tmp/sample_07.csv' into table sample_07;
+
+
+CREATE TABLE `sample_08` (
+`code` string ,
+`description` string ,  
+`total_emp` int ,  
+`salary` int )
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+load data local inpath '/tmp/sample_08.csv' into table sample_08;
+
+```
+
   
 ### Why is security needed?
 
@@ -1015,12 +1057,14 @@ hdfs dfs -chmod -R 000 /apps/hive/warehouse
 - Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
   - Automation to install views
 ```
-sudo git clone https://github.com/seanorama/ambari-bootstrap
+sudo su
+git clone https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap/extras/
 export ambari_pass=BadPass#1
 source ambari_functions.sh
-sudo ./ambari-views/create-views.sh
+./ambari-views/create-views.sh
 ```
+  - Restart HDFS via Ambari
 
 ## Day 3
 
