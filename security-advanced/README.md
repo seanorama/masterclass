@@ -1219,7 +1219,8 @@ Agenda:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
-
+  - This should return json object containing list of dirs/files located in root dir and their attributes
+  
 - Try the same request as hr1 and notice it fails with `Error 403 Forbidden` :
   - This is expected since in the policy above, we only allowed sales group to access WebHDFS over Knox
 ```
