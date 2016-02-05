@@ -1022,6 +1022,10 @@ Agenda:
 
 ## Knox 
 
+### Knox Configuration 
+
+#### Knox Configuration for AD authentication
+ 
 - Run these steps on the node where Knox was installed earlier
 - Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology) e.g. BadPass#1
    - Read password for use in following command (this will prompt you for a password and save it in knoxpass environment variable):
@@ -1035,15 +1039,6 @@ Agenda:
    sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
    unset knoxpass
    ```
-- *Configre HDFS for Knox*: Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
-  - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
-  - hadoop.proxyuser.knox.hosts=*
-    - (better would be to put a comma separated list of the FQDNs of the hosts)
-  - Now restart HDFS
-  - Without this step you will see an error like below when you run the WebHDFS request later on:
-  ```
-   org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate sales1"
-  ```
   
 - Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. Then restart Knox
   - How to tell what configs were changed from defaults? 
@@ -1198,6 +1193,21 @@ Agenda:
         </topology>
 ```
 
+#### HDFS Configuration for Knox
+
+-  Tell Hadoop to allow our users to access Knox from any node of the cluster. Make the below change in Ambari > HDFS > Config > Custom core-site 
+  - hadoop.proxyuser.knox.groups=users,hadoop-admins,sales,hr,legal
+  - hadoop.proxyuser.knox.hosts=*
+    - (better would be to put a comma separated list of the FQDNs of the hosts)
+  - Now restart HDFS
+  - Without this step you will see an error like below when you run the WebHDFS request later on:
+  ```
+   org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate sales1"
+  ```
+
+
+#### Ranger Configuration for Knox
+
 - Setup a Knox policy for sales group for WEBHDFS by:
 - Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
   - Policy name: webhdfs
@@ -1208,6 +1218,8 @@ Agenda:
   - Add
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-webhdfs-policy.png)
+
+#### WebHDFS over Knox exercises 
 
 - Now we can post some requests to WebHDFS over Knox to check its working. We will use curl with following arguments:
   - -i (aka –include): used to output HTTP response header information. This will be important when the content of the HTTP Location header is required for subsequent requests.
@@ -1243,7 +1255,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
   curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
   ```
   
-  - 2. Open file via WEBHDFS
+  - 2. Open file via WebHDFS
     - List files under /tmp and pick a text file to open:
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
