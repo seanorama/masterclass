@@ -341,7 +341,7 @@ sudo adcli join -v \
   -v \
   --show-details
 
-#copy from next line until second EOF
+#copy/paste from next line until second EOF in one shot
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
