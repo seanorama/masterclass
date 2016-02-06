@@ -88,7 +88,7 @@ Credentials will be provided for these services by the instructor:
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
   - From Ambari how do I check the cluster name?
-    - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo
+    - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo. If its long, you can hover over it to produce a helptext dialog with the full name
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/clustername.png)
 
 - Import data for later use
