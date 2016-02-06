@@ -1055,8 +1055,8 @@ hdfs dfs -ls /sales
     - Policy that allowed the access
     - Time
     - Requesting user
-    - Service type
-    - Resource name (e.g. hdfs, hive, hbase etc)
+    - Service type (e.g. hdfs, hive, hbase etc)
+    - Resource name 
     - Access type (e.g. read, write, execute)
     - Result (e.g. allowed or denied)
     - Access enforcer (i.e. whether native acl or ranger acls were used)
@@ -1070,6 +1070,7 @@ hdfs dfs -ls /sales
 
 - Logout as sales1 and log back in as hr1
 ```
+kdestroy
 #logout as sales1
 logout
 
@@ -1100,9 +1101,147 @@ hdfs dfs -ls /sales
   - request by hr1 user was denied
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-summary.png)  
 
+- Logout as hr1
+```
+kdestroy
+logout
+```
 - We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
 
 #### Access secured Hive
+
+- Goal: Setup Hive authorization policies to ensure sales users only have access to:
+  - code, description columns in default.sample_07
+  - all columns in default.sample_08
+
+- Run these steps from node where Hive (or client) is installed 
+
+- Login as sales1 and attempt to connect to Hive via beeline and access sample_07, sample_08 tables
+```
+su - sales1
+# enter password: BadPass#1
+
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+```
+- This fails with `GSS initiate failed` because the cluster is kerborized and we have not authenticated yet
+
+- To exit beeline:
+```
+!q
+```
+- Authenticate as sales1 user and check the ticket
+```
+kinit
+# enter password: BadPass#1
+
+klist
+## Default principal: sales1@LAB.HORTONWORKS.NET
+```
+- Now try connect to Hive via beeline as sales1
+```
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+```
+- This time it connects. Now try to run a query
+```
+beeline> select code, description from sample_07;
+```
+- Now it fails with authorization error: 
+  - `HiveAccessControlException Permission denied: user [sales1] does not have [SELECT] privilege on [default/sample_07]`
+
+- Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
+
+- In Ranger, click on 'Audit' to open the Audits page and filter by below. 
+  - Service Type: `Hive`
+  - User: `sales1`
+  
+- Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-denied.png)
+
+- To create an HDFS Policy in Ranger, follow below steps:
+  - On the 'Access Manager' tab click HDFS > (clustername)_hive
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-policy.png)
+  - This will open the list of HIVE policies
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-edit-policy.png)
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
+    - Policy Name: `sample_07`
+    - Hive Database: `default`
+    - table: `sample_07`
+    - Hive Column: `code` `description`
+    - Group: `sales`
+    - Permissions : `select`
+    - Add
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy.png)
+  
+- Now try accessing the columns again and now the query works
+```
+beeline> select code, description from sample_07;
+```
+
+- In Ranger, click on 'Audit' to open the Audits page and filter by below:
+  - Service Type: HIVE
+  - User: sales1
+  
+- Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-allowed.png)  
+
+  - You can also see the details that were captured for each request:
+    - Policy that allowed the access
+    - Time
+    - Requesting user
+    - Service type (e.g. hdfs, hive, hbase etc)
+    - Resource name 
+    - Access type (e.g. read, write, execute)
+    - Result (e.g. allowed or denied)
+    - Access enforcer (i.e. whether native acl or ranger acls were used)
+    - Client IP
+    - Event count
+    
+- For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-policy-details.png)  
+
+- Now let's check whether non-sales users can access the table
+
+- Logout as sales1 and log back in as hr1
+```
+kdestroy
+#logout as sales1
+logout
+
+#login as hr1 and authenticate
+su - hr1
+# enter password: BadPass#1
+
+kinit
+# enter password: BadPass#1
+
+klist
+## Default principal: hr1@LAB.HORTONWORKS.NET
+```
+- Try to access the same dir as hr1 and notice it fails
+```
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+```
+```
+beeline> select code, description from sample_07;
+```
+- In Ranger, click on 'Audit' to open the Audits page and this time filter by 'Resource Name'
+  - Service Type: `HIVE`
+  - Resource Name: `sample_07`
+  
+- Notice you can see the history/details of all the requests made for /sales directory:
+  - created by hadoopadmin 
+  - initial request by sales1 user was denied 
+  - subsequent request by sales1 user was allowed (once the policy was created)
+  - request by hr1 user was denied
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-summary.png)  
+
+- Logout as hr1
+```
+kdestroy
+logout
+```
+- We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
+
 
 #### Access secured HBase
 
