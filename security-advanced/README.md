@@ -37,7 +37,7 @@
     - WebHDFS
     - Hive?
 - [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9)
-  - Configure Ambari views for kerberos
+  - Configure Ambari views for kerberos?
 
 ---------------
 
@@ -1915,8 +1915,9 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 # Lab 9 - Optional
 
 ## Other Security features for Ambari
-
+**TODO**
 - Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
+
   - Automation to install views
 ```
 sudo su
