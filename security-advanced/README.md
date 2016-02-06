@@ -683,8 +683,11 @@ unable to load certificate
 
 #### Setup SSL for Ambari server
 
+**TODO**
 
 ### SPNEGO
+
+**TODO**
 
 - SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
 
@@ -1848,4 +1851,8 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser2.png)
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser3.png)
       
+
+#### Hive over Knox
+
+**TODO** 
     
