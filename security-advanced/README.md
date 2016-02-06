@@ -5,6 +5,7 @@
   - Install Knox
   - Security w/o kerberos
 - [Lab 2](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-2)
+  - AD overview
   - Configure Name Resolution & AD Certificate
   - Setup Access to Active Directory Server
   - Enable Active Directory Authentication for Ambari
@@ -32,32 +33,6 @@
 ---------------
 
 # Lab 1
-
-## AD overview
-
-- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
-  - CorpUsers OU, which contains:
-    - business users and groups (e.g. it1, hr1, legal1) and 
-    - hadoopadmin: Admin user (for AD, Ambari, ...)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
-  
-  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
-  
-  - HadoopServices OU: hadoop service principals (will be created by Ambari)
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
-  
-  - HadoopNodes OU: list of nodes registered with AD
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
-
-- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
-  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
-  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
-  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
-  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
-
-
-- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/cc780336(v=ws.10).aspx) 
 
 ## Accessing your Cluster
 
@@ -210,6 +185,33 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 -----------------------------
 
 # Lab 2
+
+### AD overview
+
+- Active Directory will already be setup by the instructor. A basic structure of OrganizationalUnits will have been pre-created to look something like the below:
+  - CorpUsers OU, which contains:
+    - business users and groups (e.g. it1, hr1, legal1) and 
+    - hadoopadmin: Admin user (for AD, Ambari, ...)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-corpusers.png)
+  
+  - ServiceUsers OU: service users - that would not be created by Ambari  (e.g. rangeradmin, ambari etc)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-serviceusers.png)
+  
+  - HadoopServices OU: hadoop service principals (will be created by Ambari)
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopservices.png)  
+  
+  - HadoopNodes OU: list of nodes registered with AD
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AD-hadoopnodes.png)
+
+- In addition, the below steps would have been completed in advance [per doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_use_an_existing_active_directory_domain.html):
+  - Ambari Server and cluster hosts have network access to, and be able to resolve the DNS names of, the Domain Controllers.
+  - Active Directory secure LDAP (LDAPS) connectivity has been configured.
+  - Active Directory User container for principals has been created and is on-hand. For example, "ou=HadoopServices,dc=lab,dc=hortonworks,dc=net"
+  - Active Directory administrative credentials with delegated control of "Create, delete, and manage user accounts" on the previously mentioned User container are on-hand. e.g. hadoopadmin
+
+
+- For general info on Active Directory refer to Microsoft website [here](https://technet.microsoft.com/en-us/library/cc780336(v=ws.10).aspx) 
+
 
 ### Configure name resolution & certificate to Active Directory
 
