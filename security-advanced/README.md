@@ -1157,7 +1157,7 @@ beeline> select code, description from sample_07;
 - Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-denied.png)
 
-- To create an HDFS Policy in Ranger, follow below steps:
+- To create an HIVE Policy in Ranger, follow below steps:
   - On the 'Access Manager' tab click HDFS > (clustername)_hive
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-policy.png)
   - This will open the list of HIVE policies
