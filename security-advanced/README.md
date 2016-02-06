@@ -72,6 +72,13 @@ Credentials will be provided for these services by the instructor:
   54.68.246.157  
   ```
   
+  - From SSH terminal, how can I find the cluster name?
+  ```
+  output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+  cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+  echo $cluster
+  ```
+  
   - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
     - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-RM-public-host.png)  
@@ -80,6 +87,9 @@ Credentials will be provided for these services by the instructor:
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
+  - From Ambari how do I check the cluster name?
+    - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/clustername.png)
 
 - Import data for later use
 ```
@@ -1031,7 +1041,6 @@ hdfs dfs -ls /sales
     - Add
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-create-policy.png)
   
-
 - Now try accessing the dir again as sales1 and now there is no error seen
 ```
 hdfs dfs -ls /sales
