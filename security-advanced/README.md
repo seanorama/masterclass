@@ -1093,7 +1093,7 @@ hdfs dfs -ls /sales
   - Service Type: `HDFS`
   - Resource Name: `/sales`
   
-- Notice you can see details of all the requests made for /sales directory:
+- Notice you can see the history/details of all the requests made for /sales directory:
   - created by hadoopadmin 
   - initial request by sales1 user was denied 
   - subsequent request by sales1 user was allowed (once the policy was created)
