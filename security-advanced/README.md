@@ -1275,12 +1275,12 @@ kinit
 klist
 ## Default principal: sales1@LAB.HORTONWORKS.NET
 ```
-- Now try connect to Hbase shell as sales1
+- Now try connect to Hbase shell and list tables as sales1
 ```
 hbase shell
 hbase> list 'default'
 ```
-- This time it connects. Now try to create a table called `sales` with column family called `cf`
+- This time it works. Now try to create a table called `sales` with column family called `cf`
 ```
 hbase> create 'sales', 'cf'
 ```
@@ -1370,10 +1370,10 @@ hbase> list 'default'
 ```
 hbase> create 'sales', 'cf'
 ```
-- In Ranger, click on 'Audit' to open the Audits page and filter by 'Service Type' = 'HBASE'
+- In Ranger, click on 'Audit' to open the Audits page and filter by:
   - Service Type: `HBASE`
+  - Resource Name: `sales`
 
-  
 - Here you can see the request by sales1 was allowed but hr1 was denied
 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-summary.png)  
