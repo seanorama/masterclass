@@ -22,6 +22,10 @@
   - HDFS encryption exercises
 - [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
   - Secured Hadoop exercises
+    - HDFS
+    - Hive
+    - HBase
+    - Sqoop?
 - [Lab 8](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
