@@ -91,12 +91,12 @@ Credentials will be provided for these services by the instructor:
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
 
-- Import data for later use
-```
-cd /tmp
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
-```
+- Lets import data into a Hive table for later labs
+  ```
+  cd /tmp
+  wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
+  wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+  ```
   - Create user dir for admin, sales1 and hr1
   ```
    sudo -u hdfs hadoop fs  -mkdir /user/admin
@@ -106,9 +106,7 @@ wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/
    sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
    
    sudo -u hdfs hadoop fs  -mkdir /user/hr1
-   sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
-   
-   sudo -u hdfs hadoop fs -mkdir /sales   
+   sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1   
   ```
     
   - Now create Hive table by either
