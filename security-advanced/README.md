@@ -14,6 +14,11 @@
   - Setup AD/Operating System Integration using SSSD - AD KDC
 - [Lab 4](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-4)
   - Ambari Server Security
+    - Kerberos for Ambari
+    - Ambari server as non-root
+    - Ambari Encrypt Database and LDAP Passwords
+    - SSL For Ambari server ?
+    - SPNEGO ?
 - [Lab 5](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-5)
   - Ranger install pre-reqs
   - Ranger install
@@ -753,7 +758,7 @@ logoff
 
 ### Ambari views 
 
-Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
+Ambari views setup on secure cluster will be covered in later lab ([here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari))
 
 ------------------
 
