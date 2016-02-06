@@ -1,4 +1,4 @@
-# Environment notes
+# Lab 1
 
 ## AD overview
 
@@ -174,6 +174,10 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 
 - We will use Knox further in a later exercise.
 
+-----------------------------
+
+# Lab 2
+
 ### Configure name resolution & certificate to Active Directory
 
 **Run below on all nodes**
@@ -292,6 +296,8 @@ EOF
   - Logout and log back into Ambari as 'hadoopadmin' and verify the user has rights to manage the cluster
 
 6. (optional) Disable local 'admin' user
+
+# Lab 3
  
 ## Kerberize the Cluster
 
@@ -468,6 +474,8 @@ hdfs dfs -ls /tmp/hive
 - Notice that now that the cluster is kerborized, we were not able to circumvent security by setting the env var 
 
 --------------
+
+# Lab 4
 
 ## Security options for Ambari
 
@@ -712,6 +720,8 @@ logoff
 Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
 
 ------------------
+
+# Lab 5
 
 ## Ranger 
 
@@ -962,6 +972,8 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
 ------------------
 
+# Lab 6
+
 ## Ranger KMS/Data encryption setup
 
 
@@ -1143,6 +1155,8 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 ```
 
 ------------------
+
+# Lab 7
 
 ## Secured Hadoop exercises
 
@@ -1559,8 +1573,11 @@ logout
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
 
+**TODO** Sqoop
+
 ------------------
 
+# Lab 8
 
 ## Knox 
 
@@ -1853,6 +1870,8 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 **TODO** 
 
 ------------------
+
+# Lab 9 - Optional
 
 ## Other Security features for Ambari
 
