@@ -258,9 +258,6 @@ openssl s_client -connect ad01:636 </dev/null
 
 **Now repeat above steps on all nodes**
 
-## Secure Ambari
-
-### Create Ambari Keystore
 
 ### Setup Ambari/AD sync
 
