@@ -502,11 +502,15 @@ Agenda:
   - Access webUIs via SPNEGO 
   - Manually setup Solr Ranger plugin(?)
 
+--------------
 
+## Security options for Ambari
 
-## Kerberos for Ambari
+Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/ch_amb_sec_guide.html)
 
-- Setup kerberos for Ambari. Below steps as based on doc: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_Ambari_Security_Guide/content/_optional_set_up_kerberos_for_ambari_server.html
+### Kerberos for Ambari
+
+- Setup kerberos for Ambari
 
 ```
 # run on Ambari node to start security setup guide
@@ -521,6 +525,8 @@ sudo ambari-server setup-security
   - choice: `3`
   - principal: `ambari@LAB.HORTONWORKS.NET`
   - keytab path: `/etc/security/keytabs/ambari.keytab`
+  
+- Sample output:  
 ```
 Using python  /usr/bin/python2.7
 Security setup options...
@@ -546,14 +552,149 @@ sudo ambari-server restart
 sudo ambari-agent restart
 ```
 
-- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
-- Setup Ambari as non root http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_ambari_for_non-root.html
+### Ambari server as non-root
+- To setup Ambari server as non-root run below on Ambari-server node:
+```
+sudo ambari-server setup
+```
+- Then enter the below at the prompts:
+  - OK to continue? y
+  - Customize user account for ambari-server daemon? y
+  - Enter user account for ambari-server daemon (root):ambari
+  - Do you want to change Oracle JDK [y/n] (n)? n
+  - Enter advanced database configuration [y/n] (n)? n
 
-- Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
+- Sample output:
+```
+$ sudo ambari-server setup
+Using python  /usr/bin/python2
+Setup ambari-server
+Checking SELinux...
+SELinux status is 'enabled'
+SELinux mode is 'permissive'
+WARNING: SELinux is set to 'permissive' mode and temporarily disabled.
+OK to continue [y/n] (y)? y
+Customize user account for ambari-server daemon [y/n] (n)? y
+Enter user account for ambari-server daemon (root):ambari
+Adjusting ambari-server permissions and ownership...
+Checking firewall status...
+Redirecting to /bin/systemctl status  iptables.service
+
+Checking JDK...
+Do you want to change Oracle JDK [y/n] (n)? n
+Completing setup...
+Configuring database...
+Enter advanced database configuration [y/n] (n)? n
+Configuring database...
+Default properties detected. Using built-in database.
+Configuring ambari database...
+Checking PostgreSQL...
+Configuring local database...
+Connecting to local database...done.
+Configuring PostgreSQL...
+Backup for pg_hba found, reconfiguration not required
+Extracting system views...
+.......
+Adjusting ambari-server permissions and ownership...
+Ambari Server 'setup' completed successfully.
+```
+
+### Ambari Encrypt Database and LDAP Passwords
+
+- To encrypt password, run below
+```
+sudo ambari-server stop
+sudo ambari-server setup-security
+```
+- Then enter the below at the prompts:
+  - enter choice: 2
+  - provide master key: BadPass#1
+  - re-enter master key: BadPass#1
+  - do you want to persist? y
+
+- Then start ambari
+```
+sudo ambari-server start
+```  
+- Sample output
+```
+$ sudo ambari-server setup-security
+Using python  /usr/bin/python2
+Security setup options...
+===========================================================================
+Choose one of the following options:
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 2
+Please provide master key for locking the credential store:
+Re-enter master key:
+Do you want to persist master key. If you choose not to persist, you need to provide the Master Key while starting the ambari server as an env variable named AMBARI_SECURITY_MASTER_KEY or the start will prompt for the master key. Persist [y/n] (y)? y
+Adjusting ambari-server permissions and ownership...
+Ambari Server 'setup-security' completed successfully.
+```
+
+### SSL For Ambari server
+
+#### Create self signed certificate
+
+```
+$ openssl genrsa -out ambari.key 2048
+Generating RSA private key, 2048 bit long modulus
+....+++
+.........+++
+e is 65537 (0x10001)
+
+$ openssl req -new -key ambari.key -out ambari.csr
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:US
+State or Province Name (full name) []:CA
+Locality Name (eg, city) [Default City]:Santa Clara
+Organization Name (eg, company) [Default Company Ltd]:Hortonworks
+Organizational Unit Name (eg, section) []:Sales
+Common Name (eg, your name or your server's hostname) []:lab.hortonworks.net
+Email Address []:admin@hortonworks.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:BadPass#1
+An optional company name []:
+
+$ openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
+Signature ok
+subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=lab.hortonworks.net/emailAddress=admin@hortonworks.com
+Getting Private key
+
+$ openssl x509 -in ambari.crt -inform der -outform pem -out ambari.pem
+unable to load certificate
+139688323946400:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1345:
+139688323946400:error:0D07803A:asn1 encoding routines:ASN1_ITEM_EX_D2I:nested asn1 error:tasn_dec.c:393:Type=X509
+
+```
+
+#### Setup SSL for Ambari server
+
+
+### SPNEGO
+
+- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
+
+### Ambari views 
+
+Ambari views setup on secure cluster details [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#other-security-features-for-ambari)
+
+------------------
 
 ## Ranger prereqs
-
-
 
 ##### Create & confirm MySQL user 'root'
 
