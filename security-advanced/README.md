@@ -1110,9 +1110,7 @@ logout
 
 #### Access secured Hive
 
-- Goal: Setup Hive authorization policies to ensure sales users only have access to:
-  - code, description columns in default.sample_07
-  - all columns in default.sample_08
+- Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
 - Run these steps from node where Hive (or client) is installed 
 
@@ -1177,6 +1175,10 @@ beeline> select code, description from sample_07;
 beeline> select code, description from sample_07;
 ```
 
+- Note though, that if you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
+  - `beeline> desc sample_07;`
+  - `beeline> select * from sample_07;`
+  
 - In Ranger, click on 'Audit' to open the Audits page and filter by below:
   - Service Type: HIVE
   - User: sales1
@@ -1224,23 +1226,25 @@ beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@H
 ```
 beeline> select code, description from sample_07;
 ```
-- In Ranger, click on 'Audit' to open the Audits page and this time filter by 'Resource Name'
+- In Ranger, click on 'Audit' to open the Audits page and filter by 'Service Type' = 'Hive'
   - Service Type: `HIVE`
-  - Resource Name: `sample_07`
+
   
-- Notice you can see the history/details of all the requests made for /sales directory:
-  - created by hadoopadmin 
-  - initial request by sales1 user was denied 
-  - subsequent request by sales1 user was allowed (once the policy was created)
-  - request by hr1 user was denied
-![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-summary.png)  
+- Here you can see the request by sales1 was allowed but hr1 was denied
+
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-summary.png)  
+
+- Quit beeline
+```
+!q
+```
 
 - Logout as hr1
 ```
 kdestroy
 logout
 ```
-- We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
+- We have setup Hive authorization policies to ensure only sales users have access to code, description columns in default.sample_07
 
 
 #### Access secured HBase
