@@ -156,6 +156,9 @@ load data local inpath '/tmp/sample_08.csv' into table sample_08;
   
 ### Why is security needed?
 
+
+##### HDFS access on unsecured cluster
+
 - On your unsecured cluster try to access a restricted dir in HDFS
 ```
 hdfs dfs -ls /tmp/hive   
@@ -174,6 +177,8 @@ unset HADOOP_USER_NAME
 hdfs dfs -ls /tmp/hive  
 ```
 
+##### WebHDFS access on unsecured cluster
+
 - From node running NameNode, make a WebHDFS request using below command:
 ```
 curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
@@ -181,6 +186,13 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 
 - In the absence of Knox, notice it goes over HTTP (not HTTPS) on port 50070 and no credentials were needed
 
+##### Web UI access on unsecured cluster
+
+- From Ambari notice you can open the WeUIs without any authentication
+  - HDFS > Quicklinks > NameNode UI
+  - Madreduce > Quicklinks > JobHistory UI
+  - YARN > Quicklinks > ResourceManager UI
+    
 - This should tell you why kerberos is needed on Hadoop :)
 
 
@@ -526,6 +538,7 @@ Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-
 ### Kerberos for Ambari
 
 - Setup kerberos for Ambari
+  - Required to configure Ambari views for kerberos
 
 ```
 # run on Ambari node to start security setup guide
@@ -616,6 +629,8 @@ Ambari Server 'setup' completed successfully.
 
 ### Ambari Encrypt Database and LDAP Passwords
 
+- Needed to allow Ambari to cache the admin password so its not prompted for each each you add, move or remove a service via Ambari
+
 - To encrypt password, run below
 ```
 sudo ambari-server stop
@@ -653,6 +668,8 @@ Ambari Server 'setup-security' completed successfully.
 ```
 
 ### SSL For Ambari server
+
+- Enables Ambari WebUI to run on HTTPS instead of HTTP
 
 #### Create self signed certificate
 
@@ -701,6 +718,8 @@ unable to load certificate
 **TODO**
 
 ### SPNEGO
+
+- Needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
 
 - Login to ambari node as root
 ```
