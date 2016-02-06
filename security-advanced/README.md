@@ -1,14 +1,33 @@
 # Contents
 
 - [Lab 1](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-1)
+  - Access cluster
+  - Install Knox
+  - Security w/o kerberos
 - [Lab 2](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-2)
+  - Configure Name Resolution & AD Certificate
+  - Setup Access to Active Directory Server
+  - Enable Active Directory Authentication for Ambari
 - [Lab 3](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-3)
+  - Kerborize cluster
+  - Setup AD/Operating System Integration using SSSD - AD KDC
 - [Lab 4](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-4)
+  - Ambari Server Security
 - [Lab 5](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-5)
+  - Ranger install pre-reqs
+  - Ranger install
 - [Lab 6](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-6)
+  - Ranger KMS install
+  - HDFS encryption exercises
 - [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
+  - Secured Hadoop exercises
 - [Lab 8](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-8)
+  - Configure Knox to authenticate via AD
+  - Utilize Knox to Connect to Hadoop  Cluster Services
+    - WebHDFS
+    - Hive
 - [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9)
+  - Configure Ambari views for kerberos
 
 ---------------
 
