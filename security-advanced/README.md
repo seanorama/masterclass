@@ -992,7 +992,7 @@ su - sales1
 
 hdfs dfs -ls /sales
 ```
-- Will fail with `GSSException: No valid credentials provided`
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerborized and we have not authenticated yet
 
 - Authenticate as sales1 user and check the ticket
 ```
