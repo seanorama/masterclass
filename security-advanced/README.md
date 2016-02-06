@@ -25,6 +25,7 @@
 - [Lab 6](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-6)
   - Ranger KMS install
   - HDFS encryption exercises
+  - Move Hive warehouse to EZ?
 - [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
   - Secured Hadoop exercises
     - HDFS
@@ -1134,6 +1135,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - View contents for raw file
   - Prevent access to raw file
   - **TODO** copy file across EZs
+  - **TODO** move hive warehouse dir to EZ
   
 ```
 
@@ -1194,6 +1196,7 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 ##cat: Access is denied for hdfs since the superuser is not allowed to perform this operation.
 
 ```
+
 
 ------------------
 
