@@ -1006,7 +1006,8 @@ klist
 ```
 hdfs dfs -ls /sales
 ```
-- This time it fails with `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
+- This time it fails with authorization error: 
+  - `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
 
 - Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
 
