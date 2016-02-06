@@ -1158,7 +1158,7 @@ beeline> select code, description from sample_07;
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-denied.png)
 
 - To create an HIVE Policy in Ranger, follow below steps:
-  - On the 'Access Manager' tab click HDFS > (clustername)_hive
+  - On the 'Access Manager' tab click HIVE > (clustername)_hive
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-policy.png)
   - This will open the list of HIVE policies
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-edit-policy.png)
