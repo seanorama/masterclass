@@ -996,7 +996,6 @@ sudo -u hadoopadmin hadoop fs -chmod 000 /sales
 - Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
 ```
 sudo su - sales1
-# enter password: BadPass#1
 
 hdfs dfs -ls /sales
 ```
@@ -1076,7 +1075,6 @@ logout
 
 #login as hr1 and authenticate
 sudo su - hr1
-# enter password: BadPass#1
 
 kinit
 # enter password: BadPass#1
@@ -1117,7 +1115,6 @@ logout
 - Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
 ```
 sudo su - sales1
-# enter password: BadPass#1
 
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
 ```
@@ -1211,7 +1208,6 @@ logout
 
 #login as hr1 and authenticate
 sudo su - hr1
-# enter password: BadPass#1
 
 kinit
 # enter password: BadPass#1
@@ -1256,7 +1252,6 @@ logout
 - Login as sales1
 ```
 sudo su - sales1
-# enter password: BadPass#1
 ```
 -  Start the hbase shell
 ```
@@ -1358,7 +1353,6 @@ logout
 
 #login as hr1 and authenticate
 sudo su - hr1
-# enter password: BadPass#1
 
 kinit
 # enter password: BadPass#1
