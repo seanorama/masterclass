@@ -87,7 +87,7 @@ cd /tmp
 wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
 wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
 ```
-  - Create user dir for admin
+  - Create user dir for admin, sales1 and hr1
   ```
    sudo -u hdfs hadoop fs  -mkdir /user/admin
    sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
@@ -95,10 +95,12 @@ wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/
    sudo -u hdfs hadoop fs  -mkdir /user/sales1
    sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
    
-sudo -u hdfs hadoop fs  -mkdir /user/hr1
-sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
+   sudo -u hdfs hadoop fs  -mkdir /user/hr1
+   sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1
+   
+   sudo -u hdfs hadoop fs -mkdir /sales   
   ```
-  
+    
   - Now create Hive table by either
     - logging into ambari as admin and run this via Hive view (one statement at a time) e.g. http://52.32.113.77:8080/#/main/views/HIVE/1.0.0/AUTO_HIVE_INSTANCE
     - Or starting beeline shell from the node where Hive is installed: `beeline -u "jdbc:hive2://localhost:10000/default"`
@@ -966,7 +968,137 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 ```
 
-#### HDFS Exercise
+## Secured Hadoop exercises
+
+#### Access secured HDFS
+
+- Goal: Create a /sales dir in HDFS and ensure only users belonging to Sales group have access
+ 
+- Create an HDFS dir as hadoopadmin
+```
+#authenticate
+sudo -u hadoopadmin kinit
+# enter password: BadPass#1
+
+#create dir and set permissions to 000
+sudo -u hadoopadmin hadoop fs -mkdir /sales
+sudo -u hadoopadmin hadoop fs -chmod 000 /sales
+```  
+
+- Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
+```
+su - sales1
+# enter password: BadPass#1
+
+hdfs dfs -ls /sales
+```
+- Will fail with `GSSException: No valid credentials provided`
+
+- Authenticate as sales1 user and check the ticket
+```
+kinit
+# enter password: BadPass#1
+
+klist
+## Default principal: sales1@LAB.HORTONWORKS.NET
+```
+- Now try accessing the dir again as sales1
+```
+hdfs dfs -ls /sales
+```
+- This time it fails with `Permission denied: user=sales1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------`
+
+- Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
+
+- In Ranger, click on 'Audit' to open the Audits page and filter by below. 
+  - Service Type: `HDFS`
+  - User: `sales1`
+  
+- Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-denied.png)
+
+- To create an HDFS Policy in Ranger, follow below steps:
+  - On the 'Access Manager' tab click HDFS > (clustername)_hadoop
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-policy.png)
+  - This will open the list of HDFS policies
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy.png)
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `/sales` dir:
+    - Policy Name: `sales dir`
+    - Resource Path: `/sales`
+    - Group: `sales`
+    - Permissions : `Execute Read Write`
+    - Add
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-create-policy.png)
+  
+
+- Now try accessing the dir again as sales1 and now there is no error seen
+```
+hdfs dfs -ls /sales
+```
+
+- In Ranger, click on 'Audit' to open the Audits page and filter by below:
+  - Service Type: HDFS
+  - User: sales1
+  
+- Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-allowed.png)  
+
+  - You can also see the details that were captured for each request:
+    - Policy that allowed the access
+    - Time
+    - Requesting user
+    - Service type
+    - Resource name (e.g. hdfs, hive, hbase etc)
+    - Access type (e.g. read, write, execute)
+    - Result (e.g. allowed or denied)
+    - Access enforcer (i.e. whether native acl or ranger acls were used)
+    - Client IP
+    - Event count
+    
+- For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-policy-details.png)  
+
+- Now let's check whether non-sales users can access the directory
+
+- Logout as sales1 and log back in as hr1
+```
+#logout as sales1
+logout
+
+#login as hr1 and authenticate
+su - hr1
+# enter password: BadPass#1
+
+kinit
+# enter password: BadPass#1
+
+klist
+## Default principal: hr1@LAB.HORTONWORKS.NET
+```
+- Try to access the same dir as hr1 and notice it fails
+```
+hdfs dfs -ls /sales
+## ls: Permission denied: user=hr1, access=READ_EXECUTE, inode="/sales":hadoopadmin:hdfs:d---------
+```
+
+- In Ranger, click on 'Audit' to open the Audits page and this time filter by 'Resource Name'
+  - Service Type: `HDFS`
+  - Resource Name: `/sales`
+  
+- Notice you can see details of all the requests made for /sales directory:
+  - created by hadoopadmin 
+  - initial request by sales1 user was denied 
+  - subsequent request by sales1 user was allowed (once the policy was created)
+  - request by hr1 user was denied
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HDFS-summary.png)  
+
+- We have successfully setup an HDFS dir which is only accessible by sales group (and admins)
+
+#### Access secured Hive
+
+#### Access secured HBase
+
+#### Optional - HDFS Exercise
 
 Simple exercise to show why to set dir permission to 000 for dirs whose authorization is to be managed be Ranger
 
@@ -984,8 +1116,8 @@ wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/
    sudo -u hdfs hadoop fs  -mkdir /user/sales1
    sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
    
-sudo -u hdfs hadoop fs  -mkdir /user/sales2
-sudo -u hdfs hadoop fs  -chown sales2:hadoop /user/sales2
+   sudo -u hdfs hadoop fs  -mkdir /user/sales2
+   sudo -u hdfs hadoop fs  -chown sales2:hadoop /user/sales2
   ```
   
   - Now login to ambari as admin and run this via Hive view
