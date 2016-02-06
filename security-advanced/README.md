@@ -467,41 +467,6 @@ hdfs dfs -ls /tmp/hive
 ```
 - Notice that now that the cluster is kerborized, we were not able to circumvent security by setting the env var 
 
-******************************
-
-## Day two
-
-Agenda:
-
-  - LDAP tool demo
-  - Ranger pre-reqs
-    - Install any missing services i.e. Kafka
-    - Setup MySQL
-    - Setup Solr for Ranger audits
-  - Ranger install
-    - Configure MySQL/Solr/HDFS audits
-    - Configure user/group sync with AD
-    - Configure plugins
-    - Auth via AD
-  - Ambari views setup on secure cluster
-    - Kerberos for Ambari 
-    - Files
-    - Hive
-    - Others (Jobs/Capacity Scheduler...)
-  - Using Hadoop components in secured mode. Audit excercises for:
-    - HDFS
-    - Hive
-    - Hbase
-    - YARN
-    - Storm
-    - Kafka
-    - Knox
-      - AD integration
-      - WebHDFS
-      - Hive
-  - Access webUIs via SPNEGO 
-  - Manually setup Solr Ranger plugin(?)
-
 --------------
 
 ## Security options for Ambari
@@ -687,9 +652,60 @@ unable to load certificate
 
 ### SPNEGO
 
-**TODO**
+- Login to ambari node as root
+```
+sudo su
+```
+- Create Secret Key Used for Signing Authentication Tokens
+```
+dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
+chown hdfs:hadoop /etc/security/http_secret
+chmod 440 /etc/security/http_secret
+```
+- Place file in Ambari resources dir so it gets pushes to all nodes
+```
+cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
+ambari-server restart
+```
 
-- SPNEGO: http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_Ambari_Security_Guide/content/_configuring_http_authentication_for_HDFS_YARN_MapReduce2_HBase_Oozie_Falcon_and_Storm.html
+- On all the other nodes, after the http_secret file appears under /var/lib/ambari-agent/cache/host_scripts...
+
+- Run below as root to put it in right dir and correct its permissions
+```
+cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
+chown hdfs:hadoop /etc/security/http_secret
+chmod 440 /etc/security/http_secret
+```
+
+- logoff root on each node
+```
+logoff
+```
+
+
+- In Ambari > HDFS > Configs, set the below
+  - Advanced core-site:
+    - hadoop.http.authentication.simple.anonymous.allowed = false
+  
+  - Custom core-site set the below (using bulk edit tab):
+    - hadoop.http.authentication.signature.secret.file = /etc/security/http_secret
+    - hadoop.http.authentication.typ= kerberos
+    - hadoop.http.authentication.kerberos.keytab = /etc/security/keytabs/spnego.service.keytab
+    - hadoop.http.authentication.kerberos.principal = HTTP/_HOST@HORTONWORKS.COM
+    - hadoop.http.authentication.cookie.domain = hortonworks.com
+
+  - In Custom core-site, double check that the below is already set:
+    - hadoop.http.filter.initializers = org.apache.hadoop.security.AuthenticationFilterInitializer
+
+
+- Restart all services that require restart (HDFS, Mapreduce, YARN)
+
+- Now when you try to open any of the web UIs like below you will get `401: Authentication required`
+  - HDFS: Namenode UI
+  - Mapreduce: Job history UI
+  - YARN: Resource Manager UI
+
+- **TODO**: Show how to open these UIs via kerborized browser
 
 ### Ambari views 
 
@@ -697,7 +713,9 @@ Ambari views setup on secure cluster details [here](https://github.com/seanorama
 
 ------------------
 
-## Ranger prereqs
+## Ranger 
+
+### Ranger prereqs
 
 ##### Create & confirm MySQL user 'root'
 
@@ -940,6 +958,10 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 - Confirm Banana dashboard has start to show HDFS audits
 http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
+**TODO** add screenshots
+
+------------------
+
 ## Ranger KMS/Data encryption setup
 
 
@@ -1119,6 +1141,8 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 ##cat: Access is denied for hdfs since the superuser is not allowed to perform this operation.
 
 ```
+
+------------------
 
 ## Secured Hadoop exercises
 
@@ -1535,35 +1559,7 @@ logout
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
 
-
-## Other Security features for Ambari
-
-- Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
-  - Automation to install views
-```
-sudo su
-git clone https://github.com/seanorama/ambari-bootstrap
-cd ambari-bootstrap/extras/
-export ambari_pass=BadPass#1
-source ambari_functions.sh
-./ambari-views/create-views.sh
-```
-  - Restart HDFS via Ambari
-
-## Day 3
-
-Agenda:
-1. Architechture
-2. Wire encryption overview
-  - http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.2.0/Wire_Encryption_v22/index.html#Item1.1
-3. Knox/AD
-4. Ranger KMS
-5. Security training flow review
-6. Roadmap/next steps
-7. SME rules of engagement
-  - Enabling regions
-  - Contributing to training team
-8. Ranger Logo
+------------------
 
 
 ## Knox 
@@ -1855,4 +1851,21 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 #### Hive over Knox
 
 **TODO** 
+
+------------------
+
+## Other Security features for Ambari
+
+- Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
+  - Automation to install views
+```
+sudo su
+git clone https://github.com/seanorama/ambari-bootstrap
+cd ambari-bootstrap/extras/
+export ambari_pass=BadPass#1
+source ambari_functions.sh
+./ambari-views/create-views.sh
+```
+  - Restart HDFS via Ambari
+
     
