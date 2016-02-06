@@ -445,7 +445,7 @@ hr1@LAB.HORTONWORKS.NET : domain_users hadoop-users hr
 
 - Login as sales1 user and try to access the same /tmp/hive HDFS dir
 ```
-su - sales1
+sudo su - sales1
 
 hdfs dfs -ls /tmp/hive   
 ## since we did not authenticate, this fails with GSSException: No valid credentials provided
@@ -995,7 +995,7 @@ sudo -u hadoopadmin hadoop fs -chmod 000 /sales
 
 - Now login as sales1 and attempt to access it before adding any Ranger HDFS policy
 ```
-su - sales1
+sudo su - sales1
 # enter password: BadPass#1
 
 hdfs dfs -ls /sales
@@ -1075,7 +1075,7 @@ kdestroy
 logout
 
 #login as hr1 and authenticate
-su - hr1
+sudo su - hr1
 # enter password: BadPass#1
 
 kinit
@@ -1114,9 +1114,9 @@ logout
 
 - Run these steps from node where Hive (or client) is installed 
 
-- Login as sales1 and attempt to connect to Hive via beeline and access sample_07, sample_08 tables
+- Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
 ```
-su - sales1
+sudo su - sales1
 # enter password: BadPass#1
 
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
@@ -1210,7 +1210,7 @@ kdestroy
 logout
 
 #login as hr1 and authenticate
-su - hr1
+sudo su - hr1
 # enter password: BadPass#1
 
 kinit
@@ -1249,94 +1249,153 @@ logout
 
 #### Access secured HBase
 
-#### Optional - HDFS Exercise
+- Goal: Create a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
-Simple exercise to show why to set dir permission to 000 for dirs whose authorization is to be managed be Ranger
+- Run these steps from any node where Hbase Master or RegionServer services are installed 
 
-- Import data
+- Login as sales1
 ```
-cd /tmp
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
-wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_08.csv
+sudo su - sales1
+# enter password: BadPass#1
 ```
-  - Create user dir for admin
-  ```
-   sudo -u hdfs hadoop fs  -mkdir /user/admin
-   sudo -u hdfs hadoop fs  -chown admin:hadoop /user/admin
-
-   sudo -u hdfs hadoop fs  -mkdir /user/sales1
-   sudo -u hdfs hadoop fs  -chown sales1:hadoop /user/sales1
-   
-   sudo -u hdfs hadoop fs  -mkdir /user/sales2
-   sudo -u hdfs hadoop fs  -chown sales2:hadoop /user/sales2
-  ```
-  
-  - Now login to ambari as admin and run this via Hive view
+-  Start the hbase shell
 ```
-CREATE TABLE `sample_07` (
-`code` string ,
-`description` string ,  
-`total_emp` int ,  
-`salary` int )
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
-
-load data local inpath '/tmp/sample_07.csv' into table sample_07;
-
-
-CREATE TABLE `sample_08` (
-`code` string ,
-`description` string ,  
-`total_emp` int ,  
-`salary` int )
-ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
-
-load data local inpath '/tmp/sample_08.csv' into table sample_08;
-
+hbase shell
 ```
-
-
-- Create a file as sales1 
+- List tables in default database
 ```
-su - sales1
-kinit
-hdfs dfs -put /tmp/sample_07.csv /user/sales1
+hbase> list 'default'
+```
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerborized and we have not authenticated yet
+
+- To exit hbase shell:
+```
 exit
 ```
-- Access it as sales2
+- Authenticate as sales1 user and check the ticket
 ```
-su - sales2
 kinit
-hdfs dfs -cat /user/sales1/sample_07.csv
-```
-- Notice that it works 
+# enter password: BadPass#1
 
-- Login to Ranger as admin/admin > Audit > check the audit for the event above
+klist
+## Default principal: sales1@LAB.HORTONWORKS.NET
+```
+- Now try connect to Hbase shell as sales1
+```
+hbase shell
+hbase> list 'default'
+```
+- This time it connects. Now try to create a table called `sales` with column family called `cf`
+```
+hbase> create 'sales', 'cf'
+```
+- Now it fails with authorization error: 
+  - `org.apache.hadoop.hbase.security.AccessDeniedException: Insufficient permissions for user 'sales1@LAB.HORTONWORKS.NET' (action=create)`
 
-```
-#still  as sales2
-hdfs dfs -ls /user/sales1
-```
-- Notice that everyone has read permissions on this file
-- Login to Ambari as admin. Under HDFS > Configs > Set below and restart HDFS
-  - fs.permissions.umask-mode = 077
+- Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
+
+- In Ranger, click on 'Audit' to open the Audits page and filter by below. 
+  - Service Type: `Hbase`
+  - User: `sales1`
   
-- Add a second file into the same dir after changing the umask
+- Notice that Ranger captured the access attempt and since there is currently no policy to allow the access, it was `Denied`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-denied.png)
+
+- To create an HBASE Policy in Ranger, follow below steps:
+  - On the 'Access Manager' tab click HBASE > (clustername)_hbase
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-policy.png)
+  - This will open the list of HBASE policies
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-edit-policy.png)
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
+    - Policy Name: `sales`
+    - Hbase Table: `sales`
+    - Hbase Column Family: `*`
+    - Hbase Column: `*`
+    - Group : `sales`    
+    - Permissions : `Admin` `Create` `Read` `Write`
+    - Add
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-create-policy.png)
+  
+- Now try creating the table and now it works
 ```
-su - sales1
-hdfs dfs -put /tmp/sample_08.csv /user/sales1
+hbase> create 'sales', 'cf'
+```
+  
+- In Ranger, click on 'Audit' to open the Audits page and filter by below:
+  - Service Type: HBASE
+  - User: sales1
+  
+- Notice that Ranger captured the access attempt and since this time there is a policy to allow the access, it was `Allowed`
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-allowed.png)  
+
+  - You can also see the details that were captured for each request:
+    - Policy that allowed the access
+    - Time
+    - Requesting user
+    - Service type (e.g. hdfs, hive, hbase etc)
+    - Resource name 
+    - Access type (e.g. read, write, execute)
+    - Result (e.g. allowed or denied)
+    - Access enforcer (i.e. whether native acl or ranger acls were used)
+    - Client IP
+    - Event count
+    
+- For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-policy-details.png)  
+
+- Exit hbase shell
+```
+hbase> exit
 ```
 
-- Try to access it as sales2: this should fail now with `Permission denied` and permissions should reflect it
+- Now let's check whether non-sales users can access the table
+
+- Logout as sales1 and log back in as hr1
 ```
-su - sales2
-hdfs dfs -cat /user/sales1/sample_08.csv
-hdfs dfs -ls /user/sales1
+kdestroy
+#logout as sales1
+logout
+
+#login as hr1 and authenticate
+sudo su - hr1
+# enter password: BadPass#1
+
+kinit
+# enter password: BadPass#1
+
+klist
+## Default principal: hr1@LAB.HORTONWORKS.NET
 ```
-- Recommendation for application files in HDFS. e.g.
+- Try to access the same dir as hr1 and notice this user does not even see the table
 ```
-hdfs dfs -chown -R hdfs /apps/hive/warehouse
-hdfs dfs -chmod -R 000 /apps/hive/warehouse
+hbase shell
+hbase> describe 'sales'
+hbase> list 'default'
 ```
+- Try to create a table as hr1 and it fails with `org.apache.hadoop.hbase.security.AccessDeniedException: Insufficient permissions`
+```
+hbase> create 'sales', 'cf'
+```
+- In Ranger, click on 'Audit' to open the Audits page and filter by 'Service Type' = 'HBASE'
+  - Service Type: `HBASE`
+
+  
+- Here you can see the request by sales1 was allowed but hr1 was denied
+
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HBASE-summary.png)  
+
+- Exit hbase shell
+```
+hbase> exit
+```
+
+- Logout as hr1
+```
+kdestroy
+logout
+```
+- We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
+
 
 
 ## Other Security features for Ambari
