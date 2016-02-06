@@ -972,7 +972,7 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 #### Access secured HDFS
 
-- Goal: Create a /sales dir in HDFS and ensure only users belonging to Sales group have access
+- Goal: Create a /sales dir in HDFS and ensure only users belonging to sales group (and admins) have access
  
 - Create an HDFS dir as hadoopadmin
 ```
