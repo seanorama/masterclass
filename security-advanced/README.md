@@ -1175,7 +1175,7 @@ beeline> select code, description from sample_07;
 beeline> select code, description from sample_07;
 ```
 
-- Note though, that if you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
+- Note though, that if instead you try to describe the table or query all columns, it will be denied - because we only gave sales users access to two columns in the table
   - `beeline> desc sample_07;`
   - `beeline> select * from sample_07;`
   
