@@ -127,7 +127,7 @@ Credentials will be provided for these services by the instructor:
    sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1   
   ```
     
-  - Now create Hive table by either
+  - Now create Hive table in default database by either
     - logging into ambari as admin and run this via Hive view (one statement at a time) e.g. http://52.32.113.77:8080/#/main/views/HIVE/1.0.0/AUTO_HIVE_INSTANCE
     - Or starting beeline shell from the node where Hive is installed: `beeline -u "jdbc:hive2://localhost:10000/default"`
 ```
@@ -153,7 +153,14 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
 load data local inpath '/tmp/sample_08.csv' into table sample_08;
 ```
 
-  
+- Notice that in the JDBC connect string for connecting to an unsecured Hive while its running in default (ie binary) transport mode :
+  - port is 10000
+  - no kerberos principal was needed 
+
+- This will change after we:
+  - enable kerberos
+  - configure Hive for http transport mode (to go through Knox)
+    
 ### Why is security needed?
 
 
@@ -671,8 +678,11 @@ Ambari Server 'setup-security' completed successfully.
 
 - Enables Ambari WebUI to run on HTTPS instead of HTTP
 
-#### Create self signed certificate
+#### Create self-signed certificate
 
+- Commands and sample output below (to be run on ambari node):
+  - Note that for 'Common Name' you should enter the public hostname of Ambari node
+  
 ```
 $ openssl genrsa -out ambari.key 2048
 Generating RSA private key, 2048 bit long modulus
@@ -693,29 +703,69 @@ State or Province Name (full name) []:CA
 Locality Name (eg, city) [Default City]:Santa Clara
 Organization Name (eg, company) [Default Company Ltd]:Hortonworks
 Organizational Unit Name (eg, section) []:Sales
-Common Name (eg, your name or your server's hostname) []:lab.hortonworks.net
-Email Address []:admin@hortonworks.com
+Common Name (eg, your name or your server's hostname) []:ec2-52-32-113-77.us-west-2.compute.amazonaws.com
+Email Address []:
 
 Please enter the following 'extra' attributes
 to be sent with your certificate request
-A challenge password []:BadPass#1
+A challenge password []:
 An optional company name []:
 
 $ openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
 Signature ok
 subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=lab.hortonworks.net/emailAddress=admin@hortonworks.com
 Getting Private key
-
-$ openssl x509 -in ambari.crt -inform der -outform pem -out ambari.pem
-unable to load certificate
-139688323946400:error:0D0680A8:asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag:tasn_dec.c:1345:
-139688323946400:error:0D07803A:asn1 encoding routines:ASN1_ITEM_EX_D2I:nested asn1 error:tasn_dec.c:393:Type=X509
-
 ```
+
+- This generates:
+  - certificate: ambari.crt
+  - private key: ambari.key
+
+- Copy the 3 files into a new folder called ssl under /etc/security (ambari.key, ambari.csr, ambari.crt)
+```
+mkdir /etc/security/ssl
+cp ambari.* /etc/security/ssl
+```
+
+- Proceed onto next section on enable HTTPS for Ambari
 
 #### Setup SSL for Ambari server
 
-**TODO**
+- Stop Ambari server
+```
+ambari-server stop
+```
+
+- Setup HTTPS for Ambari  
+```
+# ambari-server setup-security
+Using python  /usr/bin/python2
+Security setup options...
+===========================================================================
+Choose one of the following options:
+  [1] Enable HTTPS for Ambari server.
+  [2] Encrypt passwords stored in ambari.properties file.
+  [3] Setup Ambari kerberos JAAS configuration.
+  [4] Setup truststore.
+  [5] Import certificate to truststore.
+===========================================================================
+Enter choice, (1-5): 1
+Do you want to configure HTTPS [y/n] (y)? y
+SSL port [8443] ? 8443
+Enter path to Certificate: /etc/security/ssl/ambari.crt
+Enter path to Private Key: /etc/security/ssl/ambari.key
+Please enter password for Private Key: BadPass#1
+Importing and saving Certificate...done.
+Adjusting ambari-server permissions and ownership...
+```
+
+- Start ambari back up
+```
+ambari-server start
+```
+
+- Now you can access Ambari on HTTPS on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
+
 
 ### SPNEGO
 
@@ -1358,6 +1408,11 @@ logout
 - Run these steps from node where Hive (or client) is installed 
 
 - Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
+
+- Notice that in the JDBC connect string for connecting to an secured Hive while its running in default (ie binary) transport mode :
+  - port remains 10000
+  - *now a kerberos principal needs to be passed in*
+
 ```
 sudo su - sales1
 
@@ -1861,6 +1916,8 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
+- Notice that to make the requests over Knox, a kerberos ticket is not needed - the user authenticates by passing in AD/LDAP credentials
+
 - Check in Ranger Audits to confirm the requests were audited:
   - Ranger > Audit > Service type: KNOX
 
@@ -1928,9 +1985,37 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/knox-webhdfs-browser3.png)
       
 
-#### Hive over Knox
+- We have shown how you can use Knox to avoid the end user from having to know about internal details of cluster
+  - whether its kerborized or not
+  - what the cluster topology is (e.g. what node WebHDFS was running)
 
+
+#### Hive over Knox 
 **TODO** 
+
+##### Configure Hive for Knox
+
+- In Ambari, under Hive > Configs > set the below and restart Hive component.
+  - hive.server2.transport.mode = http
+- (optional) Give users access to jks file.
+  - This is only for testing since we are using a self-signed cert.
+  - This only exposes the truststore, not the keys.
+```
+sudo chmod o+x /var/lib/knox /var/lib/knox/data* /var/lib/knox/data*/security /var/lib/knox/data*/security/keystores
+sudo chmod o+r /var/lib/knox/data*/security/keystores/gateway.jks
+```
+
+##### Use Hive for Knox
+
+- In the JDBC connect string for connecting to an secured Hive while its running in default (ie binary) transport mode :
+  - *port changes to Knox's port 8443*
+  - *a kerberos principal not longer needs to be passed in*
+  - trust store is being passed in
+
+```
+beeline -u jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/var/lib/knox/data/security/keystores/gateway.jks;trustStorePassword=BadPass#1;transportMode=http;httpPath=gateway/default/hive
+```
+
 
 ------------------
 
