@@ -1997,7 +1997,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 - In Ambari, under Hive > Configs > set the below and restart Hive component.
   - hive.server2.transport.mode = http
-- (optional) Give users access to jks file.
+- Give users access to jks file.
   - This is only for testing since we are using a self-signed cert.
   - This only exposes the truststore, not the keys.
 ```
