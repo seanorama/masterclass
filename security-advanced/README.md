@@ -1165,7 +1165,14 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - Role: User
       - Group: hadoop-admins
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-add-nn.png) 
-      
+    - Similarly, create a user: HTTP  
+
+  - Access Manager > HDFS > (clustername)_hadoop > Add new policy >
+    - name: kms audits
+    - resource path: /ranger/audit/kms
+    - user: HTTP
+    - Permissions: Read Write Execute
+    
 - Logout of Ranger
   - Top right > admin > Logout      
 - Login to Ranger as keyadmin/keyadmin
