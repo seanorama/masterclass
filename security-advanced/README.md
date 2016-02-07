@@ -1731,6 +1731,12 @@ logout
 ```
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
+- This shows how you can interact with Hadoop components on kerborized cluster and use Ranger to manage authorization policies and audits
+
+- At this point your Silk/Banana audit dashboard should show audit data from multiple Hadoop components e.g. http://54.68.246.157:6083/solr/banana/index.html#/dashboard
+
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-banana.png)  
+
 
 **TODO** Sqoop
 
