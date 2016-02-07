@@ -1156,7 +1156,6 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 ## Ranger KMS/Data encryption exercise
 
 - Login to Ranger as admin/admin and 
-  - add hadoopadmin to global HDFS policy     
   - create new user nn
     - Settings > Users/Groups > Add new user
       - username = nn
@@ -1166,12 +1165,22 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - Group: hadoop-admins
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-add-nn.png) 
     - Similarly, create a user: HTTP  
-
-  - Access Manager > HDFS > (clustername)_hadoop > Add new policy >
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-HTTP.png)
+  
+  - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user to global access on HDFS
+    - Access Manager > HDFS > (clustername)_hadoop 
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-policy.png)
+    - This will open the list of HDFS policies
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy.png)
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
+  
+  - Now add a new policy for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
     - resource path: /ranger/audit/kms
     - user: HTTP
     - Permissions: Read Write Execute
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
     
 - Logout of Ranger
   - Top right > admin > Logout      
@@ -1284,6 +1293,15 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 - Goal: Create a /sales dir in HDFS and ensure only users belonging to sales group (and admins) have access
  
+- Confirm the HDFS repo was setup correctly in Ranger
+  - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Password: BadPass#1
+  - Once the test passes, click Save  
+  
+   
 - Create /sales dir in HDFS as hadoopadmin
 ```
 #authenticate
@@ -1411,6 +1429,14 @@ logout
 #### Access secured Hive
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
+
+- Confirm the HIVE repo was setup correctly in Ranger
+  - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Password: BadPass#1
+  - Once the test passes, click Save  
 
 - Run these steps from node where Hive (or client) is installed 
 
@@ -1554,6 +1580,14 @@ logout
 
 - Goal: Create a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
+- Confirm the HBASE repo was setup correctly in Ranger
+  - In Ranger > Service Manager > HBASE > Click the Edit icon (next to the trash icon) to edit the HBASE repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Password: BadPass#1
+  - Once the test passes, click Save  
+  
 - Run these steps from any node where Hbase Master or RegionServer services are installed 
 
 - Login as sales1
@@ -1892,6 +1926,14 @@ logout
 
 #### Ranger Configuration for Knox
 
+- Confirm the KNOX repo was setup correctly in Ranger
+  - In Ranger > Service Manager > KNOX > Click the Edit icon (next to the trash icon) to edit the KNOX repo
+  - Click 'Test connection' 
+  - if it fails re-enter below fields and re-try:
+    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Password: BadPass#1
+  - Once the test passes, click Save  
+  
 - Setup a Knox policy for sales group for WEBHDFS by:
 - Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
   - Policy name: webhdfs
