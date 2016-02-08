@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -o xtrace
 
+export HOME=${HOME:-/root}
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 
@@ -96,8 +97,8 @@ cat << EOF > configuration-custom.json
         "zeppelin.executor.mem": "512m",
         "zeppelin.executor.instances": "2",
         "zeppelin.install.dir": "/opt"
-    }
-    core-site": {
+    },
+    "core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
         "hadoop.proxyuser.HTTP.hosts" : "*",
         "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
