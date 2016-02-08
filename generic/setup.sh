@@ -5,7 +5,7 @@ export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 
 yum makecache
-yum -y -q install git epel-release ntpd screen
+yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj
 
 el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
 case ${el_version} in
@@ -29,22 +29,21 @@ sleep 10
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
 
-    yum -y -q install mysql-connector-java jq python-argparse python-configobj
-    ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-    ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
-    ambari-change-pass admin admin ${ambari_pass}
-
     if [ "${deploy}" = "true" ]; then
         #hdp_version=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
         hdp_version=2.3
+
+        ## zeppelin
         git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/ZEPPELIN
         sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
         echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
         service postgresql restart
 
+        ## solr
         git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
         sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
 
+        ## nifi
         git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
 
         ps aux | grep ambari-server | grep java | awk '{print $2}' | xargs kill
@@ -56,9 +55,13 @@ if [ "${install_ambari_server}" = "true" ]; then
             printf 'Ambari Agent failed to start\n' >&2
         fi
 
+        sleep 60
+
+        ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+        ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
+        ambari-change-pass admin admin ${ambari_pass}
 
         cd ~/ambari-bootstrap/deploy
-
 
         ## various configuration changes for demo environments, and fixes to defaults
 cat << EOF > configuration-custom.json
@@ -89,7 +92,12 @@ cat << EOF > configuration-custom.json
     "kafka-broker": {
         "listeners": "PLAINTEXT://0.0.0.0:6667"
     },
-    "core-site": {
+    "zeppelin-ambari-config": {
+        "zeppelin.executor.mem": "512m",
+        "zeppelin.executor.instances": "2",
+        "zeppelin.install.dir": "/opt"
+    }
+    core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
         "hadoop.proxyuser.HTTP.hosts" : "*",
         "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
@@ -112,8 +120,6 @@ EOF
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack:-mycluster}
         export host_count=${host_count:-skip}
-
-        sleep 60
 
         ./deploy-recommended-cluster.bash
         cd ~
