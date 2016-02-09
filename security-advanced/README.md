@@ -317,7 +317,9 @@ authentication.ldap.usernameAttribute=sAMAccountName
 EOF
 
   ```
+
 - Make sure the above LDAP authentication entries were added to ambari.properties
+
   ```
   tail -n 20 /etc/ambari-server/conf/ambari.properties 
   ```  
