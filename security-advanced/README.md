@@ -1045,7 +1045,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 6. Ranger Audits tab 
   - SolrCloud = ON
-  - enter password
+  - enter password: BadPass#1
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-8.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-9.png)
 
@@ -1053,9 +1053,48 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - No changes needed (skipping configuring Ranger authentication against AD for now)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
+
+- Now configure  components so Ranger can use rangeradmin@LAB.HORTONWORKS.NET principal to query HDFS, YARN, Hive, Hbase, Knox
+  - HDFS > Advanced > Advanced ranger-hdfs-plugin-properties:
+    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config password = BadPass#1
+    - Policy user for HDFS = rangeradmin
+    ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ranger-HDFS-plugin-config.png)
+    
+  - YARN > Advanced > Advanced ranger-yarn-plugin-properties:
+    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config password = BadPass#1
+    - Policy user for YARN = rangeradmin
+    ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ranger-YARN-plugin-config.png)
+    
+
+  - HIVE > Advanced > Advanced ranger-hive-plugin-properties:
+    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config password = BadPass#1
+    - Policy user for HIVE = rangeradmin
+    ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ranger-HIVE-plugin-config.png)
+    
+
+  - HBASE > Advanced > Advanced ranger-hbase-plugin-properties:
+    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config password = BadPass#1
+    - Policy user for HBASE = rangeradmin
+    ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ranger-HBASE-plugin-config.png)
+    
+
+  - KNOX > Advanced > Advanced ranger-knox-plugin-properties:
+    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config password = BadPass#1
+    - Policy user for KNOX = rangeradmin
+    ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ranger-KNOX-plugin-config.png)
+
+- Click Next > Proceed Anyway to proceed
+    
 - On Configure Identities page, you will have to enter your AD admin credentials:
   - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
   - Admin password: BadPass#1
+  - Notice that you can now save the admin credentials. Check this box too
+  ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/Ambari-configureidentities.png)
   
 - Click Next > Deploy to install Ranger
 
