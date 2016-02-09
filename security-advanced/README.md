@@ -980,8 +980,9 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 
 ```
 
-- Now you should access Solr webui at http://publicIP:6083/solr
-  - Click the Cloud > Graph tab to find the leader host (172.30.0.242 in below example)
+- Now you should access Solr webui http://PublicIPofAnySolrNode:6083/solr
+  - Click the Cloud > Graph tab to find the leader host (172.30.0.181 in below example)
+    - Usually the leader node is the one where the collection was created from
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
 
 - (Optional) - On the leader node, install SILK (banana) dashboard to visualize audits in Solr
@@ -992,13 +993,15 @@ export host=$(curl -4 icanhazip.com)
 sudo sed -i "s,sandbox.hortonworks.com,$host," \
    /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
-# access banana dashboard at http://hostname:6083/solr/banana/index.html
+# access banana dashboard at http://SolrLeaderNodeIP:6083/solr/banana/index.html
 ```
+
 - At this point you should be able to: 
   - access Solr webui at http://hostname:6083/solr
   - access banana dashboard (if installed earlier) at http://hostname:6083/solr/banana/index.html 
     - this will currently not have any audit data  
 
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-empty.png)
 
 ## Ranger install
 
