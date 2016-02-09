@@ -788,7 +788,7 @@ sudo mkdir /etc/security/ssl
 sudo cp ambari.* /etc/security/ssl
 ```
 
-- Proceed onto next section on enable HTTPS for Ambari
+- Proceed onto next section to enable HTTPS for Ambari using the self signed certificate we created
 
 #### Setup SSL for Ambari server
 
