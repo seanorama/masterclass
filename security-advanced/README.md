@@ -935,7 +935,8 @@ This should already be installed on your cluster. If not, refer to appendix [her
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
 
-- Run on all nodes where Solr was installed. (You can check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
+- Run on all nodes where Solr was installed. 
+  - (To check, you can check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
 ```
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
@@ -974,6 +975,7 @@ sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 # create collection - only needs to be run from one of the Solr nodes
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
+   
 sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh 
 
 ```
