@@ -323,11 +323,12 @@ EOF
   ```  
 - Run Ambari LDAP sync. 
  - Run below to setup AD sync. 
- - Press enter at each prompt to accept the default value being displayed
+ - Press *enter key* at each prompt to accept the default value being displayed
  - When prompted for 'Manager Password' at the end, enter password : BadPass#1
   ```
   sudo ambari-server setup-ldap
   ```
+   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-setup-LDAP.png)
 
 - Reestart Ambari server and agents
   ```
