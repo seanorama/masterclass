@@ -997,7 +997,8 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ```
 
 - At this point you should be able to: 
-  - access Solr webui at http://hostname:6083/solr
+  - access Solr webui for ranger_audits collection at http://SolrLeaderNodeIP:6083/solr/#/ranger_audits_shard1_replica1. This is where Ranger audits will get stored
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-dashboard-collection.png)
   - access banana dashboard (if installed earlier) at http://hostname:6083/solr/banana/index.html 
     - this will currently not have any audit data  
 
