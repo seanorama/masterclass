@@ -438,7 +438,7 @@ sudo yum -y -q install adcli
 ```
 
 ```
-#paste these lines together
+#paste all the lines in this block together, in one shot
 sudo adcli join -v \
   --domain-controller=${ad_dc} \
   --domain-ou="${ad_ou}" \
@@ -449,7 +449,7 @@ sudo adcli join -v \
 ```
 
 ```
-#paste these lines together
+#paste all the lines in this block together, in one shot
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
