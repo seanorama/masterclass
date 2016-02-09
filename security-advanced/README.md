@@ -388,9 +388,13 @@ EOF
   - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-3.png)
+
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-4.png)
+
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-5.png)
+
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-6.png)
+
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-7.png)
 
   
