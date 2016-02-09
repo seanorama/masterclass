@@ -368,6 +368,9 @@ EOF
 - Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-start-kerberos-wizard.png)
 
+- Select "Existing Active Directory" and check all the boxes
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-1.png)
+  
 - Enter the below details:
 
 - KDC:
@@ -381,7 +384,9 @@ EOF
     - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
     - Admin password: BadPass#1
 
-- Then click Next on all the following screens to pick the default values
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
+
+- Then click Next on all the following screens to proceed with all the default values
 
 ### Setup AD/OS integration via SSSD
 
