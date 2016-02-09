@@ -95,6 +95,12 @@ Credentials will be provided for these services by the instructor:
   ip-172-30-0-186.us-west-2.compute.internal  
   ```
 
+  - From SSH terminal, how can I to find external hostname of the node I'm logged into?
+  ```
+  $ curl icanhazptr.com
+  ec2-52-33-248-70.us-west-2.compute.amazonaws.com 
+  ```
+
   - From SSH terminal, how can I to find external (public) IP  of the node I'm logged into?
   ```
   $ curl icanhazip.com
