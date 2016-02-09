@@ -416,6 +416,8 @@ EOF
   ```
 - Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
+- Note: the below is just a sample way of using SSSD.  It will vary completely by environment and needs tuning and testing for your environment.
+
 - Run the steps in this section **on each node**
 
 ```
