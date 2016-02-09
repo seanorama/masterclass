@@ -400,7 +400,8 @@ EOF
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-7.png)
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-8.png)
-    
+
+  - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start WebHDFS
 
 ### Setup AD/OS integration via SSSD
 
