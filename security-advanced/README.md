@@ -17,8 +17,8 @@
     - Kerberos for Ambari
     - Ambari server as non-root
     - Ambari Encrypt Database and LDAP Passwords
-    - SSL For Ambari server ?
-    - SPNEGO ?
+    - SSL For Ambari server
+    - SPNEGO
 - [Lab 5](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-5)
   - Ranger install pre-reqs
   - Ranger install
@@ -31,7 +31,7 @@
     - HDFS
     - Hive
     - HBase
-    - Sqoop?
+    - Sqoop
 - [Lab 8](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
