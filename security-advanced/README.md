@@ -930,11 +930,12 @@ exit
 
 This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#install-solrcloud)
 
+
 ###### Setup Solr for Ranger audit 
 
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
 
-- Run on all nodes where Solr was installed
+- Run on all nodes where Solr was installed. (You can check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
 ```
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
@@ -968,7 +969,7 @@ sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
 
 # if you installed Solr via Ambari, skip this step that starts solr 
 # otherwise, run on each Solr node to start it in Cloud mode
-sudo /opt/ranger_audit_server/scripts/start_solr.sh
+# sudo /opt/ranger_audit_server/scripts/start_solr.sh
 
 # create collection - only needs to be run from one of the Solr nodes
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
