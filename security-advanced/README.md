@@ -76,6 +76,9 @@ Credentials will be provided for these services by the instructor:
   sudo su -
   ```
 
+
+#### Finding internal/external hosts
+
 - Following are useful techniques you can use in future labs to find your cluster specific details:
 
   - From SSH terminal, how can I find the cluster name?
@@ -108,8 +111,9 @@ Credentials will be provided for these services by the instructor:
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
+#### Import sample data into Hive 
 
-- Lets import data into a Hive table for later labs
+- Run below on hive node to download data and import it into a Hive table for later labs
   ```
   cd /tmp
   wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
