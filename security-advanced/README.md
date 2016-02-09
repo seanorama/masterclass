@@ -387,6 +387,8 @@ EOF
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
   - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
 
+- Now click Next on all the following screens to proceed with all the default values  
+
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-3.png)
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-4.png)
@@ -399,7 +401,6 @@ EOF
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-8.png)
     
-- Then click Next on all the following screens to proceed with all the default values
 
 ### Setup AD/OS integration via SSSD
 
