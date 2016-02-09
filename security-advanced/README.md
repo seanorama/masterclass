@@ -928,62 +928,7 @@ exit
 
 ##### Install SolrCloud from HDPSearch for Audits (if not already installed)
 
-
-###### Option 1: Install Solr manually
-
-- Manually install Solr *on each node where Zookeeper is running*
-```
-export JAVA_HOME=/usr/java/default   
-sudo yum -y install lucidworks-hdpsearch
-```
-
-###### Option 2: Use Ambari service for Solr
-
-- Install Ambari service for Solr
-```
-VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
-sudo ambari-server restart
-```
-- Login to Ambari as hadoopadmin and wait for all the services to turn green
-- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
-  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
-  
-  - On the screen to Customize the Solr service
-    - under 'Advanced solr-config':
-      - set `solr.datadir` to `/opt/ranger_audit_server`    
-      - set `solr.download.location` to `HDPSEARCH`
-      - set `solr.znode` to `/ranger_audits`
-    - under 'Advanced solr-env':
-      - set `solr.port` to `6083`
-  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
-
-- Under Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
-  - Admin password: BadPass#1
-
-- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
-
-- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
-```
-export SERVICE=SOLR
-export AMBARI_HOST=localhost
-export PASSWORD=BadPass#1
-output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
-CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
-
-#attempt to unregister the service
-curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
-#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
-
-sudo service ambari-server restart
-
-#restart agents on all nodes
-sudo service ambari-agent restart
-```
+This should already be installed on your cluster. If not, refer to appendix here
 
 ###### Setup Solr for Ranger audit 
 
@@ -2215,4 +2160,67 @@ source ambari_functions.sh
 ```
 - Restart HDFS via Ambari
 
+    
+-----------------
+
+
+# Appendix
+
+###### Install SolrCloud
+
+###### Option 1: Install Solr manually
+
+- Manually install Solr *on each node where Zookeeper is running*
+```
+export JAVA_HOME=/usr/java/default   
+sudo yum -y install lucidworks-hdpsearch
+```
+
+###### Option 2: Use Ambari service for Solr
+
+- Install Ambari service for Solr
+```
+VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+sudo git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/SOLR
+sudo ambari-server restart
+```
+- Login to Ambari as hadoopadmin and wait for all the services to turn green
+- Install Solr by starting the 'Add service' wizard (using 'Actions' dropdown) and choosing Solr. Pick the defaults in the wizard except:
+  - On the screen where you choose where to put Solr, use the + button next to Solr to add Solr to *each host that runs a Zookeeper Server*
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-placement.png)
+  
+  - On the screen to Customize the Solr service
+    - under 'Advanced solr-config':
+      - set `solr.datadir` to `/opt/ranger_audit_server`    
+      - set `solr.download.location` to `HDPSEARCH`
+      - set `solr.znode` to `/ranger_audits`
+    - under 'Advanced solr-env':
+      - set `solr.port` to `6083`
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
+
+- Under Configure Identities page, you will have to enter your AD admin credentials:
+  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin password: BadPass#1
+
+- Then go through the rest of the install wizard by clicking Next to complete installation of Solr
+
+- (Optional) In case of failure, run below from Ambari node to delete the service so you can try again:
+```
+export SERVICE=SOLR
+export AMBARI_HOST=localhost
+export PASSWORD=BadPass#1
+output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+CLUSTER=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
+
+#attempt to unregister the service
+curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X DELETE http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+#in case the unregister service resulted in 500 error, run the below first and then retry the unregister API
+#curl -u admin:$PASSWORD -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop $SERVICE via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER/services/$SERVICE
+
+sudo service ambari-server restart
+
+#restart agents on all nodes
+sudo service ambari-agent restart
+```
     
