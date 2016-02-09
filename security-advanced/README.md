@@ -794,12 +794,13 @@ sudo cp ambari.* /etc/security/ssl
 
 - Stop Ambari server
 ```
-ambari-server stop
+sudo ambari-server stop
 ```
 
-- Setup HTTPS for Ambari  
+- Setup HTTPS for Ambari and point it to port 8444
+  - We are changing it from default of 8443 to avoid potential clashes with Knox
 ```
-# ambari-server setup-security
+# sudo ambari-server setup-security
 Using python  /usr/bin/python2
 Security setup options...
 ===========================================================================
@@ -812,7 +813,7 @@ Choose one of the following options:
 ===========================================================================
 Enter choice, (1-5): 1
 Do you want to configure HTTPS [y/n] (y)? y
-SSL port [8443] ? 8443
+SSL port [8443] ? 8444
 Enter path to Certificate: /etc/security/ssl/ambari.crt
 Enter path to Private Key: /etc/security/ssl/ambari.key
 Please enter password for Private Key: BadPass#1
@@ -822,10 +823,10 @@ Adjusting ambari-server permissions and ownership...
 
 - Start ambari back up
 ```
-ambari-server start
+sudo ambari-server start
 ```
 
-- Now you can access Ambari on HTTPS on port 8443 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8443
+- Now you can access Ambari on HTTPS on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
 
 
 ### SPNEGO
