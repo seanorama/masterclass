@@ -115,7 +115,7 @@ Credentials will be provided for these services by the instructor:
   
 #### Import sample data into Hive 
 
-- Run below on hive node to download data and import it into a Hive table for later labs
+- Run below *on hive node* to download data and import it into a Hive table for later labs
   ```
   cd /tmp
   wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
@@ -192,7 +192,7 @@ hdfs dfs -ls /tmp/hive
 
 ##### WebHDFS access on unsecured cluster
 
-- From node running NameNode, make a WebHDFS request using below command:
+- From *node running NameNode*, make a WebHDFS request using below command:
 ```
 curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 ```
