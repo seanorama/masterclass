@@ -332,7 +332,7 @@ EOF
   ```
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-setup-LDAP.png)
 
-- Reestart Ambari server and agents
+- Reestart Ambari server and agent
   ```
    sudo ambari-server restart
    sudo ambari-agent restart
@@ -345,21 +345,7 @@ EOF
   ```
 
   - This should show a summary of what objects were created
-  ```
-  Completed LDAP Sync.
-  Summary:
-    memberships:
-      removed = 0
-      created = 25
-    users:
-      updated = 0
-      removed = 0
-      created = 15
-    groups:
-      updated = 0
-      removed = 0
-      created = 5
-  ``` 
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-run-LDAPsync.png)
   
 - Give 'hadoop-admins' permissions to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
