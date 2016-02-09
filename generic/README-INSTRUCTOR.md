@@ -64,7 +64,7 @@ cd masterclass/generic
 
     ```sh
 export AWS_DEFAULT_REGION=eu-west-1  ## region to deploy in
-export lab_prefix=mc-hdf-nifi        ## template for naming the cloudformation stacks
+export lab_prefix=mc        ## template for naming the cloudformation stacks
 export lab_first=100                 ## number to start at in naming
 export lab_count=1                   ## number of clusters to create
 
@@ -73,8 +73,9 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"NIFI"},
-  {"ParameterKey":"InstanceType","ParameterValue":"t2.medium"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS YARN MAPREDUCE2 HIVE PIG"},
+  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
+  {"ParameterKey":"DeployCluster","ParameterValue":"true"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
 ]
 '
