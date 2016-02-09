@@ -928,7 +928,7 @@ exit
 
 ##### Install SolrCloud from HDPSearch for Audits (if not already installed)
 
-This should already be installed on your cluster. If not, refer to appendix here
+This should already be installed on your cluster. If not, refer to appendix [here](https://github.com/seanorama/masterclass/tree/master/security-advanced#install-solrcloud)
 
 ###### Setup Solr for Ranger audit 
 
