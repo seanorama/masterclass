@@ -685,6 +685,8 @@ hadoop.proxyuser.ambari.hosts=*
 
 - Save and restart HDFS
 
+- For now we will skip configuring Ambari Agents for Non-Root
+
 ### Ambari Encrypt Database and LDAP Passwords
 
 - Needed to allow Ambari to cache the admin password so its not prompted for each each you add, move or remove a service via Ambari
@@ -724,6 +726,8 @@ Do you want to persist master key. If you choose not to persist, you need to pro
 Adjusting ambari-server permissions and ownership...
 Ambari Server 'setup-security' completed successfully.
 ```
+
+- Next time you add a service via Ambari (e.g. Ranger) you will be able to request Ambari to "Save admin credentials" (via checkbox) for next time
 
 ### SSL For Ambari server
 
