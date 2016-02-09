@@ -215,7 +215,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 - Use the 'Add Service' Wizard to install Knox, if not already installed
   - When prompted for the `Knox Master Secret`, set it to `BadPass#1`
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
-
+  - Click Next > Proceed Anyway > Deploy to accept all defaults
 - We will use Knox further in a later exercise.
 
 -----------------------------
