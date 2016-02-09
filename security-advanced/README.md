@@ -624,7 +624,6 @@ Ambari Server 'setup-security' completed successfully.
 - Restart Ambari to changes to take affect
 ```
 sudo ambari-server restart
-sudo ambari-server restart
 sudo ambari-agent restart
 ```
 
@@ -674,6 +673,17 @@ Extracting system views...
 Adjusting ambari-server permissions and ownership...
 Ambari Server 'setup' completed successfully.
 ```
+
+
+- Create proxy user settings for ambari user:
+  - Ambari > HDFS > Configs > Advanced > Custom core-site > Add property > Bulk mode:
+```
+hadoop.proxyuser.ambari.groups=*
+hadoop.proxyuser.ambari.hosts=* 
+```
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-proxyuser.png)
+
+- Save and restart HDFS
 
 ### Ambari Encrypt Database and LDAP Passwords
 
