@@ -194,7 +194,7 @@ hdfs dfs -ls /tmp/hive
 
 - From *node running NameNode*, make a WebHDFS request using below command:
 ```
-curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
+curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ```
 
 - In the absence of Knox, notice it goes over HTTP (not HTTPS) on port 50070 and no credentials were needed
