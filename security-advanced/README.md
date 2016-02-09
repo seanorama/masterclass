@@ -427,6 +427,7 @@ ad_ou="ou=HadoopNodes,${ad_root}"
 ad_realm=${ad_domain^^}
 
 sudo kinit ${ad_user}
+## enter BadPass#1 for password
 ```
 
 ```
