@@ -414,9 +414,10 @@ EOF
   
   ## groups: it1: no such user
   ```
--  Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
+- Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
 
-- Run below **on each node**
+- Run the steps in this section **on each node**
+
 ```
 ad_user="registersssd"
 ad_domain="lab.hortonworks.net"
@@ -428,14 +429,15 @@ ad_realm=${ad_domain^^}
 sudo kinit ${ad_user}
 ```
 
-- Run below on each node
 ```
 sudo yum makecache fast
 sudo yum -y -q install epel-release ## epel is required for adcli
 sudo yum -y -q install sssd oddjob-mkhomedir authconfig sssd-krb5 sssd-ad sssd-tools
 sudo yum -y -q install adcli
+```
 
-#copy next 7 lines together
+```
+#paste these lines together
 sudo adcli join -v \
   --domain-controller=${ad_dc} \
   --domain-ou="${ad_ou}" \
@@ -443,8 +445,10 @@ sudo adcli join -v \
   --login-user="${ad_user}" \
   -v \
   --show-details
+```
 
-#copy/paste from next line until second EOF in one shot
+```
+#paste these lines together
 sudo tee /etc/sssd/sssd.conf > /dev/null <<EOF
 [sssd]
 ## master & data nodes only require nss. Edge nodes require pam.
@@ -477,7 +481,9 @@ ldap_referrals = false
 memcache_timeout = 3600
 override_shell = /bin/bash
 EOF
+```
 
+```
 sudo chmod 0600 /etc/sssd/sssd.conf
 sudo service sssd restart
 sudo authconfig --enablesssd --enablesssdauth --enablemkhomedir --enablelocauthorize --update
