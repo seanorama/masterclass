@@ -365,7 +365,7 @@ EOF
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
-- Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). 
+- Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos > Enable kerberos > proceed). 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-start-kerberos-wizard.png)
 
 - Enter the below details:
