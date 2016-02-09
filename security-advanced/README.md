@@ -1738,7 +1738,67 @@ logout
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-banana.png)  
 
 
-**TODO** Sqoop
+#### (Optional) Use Sqoop to import 
+
+- If Sqoop is not already installed, install it via Ambari on same node where Mysql/Hive are installed:
+  - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults
+  
+- Login as root, and download a sample csv and login to Mysql
+```
+sudo su - 
+wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PII_data_small.csv
+mysql -u root -pBadPass#1
+```
+
+- At the `mysql>` prompt, run below to create a table in Mysql, import the data from csv and test that it was created:
+```
+create database people;
+use people;
+create table persons (people_id INT PRIMARY KEY, sex text, bdate DATE, firstname text, lastname text, addresslineone text, addresslinetwo text, city text, postalcode text, ssn text, id2 text, email text, id3 text);
+LOAD DATA LOCAL INFILE '~/PII_data_small.csv' REPLACE INTO TABLE persons FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+
+select people_id, firstname, lastname, city from persons where lastname='SMITH';
+```
+
+- logoff as root
+```
+logoff
+```
+
+- Create Ranger policy to allow sales group all permissions on persons table in Hive
+  - Access Manager > Hive > (cluster)_hive > Add new policy
+  - Create new policy as below and click Add:
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
+
+- Login as sales1
+```
+sudo su - sales1
+```
+
+- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data
+```
+kinit
+## enter BadPass#1 as password
+
+sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username root --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
+```
+- Login to beeline
+```
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+```
+
+- Query persons table in beeline
+```
+beeline> select * from persons;
+```
+- Now that the authorization policy is in place, the query should work
+
+- Ranger audit should show the request was allowed:
+  - Under Ranger > Audit > query for
+    - Service type: HIVE
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-audit-persons.png)
+
+- You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
 
 ------------------
 
