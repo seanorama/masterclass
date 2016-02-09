@@ -764,7 +764,7 @@ State or Province Name (full name) []:CA
 Locality Name (eg, city) [Default City]:Santa Clara
 Organization Name (eg, company) [Default Company Ltd]:Hortonworks
 Organizational Unit Name (eg, section) []:Sales
-Common Name (eg, your name or your server's hostname) []:ec2-52-32-113-77.us-west-2.compute.amazonaws.com
+Common Name (eg, your name or your server's hostname) []:YOUR_PUBLIC_HOSTNAME
 Email Address []:
 
 Please enter the following 'extra' attributes
@@ -784,8 +784,8 @@ Getting Private key
 
 - Copy the 3 files into a new folder called ssl under /etc/security (ambari.key, ambari.csr, ambari.crt)
 ```
-mkdir /etc/security/ssl
-cp ambari.* /etc/security/ssl
+sudo mkdir /etc/security/ssl
+sudo cp ambari.* /etc/security/ssl
 ```
 
 - Proceed onto next section on enable HTTPS for Ambari
