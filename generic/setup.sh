@@ -4,6 +4,9 @@ set -o xtrace
 export HOME=${HOME:-/root}
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
+export ambari_server_custom_script=${ambari_server_custom_script:-~/ambari-bootstrap/ambari-extras.sh}
+
+cd
 
 yum makecache
 yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj
@@ -18,49 +21,23 @@ case ${el_version} in
   ;;
 esac
 
-cd
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 
 ~/ambari-bootstrap/extras/deploy/prep-hosts.sh
 
-#export ambari_repo=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos${el_version}/2.x/BUILDS/2.2.0.0-1291/ambaribn.repo
 ~/ambari-bootstrap/ambari-bootstrap.sh
-sleep 10
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
+    bash -c "nohup ambari-server start" || true
+
+    sleep 60
+
+    ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+    ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
+    ambari-change-pass admin admin ${ambari_pass}
 
     if [ "${deploy}" = "true" ]; then
-        #hdp_version=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-        hdp_version=2.3
-
-        ## zeppelin
-        git clone https://github.com/hortonworks-gallery/ambari-zeppelin-service.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/ZEPPELIN
-        sed -i.bak '/dependencies for all/a \    "ZEPPELIN_MASTER-START": ["NAMENODE-START", "DATANODE-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
-        echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
-        service postgresql restart
-
-        ## solr
-        git clone https://github.com/abajwa-hw/solr-stack.git /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/SOLR
-        sed -i.bak '/dependencies for all/a \    "SOLR-START" : ["ZOOKEEPER_SERVER-START"],' /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/role_command_order.json
-
-        ## nifi
-        git clone https://github.com/abajwa-hw/ambari-nifi-service.git   /var/lib/ambari-server/resources/stacks/HDP/${hdp_version}/services/NIFI
-
-        ps aux | grep ambari-server | grep java | awk '{print $2}' | xargs kill
-        sleep 5
-        if ! nohup sh -c "ambari-server start 2>&1 > /dev/null"; then
-            printf 'Ambari Server failed to start\n' >&2
-        fi
-        if ! nohup sh -c "ambari-agent restart 2>&1 > /dev/null"; then
-            printf 'Ambari Agent failed to start\n' >&2
-        fi
-
-        sleep 60
-
-        ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-        ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
-        ambari-change-pass admin admin ${ambari_pass}
 
         cd ~/ambari-bootstrap/deploy
 
@@ -68,9 +45,6 @@ if [ "${install_ambari_server}" = "true" ]; then
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
-    "hdfs-site": {
-        "dfs.replication": "1"
-    },
     "yarn-site": {
         "yarn.scheduler.minimum-allocation-vcores": "1",
         "yarn.scheduler.maximum-allocation-vcores": "1",
