@@ -253,7 +253,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 
 **Run below on all nodes**
 
-1. Add your Active Directory to /etc/hosts (if not in DNS). Make sure you replace the IP address of your AD from your instructor.
+1. Add your Active Directory's internal IP to /etc/hosts (if not in DNS). Make sure you replace the IP address of your AD from your instructor below.
   - **Change the IP to match your ADs internal IP**
    ```
 ad_ip=GET_THE_AD_IP_FROM_YOUR_INSTRUCTOR
@@ -288,7 +288,7 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 openssl s_client -connect ad01:636 </dev/null
    ```
 
-**Now repeat above steps on all nodes**
+**Make sure to repeat the above steps on all nodes**
 
 
 ### Setup Ambari/AD sync
