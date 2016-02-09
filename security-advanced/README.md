@@ -365,7 +365,10 @@ EOF
 
 ### Run Ambari Kerberos Wizard against Active Directory environment
 
-Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). Enter the below details:
+- Enable kerberos using Ambari security wizard (under 'Admin' tab > Kerberos). 
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-start-kerberos-wizard.png)
+
+- Enter the below details:
 
 - KDC:
     - KDC host: ad01.lab.hortonworks.net
