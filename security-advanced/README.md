@@ -498,6 +498,9 @@ sudo service sssd restart
 
 sudo kdestroy
 ```
+
+- Restart HDFS service via Ambari to restart namenode
+
 - Test your nodes can recognize AD users
 ```
 id sales1
@@ -526,6 +529,7 @@ Execute the following on the node where the YARN ResourceManager is installed:
 sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
 sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 ```
+
 
 - kinit as a normal Hadoop user
 ```
