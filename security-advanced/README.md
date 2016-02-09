@@ -879,6 +879,8 @@ sudo chmod 440 /etc/security/http_secret
 
 
 - Restart all services that require restart (HDFS, Mapreduce, YARN)
+
+
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-restart-services.png)
 
 - Now when you try to open any of the web UIs like below you will get `401: Authentication required`
