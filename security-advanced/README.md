@@ -397,7 +397,8 @@ EOF
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-7.png)
 
-  
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-8.png)
+    
 - Then click Next on all the following screens to proceed with all the default values
 
 ### Setup AD/OS integration via SSSD
