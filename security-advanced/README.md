@@ -829,7 +829,7 @@ sudo ambari-server start
 - Now you can access Ambari on HTTPS on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
 
 
-### SPNEGO
+### Enabling SPNEGO Authentication for Hadoop
 
 - Needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
 
@@ -849,18 +849,19 @@ cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
 ambari-server restart
 ```
 
-- On all the other nodes, after the http_secret file appears under /var/lib/ambari-agent/cache/host_scripts...
-
-- Run below as root to put it in right dir and correct its permissions
-```
-cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
-chown hdfs:hadoop /etc/security/http_secret
-chmod 440 /etc/security/http_secret
-```
-
-- logoff root on each node
+- logoff as root 
 ```
 logoff
+```
+
+- Wait 30seconds. 
+
+- On non-Ambari nodes, after the http_secret file appears under /var/lib/ambari-agent/cache/host_scripts...
+- ...run below as root to put it in right dir and correct its permissions
+```
+sudo cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
+sudo chown hdfs:hadoop /etc/security/http_secret
+sudo chmod 440 /etc/security/http_secret
 ```
 
 
