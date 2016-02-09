@@ -860,7 +860,7 @@ exit
 - Confirm MySQL user: `mysql -u root -h $(hostname -f) -p -e "select count(user) from mysql.user;"`
   - Output should be a simple count. Check the last step if there are errors.
 
-##### Prepare Ambari for MySQL *(or the database you want to use)*
+##### Prepare Ambari for MySQL
 - Run this on Ambari node
 - Add MySQL JAR to Ambari:
   - `sudo ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar`
