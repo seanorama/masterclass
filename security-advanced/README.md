@@ -570,6 +570,8 @@ hdfs dfs -ls /tmp/hive
 export HADOOP_USER_NAME=hdfs
 hdfs dfs -ls /tmp/hive 
 
+#log out as sales1
+logout
 ```
 - Notice that now that the cluster is kerborized, we were not able to circumvent security by setting the env var 
 
