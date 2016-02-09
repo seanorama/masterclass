@@ -37,7 +37,7 @@
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
     - Hive?
-- [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9)
+- [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9---optional)
   - Configure Ambari views for kerberos?
 
 ---------------
@@ -2141,10 +2141,10 @@ beeline -u jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/var/lib/knox/dat
 # Lab 9 - Optional
 
 ## Other Security features for Ambari
-**TODO**
-- Setup views: http://docs.hortonworks.com/HDPDocuments/Ambari-2.1.2.0/bk_ambari_views_guide/content/ch_configuring_views_for_kerberos.html
 
-  - Automation to install views
+- Setup views using : http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html
+
+- Automation to install views (**TODO** test this)
 ```
 sudo su
 git clone https://github.com/seanorama/ambari-bootstrap
@@ -2153,6 +2153,6 @@ export ambari_pass=BadPass#1
 source ambari_functions.sh
 ./ambari-views/create-views.sh
 ```
-  - Restart HDFS via Ambari
+- Restart HDFS via Ambari
 
     
