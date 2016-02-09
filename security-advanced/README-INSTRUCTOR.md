@@ -33,12 +33,12 @@ For managing multiple clusters (each takes variables for naming & the number of 
 
    ```
 git clone https://github.com/seanorama/masterclass
-cd masterclass/security-advanced
+cd masterclass/generic
    ```
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
     - Open the CloudFormat Web UI
-    - Or with the command-line: `..bin//cloudformation-status.sh`
+    - Or with the command-line: `../bin/cloudformation-status.sh`
 
 1. Open a 'screen' so the commands continue if you lose connectivity:
 
@@ -71,8 +71,9 @@ export lab_count=2                  ## number of clusters to create
 export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER SOLR AMBARI_METRICS HBASE"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
 '
