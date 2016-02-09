@@ -1009,7 +1009,9 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ##### Install Ranger
 
-- Using Amabris 'Add Service' wizard, install Ranger on any node you like. Set the below configs in each Ranger config tab:
+- Using Amabris 'Add Service' wizard, install Ranger on any node you like. On the 'Customize Services' page of the wizard there are a number of tabs
+
+- Go through each Ranger config tab, making below changes:
 
 1. Ranger Admin tab:
   - Ranger DB Host = FQDN of host where Mysql is running (e.g. ip-172-30-0-242.us-west-2.compute.internal)
