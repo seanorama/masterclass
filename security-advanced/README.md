@@ -212,8 +212,9 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox and Hbase, if not already installed
-  - When prompted for the Knox password, set it to `BadPass#1`
+- Use the 'Add Service' Wizard to install Knox, if not already installed
+  - When prompted for the `Knox Master Secret`, set it to `BadPass#1`
+   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
 
 - We will use Knox further in a later exercise.
 
