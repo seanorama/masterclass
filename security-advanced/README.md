@@ -542,7 +542,7 @@ hdfs groups
 yarn rmadmin -getGroups hr1
 ```
 
-- output should look like:
+- output for both commands should look like:
 ```
 hr1@LAB.HORTONWORKS.NET : domain_users hadoop-users hr
 ```
