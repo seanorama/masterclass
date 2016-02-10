@@ -422,7 +422,7 @@ EOF
 ls -la /etc/security/keytabs/
 ```
 
-- Run a `klist -kt`  on the service keytab files to see the principal name it is for. Sample output below:
+- *From host running NameNode*, run a `klist -kt`  on the service keytab files to see the principal name it is for. Sample output below:
 ```
 $ sudo klist -kt /etc/security/keytabs/nn.service.keytab
 Keytab name: FILE:/etc/security/keytabs/nn.service.keytab
