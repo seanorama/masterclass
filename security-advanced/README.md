@@ -1122,11 +1122,19 @@ sudo service ambari-agent restart
 
 ##### Check Ranger
 
-- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080
-- Confirm users/group sync from AD are working by clicking 'Settings' > 'Users/Groups tab' and noticing AD users/groups are present
-- Confirm that repos for HDFS, YARN, Hive etc appear under 'Access Manager tab'
-- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Plugins' tab 
+- Open Ranger UI at http://RANGERHOST_PUBLIC_IP:6080 using admin/admin
+- Confirm that repos for HDFS, YARN, Hive, HBase, Knox appear under 'Access Manager tab'
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-AccessManager.png)
+
 - Confirm that audits appear under 'Audit' tab
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audits.png)
+
+- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Plugins' tab 
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-plugins.png)
+
+- Confirm users/group sync from AD into Ranger are working by clicking 'Settings' > 'Users/Groups tab' in Ranger UI and noticing AD users/groups are present
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-groups.png)
+
 - Confirm HDFS audits working by querying the audits dir in HDFS:
 ```
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
@@ -1138,7 +1146,7 @@ curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 - Confirm Banana dashboard has start to show HDFS audits
 http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
-**TODO** add screenshots
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-audits.png)
 
 ------------------
 
