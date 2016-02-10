@@ -1194,7 +1194,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
       - xasecure.audit.destination.hdfs.dir = hdfs://ip-172-30-0-185.us-west-2.compute.internal:8020/ranger/audit
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
 
-- Click Next to proceed with the wizard
+- Click Next > Proceed Anyway to proceed with the wizard
 
 - On Configure Identities page, you will have to enter your AD admin credentials:
   - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
@@ -1219,7 +1219,9 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - HDFS > Configs > Custom core-site:
     - hadoop.proxyuser.kms.groups = *   
 
-- Restart the HDFS and Ranger and RangerKMS service.
+- Restart the services that require it e.g. HDFS, Mapreduce, YARN
+
+- Restart Ranger and RangerKMS services.
 
 
 ## Ranger KMS/Data encryption exercise
