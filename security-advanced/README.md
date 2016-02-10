@@ -1035,7 +1035,7 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
     - Usually the leader node is the one where the collection was created from
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
 
-- (Optional) - On the leader node, install SILK (banana) dashboard to visualize audits in Solr
+- (Optional) - *On the leader node*, install SILK (banana) dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
@@ -1050,7 +1050,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - Access Solr webui for ranger_audits collection at http://SolrLeaderNodeIP:6083/solr/#/ranger_audits_shard1_replica1. 
     - This is currently empty but will be where Ranger audits will get stored
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-dashboard-collection.png)
-  - access banana dashboard (if installed earlier) at http://hostname:6083/solr/banana/index.html 
+  - access banana dashboard (if installed earlier) at http://SolrLeaderNodeIP:6083/solr/banana/index.html 
     - This is currently empty but will be where Ranger audits will get visualized
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-empty.png)
