@@ -416,6 +416,49 @@ EOF
 
   - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat)
 
+
+- Check the keytabs directory and notice that keytabs have been generated here:
+```
+ls -la /etc/security/keytabs/
+```
+
+- Run a `klist -kt`  on the service keytab files to see the principal name it is for. Sample output below:
+```
+$ sudo klist -kt /etc/security/keytabs/nn.service.keytab
+Keytab name: FILE:/etc/security/keytabs/nn.service.keytab
+KVNO Timestamp           Principal
+---- ------------------- ------------------------------------------------------
+   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 nn/ip-172-30-0-181.us-west-2.compute.internal@LAB.HORTONWORKS.NET
+```
+
+- Notice how the service keytabs are divided into the below 3 parts. The instance here is the FQDN of the node so these keytabs are *host specific*.
+```
+{name of entity}/{instance}@{REALM}. 
+```
+
+- Run a `klist -kt`  on one of the headless keytab files to see the principal name it is for. Sample output below:
+```
+$ sudo klist -kt /etc/security/keytabs/hdfs.headless.keytab
+Keytab name: FILE:/etc/security/keytabs/hdfs.headless.keytab
+KVNO Timestamp           Principal
+---- ------------------- ------------------------------------------------------
+   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+   0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
+```
+
+- Notice how the headless keytabs are divided into the below 3 parts. These keytabs are *host specific*.
+```
+{name of entity}-{cluster}@{REALM}. 
+```
+
+
 ### Setup AD/OS integration via SSSD
 
 - Why? 
@@ -1253,7 +1296,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
   
-  - Now add a new policy for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
+  - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
     - resource path: /ranger/audit/kms
     - user: HTTP
@@ -1301,33 +1344,40 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - **TODO** move hive warehouse dir to EZ
   
 ```
-
-#run kinit as different users: hdfs, hadoopadmin, sales1
+#run below on Ambari node
 
 export PASSWORD=BadPass#1
 
 #detect name of cluster
-output=`curl -u hadoopadmin:$PASSWORD -i -H 'X-Requested-By: ambari'  http://localhost:8080/api/v1/clusters`
+output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
-#then kinit using the keytab and the principal name
-sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+
+#first we will run login 3 different users: hdfs, hadoopadmin, sales1
 
 #kinit as hadoopadmin and sales using BadPass#1 
 sudo -u hadoopadmin kinit
+## enter BadPass#1
 sudo -u sales1 kinit
+## enter BadPass#1
+
+#then kinit as hdfs using the keytab and the principal name
+sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
+
 
 #as hadoopadmin create dir
 sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
+sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr2
 
 #as hdfs create/list EZ
 sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /zone_encr
+sudo -u hdfs hdfs crypto -createZone -keyName testkey2 -path /zone_encr2
 # if you get 'RemoteException' error it means you have not given namenode user permissions on testkey by creating a policy for KMS in Ranger
 
 #check it got created
 sudo -u hdfs hdfs crypto -listZones  
 
-#create test file
+#create test files
 sudo -u hadoopadmin echo "My test file1" > /tmp/test1.log
 sudo -u hadoopadmin echo "My test file2" > /tmp/test2.log
 
@@ -1335,15 +1385,22 @@ sudo -u hadoopadmin echo "My test file2" > /tmp/test2.log
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test1.log /zone_encr
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr
 
+sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr2
+
 #Notice that hadoopadmin allowed to decrypt EEK but not sales user
 sudo -u hadoopadmin hdfs dfs -cat /zone_encr/test1.log
+sudo -u hadoopadmin hdfs dfs -cat /zone_encr2/test2.log
 #this should work
 
 sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 ## this should give you below error
 ## cat: User:sales1 not allowed to do 'DECRYPT_EEK' on 'testkey'
 
-#delete a file from EZ - note the skipTrash option
+#try to remove file from EZ using usual -rm command
+sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
+## rm: Failed to move to trash.... /zone_encr/test2.log can't be moved from an encryption zone.
+
+#recall that to delete a file from EZ you need to specify the skipTrash option
 sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
 
 #View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
@@ -2292,4 +2349,3 @@ sudo service ambari-server restart
 #restart agents on all nodes
 sudo service ambari-agent restart
 ```
-    
