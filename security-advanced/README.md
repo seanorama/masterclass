@@ -25,7 +25,7 @@
 - [Lab 6](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-6)
   - Ranger KMS install
   - HDFS encryption exercises
-  - Move Hive warehouse to EZ?
+  - Move Hive warehouse to EZ
 - [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
   - Secured Hadoop exercises
     - HDFS
@@ -1321,8 +1321,13 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - if an error is thrown, go back and test connection as described in previous step
   - Create a key called `testkey` > Save
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-createkey.png)
-  
-- Add user hadoopadmin and nn to default KMS key policy
+
+- Similarly, create another key called `testkey2`
+  - Select Encryption > Key Manager
+  - Select KMS service > pick your kms > Add new Key
+  - Create a key called `testkey2` > Save  
+
+- Add user `hadoopadmin` and `nn` to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy.png)
@@ -1333,14 +1338,15 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Under 'Select User', Add hadoopadmin and nn users and click Save
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
   
+    - Note: at minimum `nn` user needs `GetMetaData` and  `GenerateEEK` priviledge
   
 - Run below to create a zone using the key and perform basic key and EZ exercises 
-  - Create EZ using key
-  - Copy file to EZ
+  - Create EZs using keys
+  - Copy file to EZs
   - Delete file from EZ
   - View contents for raw file
   - Prevent access to raw file
-  - **TODO** copy file across EZs
+  - Copy file across EZs
   - **TODO** move hive warehouse dir to EZ
   
 ```
@@ -1361,27 +1367,29 @@ sudo -u hadoopadmin kinit
 sudo -u sales1 kinit
 ## enter BadPass#1
 
-#then kinit as hdfs using the keytab and the principal name
+#then kinit as hdfs using the headless keytab and the principal name
 sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cluster}
 
+#as hadoopadmin list the keys and their metadata
+sudo -u hadoopadmin hadoop key list -metadata
 
-#as hadoopadmin create dir
+#as hadoopadmin create dirs for EZs
 sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr
 sudo -u hadoopadmin hdfs dfs -mkdir /zone_encr2
 
-#as hdfs create/list EZ
+#as hdfs create 2 EZs using the 2 keys
 sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /zone_encr
 sudo -u hdfs hdfs crypto -createZone -keyName testkey2 -path /zone_encr2
 # if you get 'RemoteException' error it means you have not given namenode user permissions on testkey by creating a policy for KMS in Ranger
 
-#check it got created
+#check EZs got created
 sudo -u hdfs hdfs crypto -listZones  
 
 #create test files
 sudo -u hadoopadmin echo "My test file1" > /tmp/test1.log
 sudo -u hadoopadmin echo "My test file2" > /tmp/test2.log
 
-#copy file to EZ
+#copy files to EZs
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test1.log /zone_encr
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr
 
@@ -1403,6 +1411,12 @@ sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
 #recall that to delete a file from EZ you need to specify the skipTrash option
 sudo -u hadoopadmin hdfs dfs -rm -skipTrash /zone_encr/test2.log
 
+#confirm that test2.log was deleted and that zone_encr only contains test1.log
+sudo -u hadoopadmin hdfs dfs -ls  /zone_encr/
+ 
+#copy a file between EZs using distcp with -skipcrccheck option
+sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /zone_encr2/test2.log /zone_encr/
+
 #View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
 sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
@@ -1417,6 +1431,29 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 ```
 
+- Configure Hive for HDFS Encryption. [Reference](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/hive-access-encr.html)
+```
+sudo -u hadoopadmin hdfs dfs -mv /apps/hive /apps/hive-old
+sudo -u hadoopadmin hdfs dfs -mkdir /apps/hive
+sudo -u hdfs hdfs crypto -createZone -keyName testkey -path /apps/hive
+sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /apps/hive-old/warehouse /apps/hive/warehouse
+```
+
+- To configure the Hive scratch directory (hive.exec.scratchdir) so that it resides inside the encryption zone:
+  - Ambari > Hive > Configs > Advanced 
+    - hive.exec.scratchdir = /apps/hive/tmp
+- Restart Hive
+
+- Make sure that the permissions for /apps/hive/tmp are set to 1777
+```
+sudo -u hdfs hdfs dfs -chmod -R 1777 /apps/hive/tmp
+```
+
+- Confirm permissions by accessing the scratch dir as sales1
+```
+sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
+## this should provide listing
+```
 
 ------------------
 
