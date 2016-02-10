@@ -1188,10 +1188,11 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.users=*      
         ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-proxy.png) 
   - Advanced ranger-kms-audit:
-    - Audit to Solr
-    - Audit to HDFS
+    - Audit to Solr = selected
+    - Audit to HDFS = selected
     - For xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
       - xasecure.audit.destination.hdfs.dir = hdfs://ip-172-30-0-185.us-west-2.compute.internal:8020/ranger/audit
+      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
 
 - Click Next to proceed with the wizard
 
