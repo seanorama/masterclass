@@ -56,7 +56,10 @@ Credentials will be provided for these services by the instructor:
 ### To connect using Putty from Windows laptop
 
 - Download ppk from [here](https://github.com/seanorama/masterclass/raw/master/security-advanced/training-keypair.ppk)
-- Use putty to connect to your nodes
+- Use putty to connect to your node as below:
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/putty.png)
+
+- Make sure to click "Save" on the session page before logging in
 
 ### To connect from Linux/MacOSX laptop
 
