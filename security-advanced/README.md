@@ -422,7 +422,7 @@ EOF
 ls -la /etc/security/keytabs/
 ```
 
-- *From host running NameNode*, run a `klist -kt`  on the service keytab files to see the principal name it is for. Sample output below:
+- Run a `klist -kt`  one of the service keytab files to see the principal name it is for. Sample output below (*executed on host running Namenode*):
 ```
 $ sudo klist -kt /etc/security/keytabs/nn.service.keytab
 Keytab name: FILE:/etc/security/keytabs/nn.service.keytab
@@ -440,7 +440,7 @@ KVNO Timestamp           Principal
 {name of entity}/{instance}@{REALM}. 
 ```
 
-- Run a `klist -kt`  on one of the headless keytab files to see the principal name it is for. Sample output below:
+- Run a `klist -kt`  on one of the headless keytab files to see the principal name it is for. Sample output below (*executed on host running Namenode*):
 ```
 $ sudo klist -kt /etc/security/keytabs/hdfs.headless.keytab
 Keytab name: FILE:/etc/security/keytabs/hdfs.headless.keytab
