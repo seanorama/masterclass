@@ -592,15 +592,18 @@ sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
 kinit hr1
 ```
 
-- check the users groups
+- check the group mappings
 ```
 hdfs groups
 yarn rmadmin -getGroups hr1
 ```
 
-- output for both commands should look like:
+- output should like below, indicating both OS-level and hadoop-level group mappings :
 ```
-hr1@LAB.HORTONWORKS.NET : domain_users hadoop-users hr
+$ hdfs groups
+hr1@LAB.HORTONWORKS.NET : domain_users hr hadoop-users
+$ yarn rmadmin -getGroups hr1
+hr1 : domain_users hr hadoop-users
 ```
 
 ### Test OS/AD integration and Kerberos security
