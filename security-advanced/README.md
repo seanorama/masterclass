@@ -1164,7 +1164,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
     - KMS_MASTER_KEY_PASSWORD = BadPass#1
     - REPOSIORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
     - REPOSIORY_CONFIG_PASSWORD = BadPass#1
-    - db_host = Internal FQDN of MySQL node
+    - db_host = Internal FQDN of MySQL node e.g. ip-172-30-0-181.us-west-2.compute.internal
     - db_password = BadPass#1
     - db_root_password = BadPass#1
   - advanced kms-site:
