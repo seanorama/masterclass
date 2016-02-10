@@ -1126,10 +1126,10 @@ sudo service ambari-agent restart
 - Confirm that repos for HDFS, YARN, Hive, HBase, Knox appear under 'Access Manager tab'
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-AccessManager.png)
 
-- Confirm that audits appear under 'Audit' tab
+- Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audits.png)
 
-- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Plugins' tab 
+- Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-plugins.png)
 
 - Confirm users/group sync from AD into Ranger are working by clicking 'Settings' > 'Users/Groups tab' in Ranger UI and noticing AD users/groups are present
