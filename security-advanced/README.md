@@ -143,9 +143,12 @@ Credentials will be provided for these services by the instructor:
    sudo -u hdfs hadoop fs  -chown hr1:hadoop /user/hr1   
   ```
     
-  - Now create Hive table in default database by either
-    - logging into ambari as admin and run this via Hive view (one statement at a time) e.g. http://52.32.113.77:8080/#/main/views/HIVE/1.0.0/AUTO_HIVE_INSTANCE
-    - Or starting beeline shell from the node where Hive is installed: `beeline -u "jdbc:hive2://localhost:10000/default"`
+  - Now create Hive table in default database by 
+    - Starting beeline shell from the node where Hive is installed: 
+```
+beeline -u "jdbc:hive2://localhost:10000/default"
+```
+
 ```
 CREATE TABLE `sample_07` (
 `code` string ,
