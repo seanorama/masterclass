@@ -89,6 +89,7 @@ Credentials will be provided for these services by the instructor:
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 
 - You will see a list of Hadoop components running on your cluster on the left side of the page
+  - They should all be in green status. If not, start them by Ambari via 'Service Actions' menu for that service
 
 #### Finding internal/external hosts
 
