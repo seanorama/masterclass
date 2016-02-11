@@ -1829,6 +1829,7 @@ hbase> create 'sales', 'cf'
 ```
 - Now it fails with authorization error: 
   - `org.apache.hadoop.hbase.security.AccessDeniedException: Insufficient permissions for user 'sales1@LAB.HORTONWORKS.NET' (action=create)`
+  - Note: there will be a lot of output from above. The error will be on the line right after your create command
 
 - Login into Ranger UI e.g. at http://RANGER_HOST_PUBLIC_IP:6080/index.html as admin/admin
 
