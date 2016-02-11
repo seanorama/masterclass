@@ -1628,9 +1628,10 @@ logout
   - port remains 10000
   - *now a kerberos principal needs to be passed in*
 
+- Login as sales1 without kerberos ticket and try to open beeline connection:
 ```
 sudo su - sales1
-
+kdestroy
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
 ```
 - This fails with `GSS initiate failed` because the cluster is kerborized and we have not authenticated yet
