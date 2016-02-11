@@ -1323,7 +1323,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   
   - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
-    - resource path: /ranger/audit/kms
+    - resource path: /ranger/audit
     - user: HTTP
     - Permissions: Read Write Execute
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
