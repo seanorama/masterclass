@@ -1282,11 +1282,13 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 - Restart Ranger and RangerKMS services.
 
 - (Optional) Add another KMS:
-  - Ambari > Ranger KMS > Service Actions > Add Ranger KMS Server
+  - Ambari > Ranger KMS > Service Actions > Add Ranger KMS Server > Pick any host
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-add-KMS.png) 
   - After it is installed, you can start it by:
     - Ambari > Ranger KMS > Service Actions > Start
-  
+    
+  - Once started you will see multiple KMS Servers running in Ambari:  
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-multiple-KMS.png) 
 
 ## Ranger KMS/Data encryption exercise
 
