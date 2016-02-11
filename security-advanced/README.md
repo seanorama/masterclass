@@ -2039,6 +2039,8 @@ beeline> select * from persons;
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-audit-persons.png)
 
+##### Drop Encrypted Hive tables 
+
 - From beeline, try to drop the table. 
 ```
 beeline> drop table persons;
