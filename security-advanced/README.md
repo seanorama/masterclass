@@ -1620,7 +1620,7 @@ logout
     - Password: BadPass#1
   - Once the test passes, click Save  
 
-- Run these steps from node where Hive (or client) is installed 
+- Now run these steps from node where Hive (or client) is installed 
 
 - Login as sales1 and attempt to connect to default database in Hive via beeline and access sample_07 table
 
