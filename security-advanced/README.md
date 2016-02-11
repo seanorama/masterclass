@@ -2037,7 +2037,7 @@ sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
-- Note: if the mapreduce job fails with below, most likely you have not given sales group decrypt permission on the key used to encrypt Hive directories 
+- Note: if the mapreduce job fails with below, most likely you have not given sales group all the permissions needed on the EK used to encrypt Hive directories 
 ```
  java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
 ```
