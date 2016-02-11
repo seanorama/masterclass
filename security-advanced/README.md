@@ -350,7 +350,7 @@ EOF
   ```
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-setup-LDAP.png)
 
-- Reestart Ambari server and agent
+- Restart Ambari server and agent
   ```
    sudo ambari-server restart
    sudo ambari-agent restart
@@ -1281,6 +1281,12 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 
 - Restart Ranger and RangerKMS services.
 
+- (Optional) Add another KMS:
+  - Ambari > Ranger KMS > Service Actions > Add Ranger KMS Server
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-add-KMS.png) 
+  - After it is installed, you can start it by:
+    - Ambari > Ranger KMS > Service Actions > Start
+  
 
 ## Ranger KMS/Data encryption exercise
 
