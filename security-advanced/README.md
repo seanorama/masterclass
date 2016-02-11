@@ -1987,7 +1987,7 @@ logout
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
   - Log out of Ranger
   
-- Create Ranger policy to allow `sales` group `decrypt permissions` on `testkey` (i.e. key used to encrypt Hive warehouse directories)
+- Create Ranger policy to allow `sales` group `decrypt EEK` permissions on `testkey` (i.e. key used to encrypt Hive warehouse directories)
   - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
