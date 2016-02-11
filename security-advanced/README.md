@@ -1985,13 +1985,15 @@ logout
 sudo su - sales1
 ```
 
-- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data
+- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL
 ```
 kinit
 ## enter BadPass#1 as password
 
 sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username root --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
+- This will start a mapreduce job to import the data
+
 - Login to beeline
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
@@ -2001,14 +2003,28 @@ beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@H
 ```
 beeline> select * from persons;
 ```
-- Now that the authorization policy is in place, the query should work
+- Since the authorization policy is in place, the query should work
 
 - Ranger audit should show the request was allowed:
   - Under Ranger > Audit > query for
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-audit-persons.png)
 
-- You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
+- From beeline, try to drop the table. 
+```
+beeline> drop table persons;
+```
+- You will get error similar to below
+```
+message:Unable to drop default.persons because it is in an encryption zone and trash is enabled.  Use PURGE option to skip trash.
+```
+
+- To drop a Hive table when Hives directories are located in EncryptionZone, you need to include `purge` as below:
+```
+beeline> drop table persons purge;
+```
+
+- This completes the lab. You have now interacted with Hadoop components in secured mode and used Ranger to manage authorization policies and audits
 
 ------------------
 
