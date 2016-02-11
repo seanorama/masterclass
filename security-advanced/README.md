@@ -1460,7 +1460,7 @@ sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 ```
 
-- Configure Hive for HDFS Encryption. [Reference](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/hive-access-encr.html)
+- Configure Hive for HDFS Encryption using testkey. [Reference](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/hive-access-encr.html)
 ```
 sudo -u hadoopadmin hdfs dfs -mv /apps/hive /apps/hive-old
 sudo -u hadoopadmin hdfs dfs -mkdir /apps/hive
@@ -1964,11 +1964,12 @@ wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PI
 mysql -u root -pBadPass#1
 ```
 
-- At the `mysql>` prompt, run below to create a table in Mysql, import the data from csv and test that it was created:
+- At the `mysql>` prompt, run below to create a table in Mysql, give access to sales1, import the data from csv and test that it was created:
 ```
 create database people;
 use people;
 create table persons (people_id INT PRIMARY KEY, sex text, bdate DATE, firstname text, lastname text, addresslineone text, addresslinetwo text, city text, postalcode text, ssn text, id2 text, email text, id3 text);
+GRANT ALL PRIVILEGES ON persons.* to 'sales1'@'%' IDENTIFIED BY 'BadPass#1';
 LOAD DATA LOCAL INFILE '~/PII_data_small.csv' REPLACE INTO TABLE persons FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 select people_id, firstname, lastname, city from persons where lastname='SMITH';
@@ -1980,22 +1981,40 @@ exit
 logout
 ```
 
-- Create Ranger policy to allow sales group all permissions on persons table in Hive
+- Create Ranger policy to allow `sales` group `all permissions` on `persons` table in Hive
   - Access Manager > Hive > (cluster)_hive > Add new policy
   - Create new policy as below and click Add:
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
+  - Log out of Ranger
+  
+- Create Ranger policy to allow `sales` group `decrypt permissions` on `testkey` (i.e. key used to encrypt Hive warehouse directories)
+  - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
+  - Access Manager > KMS > (cluster)_KMS > Add new policy
+  - Create new policy as below and click Add:
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-create-policy-testkey.png)  
+  - Log out of Ranger
+
+- Note that for end user access to keys, 'Decrypt EEK' permission is sufficient
 
 - Login as sales1
 ```
 sudo su - sales1
 ```
 
-- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL
+- As sales1 user, kinit and run sqoop job to create persons table in Hive (in ORC format) and import data from MySQL. Below are the details of the arguments passed in:
+  - Table: MySQL table name
+  - username: Mysql username
+  - password: Mysql password
+  - hcatalog-table: Hive table name
+  - create-hcatalog-table: whether to create hive table or not
+  - driver: classname for Mysql driver
+  - m: number of mappers
+  
 ```
 kinit
 ## enter BadPass#1 as password
 
-sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username root --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
+sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
 - This will start a mapreduce job to import the data
 
