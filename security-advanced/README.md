@@ -1845,7 +1845,7 @@ hbase> create 'sales', 'cf'
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-policy.png)
   - This will open the list of HBASE policies
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-edit-policy.png)
-  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `code` and `description` columns in `sample_07` dir:
+  - Click 'Add New Policy' button to create a new one allowing `sales` group users access to `sales` table in HBase:
     - Policy Name: `sales`
     - Hbase Table: `sales`
     - Hbase Column Family: `*`
