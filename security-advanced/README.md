@@ -2390,7 +2390,7 @@ sudo chmod o+x /usr/hdp/current/knox-server /usr/hdp/current/knox-server/data /u
 sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 ```
 
-#### Ranger Configuration for Hive over Knox
+##### Ranger Configuration for Hive over Knox
   
 - Setup a Knox policy for sales group for HIVE by:
 - Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
