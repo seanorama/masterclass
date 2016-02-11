@@ -2298,7 +2298,7 @@ beeline> drop table persons purge;
   - -u (aka –user) is used to provide the credentials to be used when the client is challenged by the gateway.
   - Note that most of the samples do not use the cookie features of cURL for the sake of simplicity. Therefore we will pass in user credentials with each curl request to authenticate.
 
-- Opening terminal to host where Knox is running and send below curl request to 8443 port where Knox is running to run `ls` command on `/` dir in HDFS:
+- *From the host where Knox is running*, send the below curl request to 8443 port where Knox is running to run `ls` command on `/` dir in HDFS:
 ```
 curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
