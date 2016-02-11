@@ -1267,7 +1267,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 ```
 
-- Confirm these properties got populated to kms://http@<kmshostname>:9292/kms
+- Confirm these properties got populated to kms://http@(kmshostname):9292/kms
   - HDFS > Configs > Advanced core-site:
     - hadoop.security.key.provider.path
   - HDFS > Configs > Advanced hdfs-site:
