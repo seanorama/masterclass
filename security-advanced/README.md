@@ -887,6 +887,10 @@ sudo ambari-server start
 
 - Now you can access Ambari on HTTPS on port 8444 e.g. https://ec2-52-32-113-77.us-west-2.compute.amazonaws.com:8444
 
+- Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
+  - If Firefox, you can do this by clicking on 'i understand the risk'
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/firefox-untrusted.png)  
+
 
 ### Enabling SPNEGO Authentication for Hadoop
 
@@ -928,7 +932,7 @@ sudo chmod 440 /etc/security/http_secret
   - Under Advanced core-site:
     - hadoop.http.authentication.simple.anonymous.allowed = false
   
-  - Under Custom core-site, add the below (using bulk edit tab):
+  - Under Custom core-site, add the below (using bulk add tab):
     - hadoop.http.authentication.signature.secret.file = /etc/security/http_secret
     - hadoop.http.authentication.typ= kerberos
     - hadoop.http.authentication.kerberos.keytab = /etc/security/keytabs/spnego.service.keytab
