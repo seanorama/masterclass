@@ -240,7 +240,11 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
   - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
+
 - We will use Knox further in a later exercise.
+  
+- After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
+  
 
 -----------------------------
 
