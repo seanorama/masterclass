@@ -1537,6 +1537,8 @@ hdfs dfs -ls /sales
     - Permissions : `Execute Read Write`
     - Add
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-create-policy.png)
+
+- Wait 30s for policy to take effect
   
 - Now try accessing the dir again as sales1 and now there is no error seen
 ```
