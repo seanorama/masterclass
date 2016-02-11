@@ -2320,7 +2320,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 - Other things to access WebHDFS with Knox
 
-  - 1. Use cookie to make request without passing in credentials
+  - A. Use cookie to make request without passing in credentials
     - When you ran the previous curl request it would have listed HTTP headers as part of output. One of the headers will be 'Set Cookie'
     - e.g. `Set-Cookie: JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly`
     - You can pass in the value from your setup and make the request without passing in credentials:
@@ -2328,7 +2328,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
   curl -ik --cookie "JSESSIONID=xxxxxxxxxxxxxxx;Path=/gateway/default;Secure;HttpOnly" -X GET https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
   ```
   
-  - 2. Open file via WebHDFS
+  - B. Open file via WebHDFS
     - List files under /tmp and pick a text file to open:
     ```
     curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
@@ -2352,7 +2352,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
     curl -ik -u sales1:BadPass#1 -X GET '{https://localhost:8443/gateway/default/webhdfs/data/v1/webhdfs/v1/tmp/testfile.txt?_=AAAACAAAABAAAAEwvyZNDLGGNwahMYZKvaHHaxymBy1YEoe4UCQOqLC7o8fg0z6845kTvMQN_uULGUYGoINYhH5qafY_HjozUseNfkxyrEo313-Fwq8ISt6MKEvLqas1VEwC07-ihmK65Uac8wT-Cmj2BDab5b7EZx9QXv29BONUuzStCGzBYCqD_OIgesHLkhAM6VNOlkgpumr6EBTuTnPTt2mYN6YqBSTX6cc6OhX73WWE6atHy-lv7aSCJ2I98z2btp8XLWWHQDmwKWSmEvtQW6Aj-JGInJQzoDAMnU2eNosdcXaiYH856zC16IfEucdb7SA_mqAymZuhm8lUCvL25hd-bd8p6mn1AZlOn92VySGp2TaaVYGwX-6L9by73bC6sIdi9iKPl3Iv13GEQZEKsTm1a96Bh6ilScmrctk3zmY4vBYp2SjHG9JRJvQgr2XzgA}'
     ```
       
-  - 3. Use groovy scripts to access WebHDFS
+  - C. Use groovy scripts to access WebHDFS
     - Edit the groovy script to set:
       - gateway = "https://localhost:8443/gateway/default"
       - username = "sales1"
@@ -2369,7 +2369,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
     [app-logs, apps, ats, hdp, mapred, mr-history, ranger, tmp, user, zone_encr]
     ```
     
-  - 4. Access via browser 
+  - D. Access via browser 
     - Take the same url we have been hitting via curl and replace localhost with public IP of Knox node (remember to use https!) e.g. **https**://PUBLIC_IP_OF_KNOX_HOST:8443/gateway/default/webhdfs/v1?op=LISTSTATUS
     - Open the URL via browser
     - Login as sales1/BadPass#1
