@@ -1257,9 +1257,9 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
         ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-proxy.png) 
   - Advanced ranger-kms-audit:
     - Under xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
-      - xasecure.audit.destination.hdfs.dir = hdfs://ip-172-30-0-185.us-west-2.compute.internal:8020/ranger/audit
+      - `xasecure.audit.destination.hdfs.dir` = `hdfs://YOUR_NN_INTERNAL_HOSTNAME:8020/ranger/audit`
     - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this was the value can be found under from Ranger configs)
-      - xasecure.audit.destination.solr.zookeepers=ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits
+      - `xasecure.audit.destination.solr.zookeepers`=`YOUR_ZK_QUORUM/ranger_audits`
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
 
 - Click Next > Proceed Anyway to proceed with the wizard
