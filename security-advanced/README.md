@@ -82,6 +82,8 @@ Credentials will be provided for these services by the instructor:
   sudo su -
   ```
 
+- Similarly login via SSH to each of the other nodes in your cluster as you will need to run commands on each node in a future lab
+
 #### Login to Ambari
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
@@ -122,14 +124,15 @@ Credentials will be provided for these services by the instructor:
     - It is displayed on the top left of the Ambari dashboard, next to the Ambari logo. If the name appears truncated, you can hover over it to produce a helptext dialog with the full name
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/clustername.png)
   
-  - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager) is installed?
+  - From Ambari how can I find external hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *hover over* the name of the component. The external hostname will appear.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-RM-public-host.png)  
 
-  - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager) is installed?
+  - From Ambari how can I find internal hostname of node where a component (e.g. Resource Manager or Hive) is installed?
     - Click the parent service (e.g. YARN) and *click on* the name of the component. It will take you to hosts page of that node and display the internal hostname on the top.
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
+  - In future labs you may need to provide private or public hostname of nodes running a particular component (e.g. YARN RM or Mysql or HiveServer)
 #### Import sample data into Hive 
 
 - Run below *on hive node* to download data and import it into a Hive table for later labs
@@ -234,6 +237,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 - Use the 'Add Service' Wizard to install Knox, if not already installed
   - When prompted for the `Knox Master Secret`, set it to `knox`
+  - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 - We will use Knox further in a later exercise.
