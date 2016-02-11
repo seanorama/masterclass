@@ -2423,7 +2423,7 @@ beeline --verbose -u jdbc:hive2://INTERNAL_HOSTNAME_OF_KNOX_NODE:8443/;ssl=true;
 
 - When prompted enter username/password 
   - sales1/BadPass#1 should work
-  - hr1/BadPass#1 should not
+  - hr1/BadPass#1 should *not* wor
 
 - This shows how Knox helps end users access Hive securely over HTTPS.
 
