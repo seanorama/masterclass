@@ -1380,7 +1380,9 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Under 'Select User', Add `hadoopadmin`, `nn` and `hive` users and click Save
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
   
-    - Note: at minimum `nn` and `hive` users needs `GetMetaData` and  `GenerateEEK` priviledge
+    - Note that for simplicity we are giving the hadoop users more permissions than they need. At minimum:
+      - `nn` user  needs `GetMetaData` and `GenerateEEK` priviledge
+      - `hive` user needs `GetMetaData` and `DecryptEEK` priviledge
   
 - Run below to create a zone using the key and perform basic key and EZ exercises 
   - Create EZs using keys
@@ -2006,7 +2008,7 @@ logout
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
   - Log out of Ranger
   
-- Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. key used to encrypt Hive warehouse directories)
+- Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. the key used to encrypt Hive warehouse directories)
   - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
