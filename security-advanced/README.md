@@ -80,6 +80,11 @@ Credentials will be provided for these services by the instructor:
   sudo su -
   ```
 
+#### Login to Ambari
+
+- Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
+
+- You will see a list of Hadoop components running on your cluster on the left side of the page
 
 #### Finding internal/external hosts
 
@@ -453,7 +458,7 @@ KVNO Timestamp           Principal
    0 02/09/2016 18:04:44 hdfs-Security-HWX-LabTesting-100@LAB.HORTONWORKS.NET
 ```
 
-- Notice how the headless keytabs are divided into the below 3 parts. These keytabs are *host specific*.
+- Notice how the headless keytabs are divided into the below 3 parts. These keytabs are *cluster specific* (i.e one per cluster)
 ```
 {name of entity}-{cluster}@{REALM}. 
 ```
