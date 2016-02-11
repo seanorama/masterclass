@@ -2459,6 +2459,9 @@ sudo su
 git clone https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap/extras/
 export ambari_pass=BadPass#1
+export ambari_port=8444
+export ambari_protocol=https
+
 source ambari_functions.sh
 ./ambari-views/create-views.sh
 ```
