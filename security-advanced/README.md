@@ -24,6 +24,7 @@
   - Ranger install
 - [Lab 6](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-6)
   - Ranger KMS install
+  - Add a KMS on another node
   - HDFS encryption exercises
   - Move Hive warehouse to EZ
 - [Lab 7](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-7)
