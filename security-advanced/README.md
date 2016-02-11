@@ -2395,8 +2395,8 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
   - This is only for testing since we are using a self-signed cert.
   - This only exposes the truststore, not the keys.
 ```
-sudo chmod o+x /var/lib/knox /var/lib/knox/data* /var/lib/knox/data*/security /var/lib/knox/data*/security/keystores
-sudo chmod o+r /var/lib/knox/data*/security/keystores/gateway.jks
+sudo chmod o+x /usr/hdp/current/knox-server /usr/hdp/current/knox-server/data /usr/hdp/current/knox-server/data/security /usr/hdp/current/knox-server/data/security/keystores
+sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 ```
 
 ##### Use Hive for Knox
@@ -2407,7 +2407,7 @@ sudo chmod o+r /var/lib/knox/data*/security/keystores/gateway.jks
   - trust store is being passed in
 
 ```
-beeline -u jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/var/lib/knox/data/security/keystores/gateway.jks;trustStorePassword=BadPass#1;transportMode=http;httpPath=gateway/default/hive
+beeline -u jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/usr/hdp/current/knox-server/data/security/keystores/gateway.jks;trustStorePassword=BadPass#1;transportMode=http;httpPath=gateway/default/hive
 ```
 
 
