@@ -89,7 +89,7 @@ Credentials will be provided for these services by the instructor:
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 
 - You will see a list of Hadoop components running on your cluster on the left side of the page
-  - They should all be in green status. If not, start them by Ambari via 'Service Actions' menu for that service
+  - They should all show green (ie started) status. If not, start them by Ambari via 'Service Actions' menu for that service
 
 #### Finding internal/external hosts
 
@@ -648,7 +648,7 @@ hdfs dfs -ls /tmp/hive
 #log out as sales1
 logout
 ```
-- Notice that now that the cluster is kerborized, we were not able to circumvent security by setting the env var 
+- Notice that now that the cluster is kerberized, we were not able to circumvent security by setting the env var 
 
 --------------
 
@@ -960,7 +960,7 @@ sudo chmod 440 /etc/security/http_secret
   - Mapreduce: Job history UI
   - YARN: Resource Manager UI
 
-- **TODO**: Show how to open these UIs via kerborized browser
+- **TODO**: Show how to open these UIs via kerberized browser
 
 ### Ambari views 
 
@@ -1549,7 +1549,7 @@ sudo su - sales1
 
 hdfs dfs -ls /sales
 ```
-- This fails with `GSSException: No valid credentials provided` because the cluster is kerborized and we have not authenticated yet
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
 
 - Authenticate as sales1 user and check the ticket
 ```
@@ -1684,7 +1684,7 @@ sudo su - sales1
 kdestroy
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
 ```
-- This fails with `GSS initiate failed` because the cluster is kerborized and we have not authenticated yet
+- This fails with `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
 
 - To exit beeline:
 ```
@@ -1843,7 +1843,7 @@ hbase shell
 ```
 hbase> list 'default'
 ```
-- This fails with `GSSException: No valid credentials provided` because the cluster is kerborized and we have not authenticated yet
+- This fails with `GSSException: No valid credentials provided` because the cluster is kerberized and we have not authenticated yet
 
 - To exit hbase shell:
 ```
@@ -1975,7 +1975,7 @@ logout
 ```
 - We have successfully created a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
 
-- This shows how you can interact with Hadoop components on kerborized cluster and use Ranger to manage authorization policies and audits
+- This shows how you can interact with Hadoop components on kerberized cluster and use Ranger to manage authorization policies and audits
 
 - At this point your Silk/Banana audit dashboard should show audit data from multiple Hadoop components e.g. http://54.68.246.157:6083/solr/banana/index.html#/dashboard
 
@@ -2381,7 +2381,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
       
 
 - We have shown how you can use Knox to avoid the end user from having to know about internal details of cluster
-  - whether its kerborized or not
+  - whether its kerberized or not
   - what the cluster topology is (e.g. what node WebHDFS was running)
 
 
