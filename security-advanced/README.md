@@ -1782,16 +1782,17 @@ beeline> select code, description from sample_07;
 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-summary.png)  
 
-- Quit beeline
+- Exit beeline
 ```
 !q
 ```
-
-- Logout as hr1
+- Logoff as hr1
 ```
-kdestroy
 logout
 ```
+
+
+
 - We have setup Hive authorization policies to ensure only sales users have access to code, description columns in default.sample_07
 
 
@@ -2039,9 +2040,10 @@ beeline> select * from persons;
     - Service type: HIVE
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-audit-persons.png)
 
+
 ##### Drop Encrypted Hive tables 
 
-- From beeline, try to drop the table. 
+- From beeline, try to drop the persons table. 
 ```
 beeline> drop table persons;
 ```
