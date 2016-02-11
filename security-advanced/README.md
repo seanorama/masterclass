@@ -2016,7 +2016,12 @@ kinit
 
 sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
-- This will start a mapreduce job to import the data
+- This will start a mapreduce job to import the data from Mysql to Hive in ORC format
+
+- Note: if the mapreduce job fails with below, most likely you have not given sales group decrypt permission on the key used to encrypt Hive directories 
+```
+ java.lang.RuntimeException: com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure
+```
 
 - Login to beeline
 ```
