@@ -33,6 +33,7 @@
     - Hive
     - HBase
     - Sqoop
+    - Drop Encrypted Hive table
 - [Lab 8](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-8)
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
