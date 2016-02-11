@@ -1382,6 +1382,11 @@ export PASSWORD=BadPass#1
 output=`curl -u hadoopadmin:$PASSWORD -k -i -H 'X-Requested-By: ambari'  https://localhost:8444/api/v1/clusters`
 cluster=`echo $output | sed -n 's/.*"cluster_name" : "\([^\"]*\)".*/\1/p'`
 
+echo $cluster
+## this should show the name of your cluster
+
+## if not you can manully set this as below
+## cluster=Security-HWX-LabTesting-XXXX
 
 #first we will run login 3 different users: hdfs, hadoopadmin, sales1
 
