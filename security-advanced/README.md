@@ -2101,7 +2101,7 @@ beeline> drop table persons purge;
    unset knoxpass
    ```
   
-- Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. Then restart Knox
+- Now lets configure Knox to use our AD for authentication. Replace below content in Ambari > Knox > Config > Advanced topology. 
   - How to tell what configs were changed from defaults? 
     - Default configs remain indented below
     - Configurations that were added/modified are not indented
@@ -2253,6 +2253,8 @@ beeline> drop table persons purge;
             </service>
         </topology>
 ```
+
+- Then restart Knox via Ambari
 
 #### HDFS Configuration for Knox
 
