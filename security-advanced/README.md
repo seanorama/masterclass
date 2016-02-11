@@ -1789,14 +1789,6 @@ logout
 #### Access secured HBase
 
 - Goal: Create a table called 'sales' in HBase and setup authorization policies to ensure only sales users have access to the table
-
-- Confirm the HBASE repo was setup correctly in Ranger
-  - In Ranger > Service Manager > HBASE > Click the Edit icon (next to the trash icon) to edit the HBASE repo
-  - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: rangeradmin@LAB.HORTONWORKS.NET
-    - Password: BadPass#1
-  - Once the test passes, click Save  
   
 - Run these steps from any node where Hbase Master or RegionServer services are installed 
 
