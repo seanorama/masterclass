@@ -1258,7 +1258,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
   - Advanced ranger-kms-audit:
     - Under xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
       - `xasecure.audit.destination.hdfs.dir` = `hdfs://YOUR_NN_INTERNAL_HOSTNAME:8020/ranger/audit`
-    - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this was the value can be found under from Ranger configs)
+    - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this is the value you noted down before starting the KMS install)
       - `xasecure.audit.destination.solr.zookeepers`=`YOUR_ZK_QUORUM/ranger_audits`
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
 
