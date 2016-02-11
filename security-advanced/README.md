@@ -1221,6 +1221,10 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
 - Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html)
 
+- Before starting KMS install, find and note down the value of ranger.audit.solr.zookeepers (this will be used during KMS install)
+  - Open Ambari > Ranger > Config > ranger.audit.solr.zookeepers and note this value
+    - it will be something like `ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits`
+  
 - Open Ambari >> start 'Add service' wizard >> select 'Ranger KMS'.
 - Pick any node to install on
 - Keep the default configs except for below properties 
@@ -1252,10 +1256,10 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
       - hadoop.kms.proxyuser.keyadmin.users=*      
         ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-proxy.png) 
   - Advanced ranger-kms-audit:
-    - Audit to Solr = selected
-    - Audit to HDFS = selected
-    - For xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
+    - Under xasecure.audit.destination.hdfs.dir, replace NAMENODE_HOSTNAME with FQDN of host where name node is running e.g.
       - xasecure.audit.destination.hdfs.dir = hdfs://ip-172-30-0-185.us-west-2.compute.internal:8020/ranger/audit
+    - Under xasecure.audit.destination.solr.zookeepers, copy the value of ranger.audit.solr.zookeepers (this was the value can be found under from Ranger configs)
+      - xasecure.audit.destination.solr.zookeepers=ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-config-audit.png)
 
 - Click Next > Proceed Anyway to proceed with the wizard
