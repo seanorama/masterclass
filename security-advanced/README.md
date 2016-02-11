@@ -793,7 +793,6 @@ Adjusting ambari-server permissions and ownership...
 Ambari Server 'setup-security' completed successfully.
 ```
 
-- Next time you add a service via Ambari (e.g. Ranger) you will be able to request Ambari to "Save admin credentials" (via checkbox) for next time
 
 ### SSL For Ambari server
 
@@ -1338,7 +1337,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
 
   - Give keyadmin permission to view Audits screen in Ranger:
-    - Settings > Permissions
+    - Settings tab > Permissions
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions.png)
     - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
     - Under 'Select User', add 'keyadmin' user
@@ -2007,14 +2006,12 @@ logout
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy-persons.png)  
   - Log out of Ranger
   
-- Create Ranger policy to allow `sales` group `decrypt EEK` permissions on `testkey` (i.e. key used to encrypt Hive warehouse directories)
+- Create Ranger policy to allow `sales` group `Get Metadata` `GenerateEEK` `DecryptEEK` permissions on `testkey` (i.e. key used to encrypt Hive warehouse directories)
   - Login to Ranger http://RANGER_PUBLIC_IP:6080 with keyadmin/keyadmin
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-create-policy-testkey.png)  
   - Log out of Ranger and re-login as admin/admin
-
-- Notice that for end user access to keys, 'Decrypt EEK' permission is sufficient
 
 - Login as sales1
 ```
@@ -2026,7 +2023,7 @@ sudo su - sales1
   - username: Mysql username
   - password: Mysql password
   - hcatalog-table: Hive table name
-  - create-hcatalog-table: whether to create hive table or not
+  - create-hcatalog-table: hive table should be created first
   - driver: classname for Mysql driver
   - m: number of mappers
   
