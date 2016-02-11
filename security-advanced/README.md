@@ -1284,7 +1284,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 
 ## Ranger KMS/Data encryption exercise
 
-- Login to Ranger as admin/admin and 
+- Login to Ranger as admin/admin and create few users for Hadoop components we will need to create policies for:
   - create new user nn
     - Settings > Users/Groups > Add new user
       - username = nn
@@ -1295,6 +1295,9 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-add-nn.png) 
     - Similarly, create a user: HTTP  
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-HTTP.png)
+    - Similarly, create a user: hive  
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-hive.png)
+
   
   - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user to global access on HDFS
     - Access Manager > HDFS > (clustername)_hadoop 
@@ -1335,7 +1338,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Select KMS service > pick your kms > Add new Key
   - Create a key called `testkey2` > Save  
 
-- Add user `hadoopadmin` and `nn` to default KMS key policy
+- Add user `hadoopadmin` and `nn` and `hive` to default KMS key policy
   - Click Access Manager tab
   - Click Service Manager > KMS > (clustername)_kms link
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy.png)
@@ -1343,10 +1346,10 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - Edit the default policy
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-edit-policy.png)
   
-  - Under 'Select User', Add hadoopadmin and nn users and click Save
+  - Under 'Select User', Add `hadoopadmin`, `nn` and `hive` users and click Save
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
   
-    - Note: at minimum `nn` user needs `GetMetaData` and  `GenerateEEK` priviledge
+    - Note: at minimum `nn` and `hive` users needs `GetMetaData` and  `GenerateEEK` priviledge
   
 - Run below to create a zone using the key and perform basic key and EZ exercises 
   - Create EZs using keys
@@ -1355,7 +1358,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   - View contents for raw file
   - Prevent access to raw file
   - Copy file across EZs
-  - **TODO** move hive warehouse dir to EZ
+  - move hive warehouse dir to EZ
   
 ```
 #run below on Ambari node
@@ -1652,6 +1655,12 @@ klist
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
 ```
+
+- If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
+```
+org.apache.hadoop.security.authorize.AuthorizationException: User:hive not allowed to do 'GET_METADATA' on 'testkey'
+```
+
 - This time it connects. Now try to run a query
 ```
 beeline> select code, description from sample_07;
@@ -1682,6 +1691,11 @@ beeline> select code, description from sample_07;
     - Permissions : `select`
     - Add
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-create-policy.png)
+  
+- Notice that as you typed the name of the DB and table, Ranger was able to look these up and autocomplete them
+  -  This was done using the rangeradmin principal we provided during Ranger install
+
+- Wait 30s for the new policy to be picked up
   
 - Now try accessing the columns again and now the query works
 ```
@@ -1714,6 +1728,10 @@ beeline> select code, description from sample_07;
 - For any allowed requests, notice that you can quickly check the details of the policy that allowed the access by clicking on the policy number in the 'Policy ID' column
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-HIVE-policy-details.png)  
 
+- Exit beeline
+```
+!q
+```
 - Now let's check whether non-sales users can access the table
 
 - Logout as sales1 and log back in as hr1
