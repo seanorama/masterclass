@@ -1967,11 +1967,12 @@ create table persons (people_id INT PRIMARY KEY, sex text, bdate DATE, firstname
 LOAD DATA LOCAL INFILE '~/PII_data_small.csv' REPLACE INTO TABLE persons FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 select people_id, firstname, lastname, city from persons where lastname='SMITH';
+exit
 ```
 
 - logoff as root
 ```
-logoff
+logout
 ```
 
 - Create Ranger policy to allow sales group all permissions on persons table in Hive
