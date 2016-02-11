@@ -2411,14 +2411,21 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
   - *a kerberos principal not longer needs to be passed in*
   - trust store is being passed in
 
-- change trustStorePassword password to whatever you set it to when installing Knox
+- If beeline client is not installed on your Knox host, you will need to copy over the jks file from Knox node (from `/usr/hdp/current/knox-server/data/security/keystores/gateway.jks`) to the node where you are running beeline from.
+
+- In the below connect string change:
+  - Knox node internal hostname
+  - path to gateway.jks
+  - trustStorePassword password to whatever you set it to when installing Knox
 ```
 beeline --verbose -u jdbc:hive2://INTERNAL_HOSTNAME_OF_KNOX_NODE:8443/;ssl=true;sslTrustStore=/usr/hdp/current/knox-server/data/security/keystores/gateway.jks;trustStorePassword=YOUR_KNOX_PASSWORD;transportMode=http;httpPath=gateway/default/hive
 ```
-  - You may need to copy over the jks file from Knox node (from `/usr/hdp/current/knox-server/data/security/keystores/gateway.jks`) to the node where you are running beeline from, if they are no co-located.
 
-- When prompted enter username/password: sales1/BadPass#1
+- When prompted enter username/password 
+  - sales1/BadPass#1 should work
+  - hr1/BadPass#1 should not
 
+- This shows how Knox helps end users access Hive securely over HTTPS.
 
 ------------------
 
@@ -2428,7 +2435,7 @@ beeline --verbose -u jdbc:hive2://INTERNAL_HOSTNAME_OF_KNOX_NODE:8443/;ssl=true;
 
 - Setup views using : http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html
 
-- Automation to install views (**TODO** test this)
+- Automation to install views (does not support Ambari running on HTTPS)
 ```
 sudo su
 git clone https://github.com/seanorama/ambari-bootstrap
