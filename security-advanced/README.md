@@ -1081,7 +1081,11 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ##### Install Ranger
 
-- Using Amabris 'Add Service' wizard, install Ranger on any node you like. On the 'Customize Services' page of the wizard there are a number of tabs
+- Start the Amabri 'Add Service' wizard, install Ranger on any node you like. 
+
+- On the Ranger Requirements popup windows, you can check the box and continue as we have already completed the pre-requisite steps
+
+- On the 'Customize Services' page of the wizard there are a number of tabs that need to be configured as below
 
 - Go through each Ranger config tab, making below changes:
 
@@ -2415,11 +2419,6 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 
 ##### Use Hive for Knox
 
-- In the JDBC connect string for connecting to an secured Hive while its running in default (ie binary) transport mode :
-  - *port changes to Knox's port 8443*
-  - *a kerberos principal not longer needs to be passed in*
-  - trust store is being passed in
-
 - By default Knox will use a self-signed (untrusted) certificate
   - To trust the certificate execute:
     ```
@@ -2433,6 +2432,12 @@ keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changei
     ```
 beeline -u "jdbc:hive2://${knoxserver}:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
     ```
+
+- Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
+  - *port changes to Knox's port 8443*
+  - *traffic between client and Knox is over HTTPS*
+  - *a kerberos principal not longer needs to be passed in*
+
 
 - Test these users:
   - sales1/BadPass#1 should work
