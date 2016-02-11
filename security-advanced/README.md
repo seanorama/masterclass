@@ -1992,9 +1992,9 @@ logout
   - Access Manager > KMS > (cluster)_KMS > Add new policy
   - Create new policy as below and click Add:
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-create-policy-testkey.png)  
-  - Log out of Ranger
+  - Log out of Ranger and re-login as admin/admin
 
-- Note that for end user access to keys, 'Decrypt EEK' permission is sufficient
+- Notice that for end user access to keys, 'Decrypt EEK' permission is sufficient
 
 - Login as sales1
 ```
