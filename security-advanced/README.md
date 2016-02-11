@@ -233,7 +233,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
 - Use the 'Add Service' Wizard to install Knox, if not already installed
-  - When prompted for the `Knox Master Secret`, set it to `BadPass#1`
+  - When prompted for the `Knox Master Secret`, set it to `knox`
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
   - Click Next > Proceed Anyway > Deploy to accept all defaults
 - We will use Knox further in a later exercise.
@@ -2269,15 +2269,7 @@ beeline> drop table persons purge;
   ```
 
 
-#### Ranger Configuration for Knox
-
-- Confirm the KNOX repo was setup correctly in Ranger
-  - In Ranger > Service Manager > KNOX > Click the Edit icon (next to the trash icon) to edit the KNOX repo
-  - Click 'Test connection' 
-  - if it fails re-enter below fields and re-try:
-    - Username: rangeradmin@LAB.HORTONWORKS.NET
-    - Password: BadPass#1
-  - Once the test passes, click Save  
+#### Ranger Configuration for WebHDFS over Knox
   
 - Setup a Knox policy for sales group for WEBHDFS by:
 - Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
@@ -2385,7 +2377,6 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 
 
 #### Hive over Knox 
-**TODO** 
 
 ##### Configure Hive for Knox
 
@@ -2399,6 +2390,20 @@ sudo chmod o+x /usr/hdp/current/knox-server /usr/hdp/current/knox-server/data /u
 sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 ```
 
+#### Ranger Configuration for Hive over Knox
+  
+- Setup a Knox policy for sales group for HIVE by:
+- Login to Ranger > Access Manager > KNOX > click the cluster name link > Add new policy
+  - Policy name: hive
+  - Topology name: default
+  - Service name: HIVE
+  - Group permissions: sales 
+  - Permission: check Allow
+  - Add
+
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-knox-hive-policy.png)
+
+
 ##### Use Hive for Knox
 
 - In the JDBC connect string for connecting to an secured Hive while its running in default (ie binary) transport mode :
@@ -2406,9 +2411,13 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
   - *a kerberos principal not longer needs to be passed in*
   - trust store is being passed in
 
+- change trustStorePassword password to whatever you set it to when installing Knox
 ```
-beeline -u jdbc:hive2://localhost:8443/;ssl=true;sslTrustStore=/usr/hdp/current/knox-server/data/security/keystores/gateway.jks;trustStorePassword=BadPass#1;transportMode=http;httpPath=gateway/default/hive
+beeline --verbose -u jdbc:hive2://INTERNAL_HOSTNAME_OF_KNOX_NODE:8443/;ssl=true;sslTrustStore=/usr/hdp/current/knox-server/data/security/keystores/gateway.jks;trustStorePassword=YOUR_KNOX_PASSWORD;transportMode=http;httpPath=gateway/default/hive
 ```
+  - You may need to copy over the jks file from Knox node (from `/usr/hdp/current/knox-server/data/security/keystores/gateway.jks`) to the node where you are running beeline from, if they are no co-located.
+
+- When prompted enter username/password: sales1/BadPass#1
 
 
 ------------------
