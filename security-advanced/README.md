@@ -2429,6 +2429,7 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
 keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
     ```
   - Now Beeline should work:
+
     ```
 beeline -u "jdbc:hive2://${knoxserver}:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
     ```
