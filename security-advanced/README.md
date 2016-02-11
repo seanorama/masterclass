@@ -1302,7 +1302,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
 
 ## Ranger KMS/Data encryption exercise
 
-- Login to Ranger as admin/admin and create few users for Hadoop components we will need to create policies for:
+- Login to Ranger as admin/admin and create few users (nn, HTTP, hive) for Hadoop components we will need to create policies for:
   - create new user nn
     - Settings > Users/Groups > Add new user
       - username = nn
@@ -1317,7 +1317,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-hive.png)
 
   
-  - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user to global access on HDFS
+  - Now lets add hadoopadmin to 'global policy' for HDFS to allow the user global access on HDFS
     - Access Manager > HDFS > (clustername)_hadoop 
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-policy.png)
     - This will open the list of HDFS policies
@@ -1325,12 +1325,26 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
   
+  - You can follow similar steps to give hadoopadmin admin access on HIVE
+    - Access Manager > HIVE > (clustername)_hive   
+    - This will open the list of HIVE policies
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+  
   - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
     - resource path: /ranger/audit
     - user: HTTP
     - Permissions: Read Write Execute
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
+
+  - Give keyadmin permission to view Audits screen in Ranger:
+    - Settings > Permissions
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions.png)
+    - Click 'Audit' (second row from bottom) to change users who have access to Audit screen
+    - Under 'Select User', add 'keyadmin' user
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions-audits.png)
+    - Save
+  
     
 - Logout of Ranger
   - Top right > admin > Logout      
