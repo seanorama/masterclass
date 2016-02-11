@@ -1855,6 +1855,8 @@ hbase> create 'sales', 'cf'
     - Add
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-create-policy.png)
   
+- Wait 30s for policy to take effect
+  
 - Now try creating the table and now it works
 ```
 hbase> create 'sales', 'cf'
@@ -1946,7 +1948,7 @@ logout
 - If Sqoop is not already installed, install it via Ambari on same node where Mysql/Hive are installed:
   - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults
   
-- Login as root, and download a sample csv and login to Mysql
+- *On the host running Mysql*: Login as root, and download a sample csv and login to Mysql
 ```
 sudo su - 
 wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PII_data_small.csv
