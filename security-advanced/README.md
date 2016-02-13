@@ -256,8 +256,11 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 - Ensure Tez is installed on all nodes where Pig clients are installed. This is done to ensure Pig service checks do not fail later on.
  - Ambari > Pig > click the 'Pig clients' link
  - This tell us which nodes have Pig clients installed
+   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AAmbari-pig-nodes.png)
  - For each node that has Pig installed:
+   - Click on the hyperlink of the node name to view that shows all the services running on that particular node
    - Click '+Add' and select 'Tez client' > Confirm add 
+   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/AAmbari-host-add-tez.png)   
 
 -----------------------------
 
