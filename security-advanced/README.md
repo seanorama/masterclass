@@ -1417,6 +1417,8 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Note that for simplicity we are giving the hadoop users more permissions than they need. At minimum:
       - `nn` user  needs `GetMetaData` and `GenerateEEK` priviledge
       - `hive` user needs `GetMetaData` and `DecryptEEK` priviledge
+
+- Logout of Ranger as keyadmin user
   
 - Run below to create a zone using the key and perform basic key and encryption zone (EZ) exercises 
   - Create EZs using keys
@@ -1538,6 +1540,11 @@ sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
 ## this should provide listing
 ```
 
+- Destroy ticket for sales1
+```
+sudo -u sales1 kdestroy
+```
+
 ------------------
 
 # Lab 7
@@ -1548,7 +1555,8 @@ sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
 
 - Goal: Create a /sales dir in HDFS and ensure only users belonging to sales group (and admins) have access
  
-- Confirm the HDFS repo was setup correctly in Ranger
+ 
+- Login to Ranger (using admin/admin) and confirm the HDFS repo was setup correctly in Ranger
   - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
   - Click 'Test connection' 
   - if it fails re-enter below fields and re-try:
@@ -1821,7 +1829,7 @@ kinit
 klist
 ## Default principal: hr1@LAB.HORTONWORKS.NET
 ```
-- Try to access the same dir as hr1 and notice it fails
+- Try to access the same table as hr1 and notice it fails
 ```
 beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
 ```
@@ -2011,8 +2019,11 @@ logout
 
 - If Sqoop is not already installed, install it via Ambari on same node where Mysql/Hive are installed:
   - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults
+  - You will be asked to enter admin principal/password:
+    - hadoopadmin@LAB.HORTONWORKS.NET
+    - BadPass#1
   
-- *On the host running Mysql*: Login as root, and download a sample csv and login to Mysql
+- *On the host running Mysql*: change user to root and download a sample csv and login to Mysql
 ```
 sudo su - 
 wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PII_data_small.csv
