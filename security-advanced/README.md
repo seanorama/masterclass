@@ -327,10 +327,11 @@ URI ldaps://ad01.lab.hortonworks.net ldap://ad01.lab.hortonworks.net
 BASE dc=lab,dc=hortonworks,dc=net
 EOF
 
-## test by running below (LDAP password is: BadPass#1)
-ldapsearch -W -D ldap-reader@lab.hortonworks.net
-
+##test connection to AD using openssl client
 openssl s_client -connect ad01:636 </dev/null
+
+## test connection to AD using ldapsearch (when prompted for password, enter: BadPass#1)
+ldapsearch -W -D ldap-reader@lab.hortonworks.net
    ```
 
 **Make sure to repeat the above steps on all nodes**
