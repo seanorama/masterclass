@@ -927,7 +927,7 @@ ambari-server restart
 
 - logoff as root 
 ```
-logoff
+logout
 ```
 
 - Wait 30seconds. 
@@ -2030,7 +2030,11 @@ wget https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/data/PI
 mysql -u root -pBadPass#1
 ```
 
-- At the `mysql>` prompt, run below to create a table in Mysql, give access to sales1, import the data from csv and test that it was created:
+- At the `mysql>` prompt run below to: 
+  - create a table in Mysql
+  - give access to sales1
+  - import the data from csv
+  - test that table was created
 ```
 create database people;
 use people;
@@ -2133,8 +2137,13 @@ beeline> drop table persons purge;
 #### Knox Configuration for AD authentication
  
 - Run these steps on the node where Knox was installed earlier
-- Create keystore alias for the ldap manager user (which you set in 'systemUsername' in the topology) e.g. BadPass#1
-   - Read password for use in following command (this will prompt you for a password and save it in knoxpass environment variable):
+
+- To configure Knox for AD authentication we need to enter AD related properties in topology xml via Ambari
+
+- The problem is it requires us to enter LDAP bind password, but we do not want it exposed as plain text in the Ambari configs
+
+- The solution? Create keystore alias for the ldap manager user (which you will later pass in to the topology via the 'systemUsername' property)
+   - Read password for use in following command (this will prompt you for a password and save it in knoxpass environment variable). Enter BadPass#1:
    ```
    read -s -p "Password: " knoxpass
    ```
@@ -2142,7 +2151,7 @@ beeline> drop table persons purge;
 
    - Create password alias for Knox called knoxLdapSystemPassword
    ```
-   sudo sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
+   sudo -u knox /usr/hdp/current/knox-server/bin/knoxcli.sh create-alias knoxLdapSystemPassword --cluster default --value ${knoxpass}
    unset knoxpass
    ```
   
@@ -2344,7 +2353,7 @@ curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?
 - Try the same request as hr1 and notice it fails with `Error 403 Forbidden` :
   - This is expected since in the policy above, we only allowed sales group to access WebHDFS over Knox
 ```
-curl -ik -u sales1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
+curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS
 ```
 
 - Notice that to make the requests over Knox, a kerberos ticket is not needed - the user authenticates by passing in AD/LDAP credentials
