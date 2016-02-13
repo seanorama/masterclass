@@ -164,7 +164,9 @@ Credentials will be provided for these services by the instructor:
 ```
 beeline -u "jdbc:hive2://localhost:10000/default"
 ```
+
     - At beeline prompt, run below:
+    
 ```
 CREATE TABLE `sample_07` (
 `code` string ,
