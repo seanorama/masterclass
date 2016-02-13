@@ -1418,7 +1418,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - `nn` user  needs `GetMetaData` and `GenerateEEK` priviledge
       - `hive` user needs `GetMetaData` and `DecryptEEK` priviledge
   
-- Run below to create a zone using the key and perform basic key and EZ exercises 
+- Run below to create a zone using the key and perform basic key and encryption zone (EZ) exercises 
   - Create EZs using keys
   - Copy file to EZs
   - Delete file from EZ
