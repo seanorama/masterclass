@@ -766,7 +766,7 @@ hadoop.proxyuser.ambari.hosts=*
 
 ### Ambari Encrypt Database and LDAP Passwords
 
-- Needed to allow Ambari to cache the admin password
+- Needed to allow Ambari to cache the admin password. Run below on Ambari-server node:
 
 - To encrypt password, run below
 ```
@@ -839,7 +839,7 @@ Email Address []:
 
 Please enter the following 'extra' attributes
 to be sent with your certificate request
-A challenge password []:
+A challenge password []:BadPass#1
 An optional company name []:
 
 $ openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
@@ -907,6 +907,8 @@ sudo ambari-server start
 
 - Needed to secure the Hadoop components webUIs (e.g. Namenode UI, JobHistory UI, Yarn ResourceManager UI etc...)
 
+- Run steps on ambari server node
+
 - Login to ambari node as root
 ```
 sudo su
@@ -951,6 +953,7 @@ sudo chmod 440 /etc/security/http_secret
     - hadoop.http.authentication.cookie.domain = hortonworks.com
     - hadoop.http.filter.initializers = org.apache.hadoop.security.AuthenticationFilterInitializer
 
+- Save configs
 
 - Restart all services that require restart (HDFS, Mapreduce, YARN)
 
@@ -962,7 +965,6 @@ sudo chmod 440 /etc/security/http_secret
   - Mapreduce: Job history UI
   - YARN: Resource Manager UI
 
-- **TODO**: Show how to open these UIs via kerberized browser
 
 ### Ambari views 
 
@@ -978,7 +980,12 @@ Ambari views setup on secure cluster will be covered in later lab ([here](https:
 
 ##### Create & confirm MySQL user 'root'
 
-Prepare MySQL DB for Ranger use. Run these steps on the node where MySQL is located
+Prepare MySQL DB for Ranger use.
+
+- Run these steps on the node where MySQL/Hive is located. To find this, you can either:
+  - use Ambari UI or
+  - Just run `mysql` on each node: if it returns `mysql: command not found`, move onto next node
+
 - `sudo mysql`
 - Execute following in the MySQL shell. Change the password to your preference. 
 
@@ -1010,7 +1017,7 @@ This should already be installed on your cluster. If not, refer to appendix [her
 - Once Solr is installed, run below to set it up for Ranger audits. Steps are based on http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.2/bk_Ranger_Install_Guide/content/solr_ranger_configure_solrcloud.html
 
 - Run on all nodes where Solr was installed. 
-  - (To check, you can check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
+  - (To check, you can either use amabri UI or check for solr dir on each node: `ls /opt/lucidworks-hdpsearch/solr`)
 ```
 export JAVA_HOME=/usr/java/default
 export host=$(curl -4 icanhazip.com)
@@ -1039,14 +1046,18 @@ SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
 
-# create ZK dir - only needs to be run from one of the Solr nodes
+- create ZK dir - only needs to be run from one of the Solr nodes
+```
 sudo /opt/ranger_audit_server/scripts/add_ranger_audits_conf_to_zk.sh
+```
 
-# if you installed Solr via Ambari, skip this step that starts solr 
-# otherwise, run on each Solr node to start it in Cloud mode
-# sudo /opt/ranger_audit_server/scripts/start_solr.sh
+- if you installed Solr via Ambari, skip this step. Otherwise, run this on each Solr node to start the service in Cloud mode
+```
+sudo /opt/ranger_audit_server/scripts/start_solr.sh
+```
 
-# create collection - only needs to be run from one of the Solr nodes
+-  Create collection - only needs to be run from one of the Solr nodes
+```
 sudo sed -i 's,^SOLR_HOST_URL=.*,SOLR_HOST_URL=http://localhost:6083,' \
    /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
    
@@ -1055,11 +1066,11 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 ```
 
 - Now you should access Solr webui http://PublicIPofAnySolrNode:6083/solr
-  - Click the Cloud > Graph tab to find the leader host (172.30.0.181 in below example)
+  - Click the Cloud > Graph tab to find the leader host i.e. the dark dot (172.30.0.181 in below example)
     - Usually the leader node is the one where the collection was created from
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-cloud.png)   
 
-- (Optional) - *On the leader node*, install SILK (banana) dashboard to visualize audits in Solr
+- (Optional) - From the **the leader node host**, install SILK (banana) dashboard to visualize audits in Solr
 ```
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
@@ -1069,6 +1080,7 @@ sudo sed -i "s,sandbox.hortonworks.com,$host," \
 sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 # access banana dashboard at http://SolrLeaderNodeIP:6083/solr/banana/index.html
 ```
+  - if you are not able to see the dashboard, make sure you ran previous step on the *Solr leader node*
 
 - At this point you should be able to: 
   - Access Solr webui for ranger_audits collection at http://SolrLeaderNodeIP:6083/solr/#/ranger_audits_shard1_replica1. 
@@ -1099,9 +1111,9 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-2.png)
 
 2. Ranger User info tab
-  - 'Sync Source' = AD/LDAP 
+  - 'Sync Source' = LDAP/AD 
   - Common configs subtab
-    - Enter password
+    - Enter password: BadPass#1
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.png)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-3.5.png)
 
@@ -1217,12 +1229,12 @@ sudo service ambari-agent restart
 ```
 sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
-- Confirm Solr audits working by querying Solr REST API
+- Confirm Solr audits working by querying Solr REST API *from any solr node*
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
 - Confirm Banana dashboard has start to show HDFS audits
-http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
+http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Banana-audits.png)
 
@@ -1238,11 +1250,13 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 - In this section we will have to setup proxyusers. This is done to enable *impersonation* whereby a superuser can submit jobs or access hdfs on behalf of another user (e.g. because superuser has kerberos credentials but user joe doesn’t have any)
   - For more details on this, refer to the [doc](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
 
-- Before starting KMS install, find and note down the value of ranger.audit.solr.zookeepers (this will be used during KMS install)
-  - Open Ambari > Ranger > Config > ranger.audit.solr.zookeepers and note this value
+- Before starting KMS install, find and note down the value of ranger.audit.solr.zookeepers and internal hostname of namenode. These will be used during KMS install
+  - Open Ambari > Ranger > Config > Filter for `ranger.audit.solr.zookeepers` and note down its value 
     - it will be something like `ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits`
+  - Find the internal hostname of host running namenode and note it down
+    - From Ambari > HDFS > click the 'NameNode' hyperlink. The internal hostname should appear in upper left of the page.
   
-- Open Ambari >> start 'Add service' wizard >> select 'Ranger KMS'.
+- Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
 - Keep the default configs except for below properties 
   - Advanced kms-properties
@@ -1284,6 +1298,7 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 - On Configure Identities page, you will have to enter your AD admin credentials:
   - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
   - Admin password: BadPass#1
+  - Check the "Save admin credentials" checkbox
   
 - Click Next > Deploy to install RangerKMS
         
