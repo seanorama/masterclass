@@ -756,7 +756,7 @@ Ambari Server 'setup' completed successfully.
 ```
 
 
-- Create proxy user settings for ambari user:
+- Create proxy user settings for ambari user to enable it to become a super user on all hosts (more details on this later):
   - Ambari > HDFS > Configs > Advanced > Custom core-site > Add property > Bulk mode:
 ```
 hadoop.proxyuser.ambari.groups=*
@@ -765,7 +765,7 @@ hadoop.proxyuser.ambari.hosts=*
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-proxyuser.png)
 
 - Save and restart HDFS
-  - Ambari will show that other components need restarting too but you can proceed without restarting those for now.
+  - Ambari will show that other components need restarting too but you can proceed without restarting those for now to save time (we will restart those later)
 
 - For now we will skip configuring Ambari Agents for Non-Root
 
