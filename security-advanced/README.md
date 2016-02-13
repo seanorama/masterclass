@@ -577,7 +577,7 @@ sudo service sssd restart
 sudo kdestroy
 ```
 
-- Restart HDFS service via Ambari to restart namenode. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
+- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
 - Test your nodes can recognize AD users
 ```
