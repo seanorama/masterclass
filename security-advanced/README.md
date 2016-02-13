@@ -1045,6 +1045,7 @@ SOLR_LOG_FOLDER=/var/log/solr/ranger_audits
 SOLR_MAX_MEM=1g
 EOF
 sudo ./setup.sh
+```
 
 - create ZK dir - only needs to be run from one of the Solr nodes
 ```
