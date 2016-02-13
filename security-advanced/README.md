@@ -237,7 +237,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
   - Madreduce > Quicklinks > JobHistory UI
   - YARN > Quicklinks > ResourceManager UI
     
-- This should tell you why kerberos is needed on Hadoop :)
+- This should tell you why kerberos (and other security) is needed on Hadoop :)
 
 
 ### Manually install missing components
