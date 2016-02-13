@@ -246,6 +246,11 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
   
 - After the install completed, Ambari will show that a number of services need to be restarted. Ignore this for now, we will restart them at a later stage.
   
+- Ensure Tez is installed on all nodes where Pig clients are installed. This is done to ensure Pig service checks do not fail later on.
+ - Ambari > Pig > click the 'Pig clients' link
+ - This tell us which nodes have Pig clients installed
+ - For each node that has Pig installed:
+   - Click '+Add' and select 'Tez client' > Confirm add 
 
 -----------------------------
 
