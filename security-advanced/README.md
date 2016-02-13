@@ -134,7 +134,10 @@ Credentials will be provided for these services by the instructor:
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-YARN-internal-host.png)  
   
   - In future labs you may need to provide private or public hostname of nodes running a particular component (e.g. YARN RM or Mysql or HiveServer)
+  
+  
 #### Import sample data into Hive 
+
 
 - Run below *on hive node* to download data and import it into a Hive table for later labs
   ```
