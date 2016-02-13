@@ -260,6 +260,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
  - For each node that has Pig installed:
    - Click on the hyperlink of the node name to view that shows all the services running on that particular node
    - Click '+Add' and select 'Tez client' > Confirm add 
+     - If 'Tez client'does not appear in the list, it is already installed on this host, so you can skip this host
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-host-add-tez.png)   
 
 -----------------------------
