@@ -140,7 +140,8 @@ Credentials will be provided for these services by the instructor:
 
 
 - Run below *on the node where HiveServer2 is installed* to download data and import it into a Hive table for later labs
-  - You can either find the node using Ambari or just by running `beeline`
+  - You can either find the node using Ambari or just by running `beeline` command to see where it is installed
+  - Download and import data
   ```
   cd /tmp
   wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/data/sample_07.csv
