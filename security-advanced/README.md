@@ -361,7 +361,7 @@ EOF
   ```
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-setup-LDAP.png)
 
-- Restart Ambari server and agent
+- Restart Ambari server. When you do this, the agent will likely go down so restart it as well.
   ```
    sudo ambari-server restart
    sudo ambari-agent restart
@@ -415,7 +415,8 @@ EOF
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
   - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
-
+  - Sometimes the "Test Connection" button may fail (usually related to AWS issues), but if you previously ran the "Configure name resolution & certificate to Active Directory" steps *on all nodes*, you can proceed.
+  
 - Now click Next on all the following screens to proceed with all the default values  
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-3.png)
@@ -430,7 +431,7 @@ EOF
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-8.png)
 
-  - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat)
+  - Note if the wizard fails after completing more than 90% of "Start and test services" phase, you can just click "Complete" and manually start any unstarted services (e.g. WebHCat or HBase master)
 
 
 - Check the keytabs directory and notice that keytabs have been generated here:
@@ -483,7 +484,7 @@ KVNO Timestamp           Principal
   ```
   id it1
   groups it1
-  
+  hdfs groups it1
   ## groups: it1: no such user
   ```
 - Pre-req for below steps: Your AD admin/instructor should have given 'registersssd' user permissions to add the workstation to OU=HadoopNodes (needed to run 'adcli join' successfully)
@@ -571,7 +572,7 @@ sudo service sssd restart
 sudo kdestroy
 ```
 
-- Restart HDFS service via Ambari to restart namenode
+- Restart HDFS service via Ambari to restart namenode. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
 
 - Test your nodes can recognize AD users
 ```
@@ -759,12 +760,13 @@ hadoop.proxyuser.ambari.hosts=*
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-proxyuser.png)
 
 - Save and restart HDFS
+  - Ambari will show that other components need restarting too but you can proceed without restarting those for now.
 
 - For now we will skip configuring Ambari Agents for Non-Root
 
 ### Ambari Encrypt Database and LDAP Passwords
 
-- Needed to allow Ambari to cache the admin password so its not prompted for each each you add, move or remove a service via Ambari
+- Needed to allow Ambari to cache the admin password
 
 - To encrypt password, run below
 ```
@@ -1232,6 +1234,9 @@ http://PUBLIC_IP_OF_BANANA_NODE:6083/solr/banana/index.html#/dashboard
 
 
 - Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html)
+
+- In this section we will have to setup proxyusers. This is done to enable *impersonation* whereby a superuser can submit jobs or access hdfs on behalf of another user (e.g. because superuser has kerberos credentials but user joe doesn’t have any)
+  - For more details on this, refer to the [doc](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
 
 - Before starting KMS install, find and note down the value of ranger.audit.solr.zookeepers (this will be used during KMS install)
   - Open Ambari > Ranger > Config > ranger.audit.solr.zookeepers and note this value
