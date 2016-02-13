@@ -38,9 +38,9 @@
   - Configure Knox to authenticate via AD
   - Utilize Knox to Connect to Hadoop  Cluster Services
     - WebHDFS
-    - Hive?
+    - Hive
 - [Lab 9](https://github.com/seanorama/masterclass/tree/master/security-advanced#lab-9---optional)
-  - Configure Ambari views for kerberos?
+  - Configure Ambari views for kerberos
 
 ---------------
 
