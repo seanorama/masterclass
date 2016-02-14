@@ -1327,7 +1327,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   
 - Click Next > Deploy to install RangerKMS
         
-- Restart Ranger and RangerKMS via Ambari (hold off on restarting HDFS for now)
+- Restart Ranger and RangerKMS via Ambari (hold off on restarting HDFS and other components for now)
 
 - On RangerKMS node, create symlink to core-site.xml
 ```
