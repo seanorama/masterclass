@@ -1530,7 +1530,9 @@ sudo -u hadoopadmin hdfs dfs -ls  /zone_encr/
  
 #copy a file between EZs using distcp with -skipcrccheck option
 sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /zone_encr2/test2.log /zone_encr/
-
+```
+- Lets now look at the contents of the raw file
+```
 #View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
 sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
