@@ -617,7 +617,7 @@ sudo sudo -u hdfs kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-${cl
 sudo sudo -u hdfs hdfs dfsadmin -refreshUserToGroupsMappings
 ```
 
-Execute the following on the node where the YARN ResourceManager is installed:
+- Execute the following on the node where the YARN ResourceManager is installed:
 ```
 sudo sudo -u yarn kinit -kt /etc/security/keytabs/yarn.service.keytab yarn/$(hostname -f)@LAB.HORTONWORKS.NET
 sudo sudo -u yarn yarn rmadmin -refreshUserToGroupsMappings
