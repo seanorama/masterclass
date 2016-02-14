@@ -393,7 +393,7 @@ EOF
   - This should show a summary of what objects were created
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-run-LDAPsync.png)
   
-- Give 'hadoop-admins' permissions to manage the cluster
+- Give 'hadoop-admin' admin permissions in Ambari to allow the user to manage the cluster
   - Login to Ambari as your local 'admin' user (i.e. admin/BadPass#1)
   - Grant 'hadoopadmin' user permissions to manage the cluster:
     - Click the dropdown on top right of Ambari UI
