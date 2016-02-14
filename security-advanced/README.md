@@ -955,10 +955,9 @@ sudo cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
 sudo ambari-server restart
 ```
 
-- Wait 30 seconds. 
+- Wait 30 seconds for the http_secret file to get pushed to all nodes under /var/lib/ambari-agent/cache/host_scripts
 
-- On non-Ambari nodes, after the http_secret file appears under /var/lib/ambari-agent/cache/host_scripts...
-- ...run below as root to put it in right dir and correct its permissions
+- On non-Ambari nodes, once the above file is available, run below to put it in right dir and correct its permissions
 ```
 sudo cp /var/lib/ambari-agent/cache/host_scripts/http_secret /etc/security/
 sudo chown hdfs:hadoop /etc/security/http_secret
