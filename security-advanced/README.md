@@ -875,7 +875,7 @@ An optional company name []:
 
 $ sudo openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
 Signature ok
-subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=lab.hortonworks.net/emailAddress=admin@hortonworks.com
+subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=ec2-52-36-87-146.us-west-2.compute.amazonaws.com
 Getting Private key
 ```
 
