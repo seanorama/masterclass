@@ -932,6 +932,9 @@ sudo ambari-server start
 - Note that the browser will not trust the new self signed ambari certificate. You will need to trust that cert first.
   - If Firefox, you can do this by clicking on 'i understand the risk' > 'Add Exception...'
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/firefox-untrusted.png)  
+  - If Chome, you can do this by clicking on 'Advanced' > 'Proceed to xxxxxx'
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/chrome-untrusted.png)  
+
 
 
 ### Enabling SPNEGO Authentication for Hadoop
