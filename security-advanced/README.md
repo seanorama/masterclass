@@ -1442,7 +1442,6 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
       - `nn` user  needs `GetMetaData` and `GenerateEEK` priviledge
       - `hive` user needs `GetMetaData` and `DecryptEEK` priviledge
 
-- Logout of Ranger as keyadmin user
   
 - Run below to create a zone using the key and perform basic key and encryption zone (EZ) exercises 
   - Create EZs using keys
@@ -1504,7 +1503,7 @@ sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr
 
 sudo -u hadoopadmin hdfs dfs -copyFromLocal /tmp/test2.log /zone_encr2
 
-#Notice that hadoopadmin allowed to decrypt EEK but not sales user
+#Notice that hadoopadmin allowed to decrypt EEK but not sales user (since there is no Ranger policy allowing this)
 sudo -u hadoopadmin hdfs dfs -cat /zone_encr/test1.log
 sudo -u hadoopadmin hdfs dfs -cat /zone_encr2/test2.log
 #this should work
@@ -1512,7 +1511,13 @@ sudo -u hadoopadmin hdfs dfs -cat /zone_encr2/test2.log
 sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 ## this should give you below error
 ## cat: User:sales1 not allowed to do 'DECRYPT_EEK' on 'testkey'
+```
 
+- Check the Ranger > Audit page and notice that the request from hadoopadmin was allowed but the request from sales1 was denied
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-audit.png)
+
+- Now lets test deleting and copying files between EZs
+```
 #try to remove file from EZ using usual -rm command
 sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
 ## rm: Failed to move to trash.... /zone_encr/test2.log can't be moved from an encryption zone.
@@ -1568,6 +1573,8 @@ sudo -u sales1 hdfs dfs -ls /apps/hive/tmp
 ```
 sudo -u sales1 kdestroy
 ```
+
+- Logout of Ranger as keyadmin user
 
 ------------------
 
