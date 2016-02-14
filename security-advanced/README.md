@@ -591,13 +591,14 @@ sudo service sssd restart
 sudo kdestroy
 ```
 
-- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
-
-- Test your nodes can recognize AD users
+- Confirm that your nodes OS can now recognize AD users
 ```
 id sales1
 groups sales1
 ```
+
+- Restart HDFS service via Ambari. This is needed for Hadoop to recognize the group mappings (else the `hdfs groups` command will not work)
+
 
 ### Refresh HDFS User-Group mappings
 
