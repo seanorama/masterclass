@@ -836,17 +836,22 @@ Ambari Server 'setup-security' completed successfully.
 
 #### Create self-signed certificate
 
+- Note down Ambari node public hostname
+```
+curl icanhazptr.com
+```
+
 - Commands and sample output below (to be run on ambari node):
   - Note that for 'Common Name' you should enter the public hostname of Ambari node
   
 ```
-$ openssl genrsa -out ambari.key 2048
+$ sudo openssl genrsa -out ambari.key 2048
 Generating RSA private key, 2048 bit long modulus
 ....+++
 .........+++
 e is 65537 (0x10001)
 
-$ openssl req -new -key ambari.key -out ambari.csr
+$ sudo openssl req -new -key ambari.key -out ambari.csr
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -867,7 +872,7 @@ to be sent with your certificate request
 A challenge password []:BadPass#1
 An optional company name []:
 
-$ openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
+$ sudo openssl x509 -req -days 365 -in ambari.csr -signkey ambari.key -out ambari.crt
 Signature ok
 subject=/C=US/ST=CA/L=Santa Clara/O=Hortonworks/OU=Sales/CN=lab.hortonworks.net/emailAddress=admin@hortonworks.com
 Getting Private key
