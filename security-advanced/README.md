@@ -943,28 +943,19 @@ sudo ambari-server start
 
 - Run steps on ambari server node
 
-- Login to ambari node as root
-```
-sudo su
-```
 - Create Secret Key Used for Signing Authentication Tokens
 ```
-dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
-chown hdfs:hadoop /etc/security/http_secret
-chmod 440 /etc/security/http_secret
+sudo dd if=/dev/urandom of=/etc/security/http_secret bs=1024 count=1
+sudo chown hdfs:hadoop /etc/security/http_secret
+sudo chmod 440 /etc/security/http_secret
 ```
 - Place file in Ambari resources dir so it gets pushes to all nodes
 ```
-cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
-ambari-server restart
+sudo cp /etc/security/http_secret /var/lib/ambari-server/resources/host_scripts/
+sudo ambari-server restart
 ```
 
-- logoff as root 
-```
-logout
-```
-
-- Wait 30seconds. 
+- Wait 30 seconds. 
 
 - On non-Ambari nodes, after the http_secret file appears under /var/lib/ambari-agent/cache/host_scripts...
 - ...run below as root to put it in right dir and correct its permissions
