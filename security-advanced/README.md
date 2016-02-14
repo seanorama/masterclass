@@ -1516,7 +1516,7 @@ sudo -u sales1      hdfs dfs -cat /zone_encr/test1.log
 - Check the Ranger > Audit page and notice that the request from hadoopadmin was allowed but the request from sales1 was denied
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-audit.png)
 
-- Now lets test deleting and copying files between EZs
+- Now lets test deleting and copying files between EZs - ([Reference doc](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_hdfs_admin_tools/content/copy-to-from-encr-zone.html))
 ```
 #try to remove file from EZ using usual -rm command
 sudo -u hadoopadmin hdfs dfs -rm /zone_encr/test2.log
