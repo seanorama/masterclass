@@ -845,6 +845,7 @@ curl icanhazptr.com
   - Note that for 'Common Name' you should enter the public hostname of Ambari node
   
 ```
+$ cd
 $ sudo openssl genrsa -out ambari.key 2048
 Generating RSA private key, 2048 bit long modulus
 ....+++
