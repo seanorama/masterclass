@@ -1382,11 +1382,6 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HDFS policy and Save 
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-edit-policy-add-hadoopadmin.png)
   
-  - You can follow similar steps to give hadoopadmin admin access on HIVE
-    - Access Manager > HIVE > (clustername)_hive   
-    - This will open the list of HIVE policies
-    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
-  
   - Now "Add a new policy" for HTTP user to write KMS audits to HDFS by clicking "Add new policy" and creating below policy:
     - name: kms audits
     - resource path: /ranger/audit
@@ -1394,6 +1389,11 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Permissions: Read Write Execute
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
 
+  - You can follow similar steps to give hadoopadmin admin access on HIVE
+    - Access Manager > HIVE > (clustername)_hive   
+    - This will open the list of HIVE policies
+    - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
+  
   - Give keyadmin permission to view Audits screen in Ranger:
     - Settings tab > Permissions
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-user-permissions.png)
