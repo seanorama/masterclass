@@ -643,6 +643,11 @@ $ yarn rmadmin -getGroups hr1
 hr1 : domain_users hr hadoop-users
 ```
 
+- remove kerberos ticket
+```
+kdestroy
+```
+
 ### Test OS/AD integration and Kerberos security
 
 - Login as sales1 user and try to access the same /tmp/hive HDFS dir
