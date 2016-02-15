@@ -2507,6 +2507,7 @@ openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox
     - On node where beeline will be run from (e.g. Hive node):
       - copy over the /tmp/knox.crt
       - trust the certificate
+      
     ```
 sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
     ```
