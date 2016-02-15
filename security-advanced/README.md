@@ -2498,14 +2498,19 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
 
 - By default Knox will use a self-signed (untrusted) certificate
   - To trust the certificate execute:
+  
+    - On Knox node, create the /tmp/knox.crt certificate
     ```
 knoxserver=hostnameOrIPofKnoxServer
-
 openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox.crt
-keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
     ```
-  - Now Beeline should work:
-
+    - On node where beeline will be run from (e.g. Hive node):
+      - copy over the /tmp/knox.crt
+      - trust the certificate
+    ```
+sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass changeit -noprompt -alias knox -file /tmp/knox.crt
+    ```
+  - Now connect via beeline
     ```
 beeline -u "jdbc:hive2://${knoxserver}:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
     ```
