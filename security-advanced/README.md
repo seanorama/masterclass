@@ -1183,6 +1183,8 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
 - Do *NOT* click Next just yet. Now configure components so Ranger can use rangeradmin@LAB.HORTONWORKS.NET principal to query HDFS, YARN, Hive, Hbase, Knox. We will do this by clicking the tabs for each of these services and modifying Ranger specific properties. 
+![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-install-configure-components.png)
+
   - HDFS > Advanced > Advanced ranger-hdfs-plugin-properties:
     - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
     - Ranger repository config password = BadPass#1
