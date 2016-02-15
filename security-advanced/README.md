@@ -1097,8 +1097,8 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 
 - (Optional) - From the **the leader node host**, install SILK (banana) dashboard to visualize audits in Solr
 ```
-sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 export host=$(curl -4 icanhazip.com)
+sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 # replace host/port in this line::: "server": "http://sandbox.hortonworks.com:6083/solr/",
 sudo sed -i "s,sandbox.hortonworks.com,$host," \
    /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
