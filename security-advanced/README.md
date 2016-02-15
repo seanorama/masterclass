@@ -2500,7 +2500,7 @@ sudo chmod o+r /usr/hdp/current/knox-server/data/security/keystores/gateway.jks
   
     - First on Knox node, create the /tmp/knox.crt certificate
     ```
-knoxserver=hostnameOrIPofKnoxServer
+knoxserver=$(hostname -f)
 openssl s_client -connect ${knoxserver}:8443 <<<'' | openssl x509 -out /tmp/knox.crt
     ```
     - On node where beeline will be run from (e.g. Hive node):
@@ -2513,7 +2513,7 @@ sudo keytool -import -trustcacerts -keystore /etc/pki/java/cacerts -storepass ch
     - Now connect via beeline:
   
     ```
-beeline -u "jdbc:hive2://${knoxserver}:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
+beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive" -n sales1 -p BadPass#1
     ```
 
 - Notice that in the JDBC connect string for connecting to an secured Hive running in http transport mode:
@@ -2525,8 +2525,16 @@ beeline -u "jdbc:hive2://${knoxserver}:8443/;ssl=true;transportMode=http;httpPat
 - Test these users:
   - sales1/BadPass#1 should work
   - hr1/BadPass#1 should *not* work
+    ```
+    Could not create http connection to jdbc:hive2://ip-172-30-0-74.us-west-2.compute.internal:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
+    ```
 
-- This shows how Knox helps end users access Hive securely over HTTPS.
+- Check in Ranger Audits to confirm the requests were audited:
+  - Ranger > Audit > Service type: KNOX
+  ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audit-KNOX-hive-summary.png)
+
+
+- This shows how Knox helps end users access Hive securely over HTTPS using Ranger to set authorization policies and for audits
 
 ------------------
 
