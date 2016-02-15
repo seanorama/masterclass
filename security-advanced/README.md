@@ -2416,7 +2416,10 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
       
       ```
       echo "Test file" > testfile.txt
-      hdfs dfs -put testfile.txt /tmp
+      sudo -u sales1 kinit
+      ## enter BadPass#1
+      sudo -u sales1 hdfs dfs -put testfile.txt /tmp
+      sudo -u sales1 kdestroy
       ```
       
     - Open this file via WebHDFS 
