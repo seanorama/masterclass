@@ -1120,7 +1120,9 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 
 ##### Install Ranger
 
-- Start the Amabri 'Add Service' wizard, install Ranger on any node you like. 
+- Start the Ambari 'Add Service' wizard and select Ranger
+
+- When prompted for where to install it, choose any node you like
 
 - On the Ranger Requirements popup windows, you can check the box and continue as we have already completed the pre-requisite steps
 
