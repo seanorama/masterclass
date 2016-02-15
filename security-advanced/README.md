@@ -2415,10 +2415,10 @@ curl -ik -u hr1:BadPass#1 https://localhost:8443/gateway/default/webhdfs/v1/?op=
       - You can run below command to create a test file into /tmp
       
       ```
-      echo "Test file" > testfile.txt
+      echo "Test file" > /tmp/testfile.txt
       sudo -u sales1 kinit
       ## enter BadPass#1
-      sudo -u sales1 hdfs dfs -put testfile.txt /tmp
+      sudo -u sales1 hdfs dfs -put /tmp/testfile.txt /tmp
       sudo -u sales1 kdestroy
       ```
       
