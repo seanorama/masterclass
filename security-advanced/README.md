@@ -2550,6 +2550,7 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 sudo su
 git clone https://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap/extras/
+export ambari_user=hadoopadmin
 export ambari_pass=BadPass#1
 export ambari_port=8444
 export ambari_protocol=https
