@@ -1748,7 +1748,7 @@ logout
 ```
 sudo su - sales1
 kdestroy
-beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 - This fails with `GSS initiate failed` because the cluster is kerberized and we have not authenticated yet
 
@@ -1766,7 +1766,7 @@ klist
 ```
 - Now try connect to Hive via beeline as sales1
 ```
-beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 
 - If you get the below error, it is because you did not add hive to the global KMS policy in an earlier step (along with nn, hadoopadmin). Go back and add it in.
@@ -1864,7 +1864,7 @@ klist
 ```
 - Try to access the same table as hr1 and notice it fails
 ```
-beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 ```
 beeline> select code, description from sample_07;
@@ -2126,7 +2126,7 @@ sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons
 
 - Login to beeline
 ```
-beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@HORTONWORKS.COM"
+beeline -u "jdbc:hive2://localhost:10000/default;principal=hive/$(hostname -f)@LAB.HORTONWORKS.NET"
 ```
 
 - Query persons table in beeline
