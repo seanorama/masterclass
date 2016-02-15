@@ -1741,6 +1741,12 @@ logout
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
+- Enble Hive on tez by setting below and restarting Hive and Tez
+  - Ambari > Hive > Configs  
+    - Execution Engine = Tez
+  - Ambari > Tez > Configs > Custom tez-site 
+   - tez.dag.recovery.enabled  = false
+
 - Confirm the HIVE repo was setup correctly in Ranger
   - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
   - Click 'Test connection' 
