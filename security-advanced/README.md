@@ -2072,7 +2072,7 @@ mysql -u root -pBadPass#1
 create database people;
 use people;
 create table persons (people_id INT PRIMARY KEY, sex text, bdate DATE, firstname text, lastname text, addresslineone text, addresslinetwo text, city text, postalcode text, ssn text, id2 text, email text, id3 text);
-GRANT ALL PRIVILEGES ON persons.* to 'sales1'@'%' IDENTIFIED BY 'BadPass#1';
+GRANT ALL PRIVILEGES ON people.* to 'sales1'@'%' IDENTIFIED BY 'BadPass#1';
 LOAD DATA LOCAL INFILE '~/PII_data_small.csv' REPLACE INTO TABLE persons FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 select people_id, firstname, lastname, city from persons where lastname='SMITH';
@@ -2115,7 +2115,7 @@ sudo su - sales1
 kinit
 ## enter BadPass#1 as password
 
-sqoop import --verbose --connect 'jdbc:mysql://localhost/people' --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
+sqoop import --verbose --connect "jdbc:mysql://$(hostname -f)/people" --table persons --username sales1 --password BadPass#1 --hcatalog-table persons --hcatalog-storage-stanza "stored as orc" -m 1 --create-hcatalog-table  --driver com.mysql.jdbc.Driver
 ```
 - This will start a mapreduce job to import the data from Mysql to Hive in ORC format
 
