@@ -689,12 +689,29 @@ Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-
 - Setup kerberos for Ambari
   - Required to configure Ambari views for kerberos
 
+- Run below on Ambari node
+
+- Generate keytab and confirm it can be used to successfully kinit as ambari
 ```
-# run on Ambari node to start security setup guide
-cd /etc/security/keytabs/
-sudo wget https://github.com/seanorama/masterclass/raw/master/security-advanced/extras/ambari.keytab
-sudo chown ambari:hadoop ambari.keytab
+$ cd 
+$ ktutil
+ktutil:  addent -password -p ambari@LAB.HORTONWORKS.NET -k 1  -e RC4-HMAC
+Password for ambari@LAB.HORTONWORKS.NET: BadPass#1
+ktutil:  wkt ambari.keytab
+ktutil:  q
+
+$ sudo kinit -kVt ambari.keytab ambari
+```
+
+- Correct permissions and copy over the keytab to right dir:
+```
 sudo chmod 400 ambari.keytab
+sudo chown ambari:hadoop ambari.keytab
+sudo cp ambari.keytab /etc/security/keytabs/
+```
+
+- Stop Ambari and start security setup guide
+```
 sudo ambari-server stop
 sudo ambari-server setup-security
 ```
