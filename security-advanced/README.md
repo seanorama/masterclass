@@ -691,7 +691,7 @@ Reference: Doc available [here](http://docs.hortonworks.com/HDPDocuments/Ambari-
 
 - Run below on Ambari node
 
-- Generate keytab and confirm it can be used to successfully kinit as ambari
+- Generate keytab
 ```
 $ cd 
 $ ktutil
@@ -699,8 +699,6 @@ ktutil:  addent -password -p ambari@LAB.HORTONWORKS.NET -k 1  -e RC4-HMAC
 Password for ambari@LAB.HORTONWORKS.NET: BadPass#1
 ktutil:  wkt ambari.keytab
 ktutil:  q
-
-$ sudo kinit -kVt ambari.keytab ambari
 ```
 
 - Correct permissions and copy over the keytab to right dir:
@@ -708,6 +706,11 @@ $ sudo kinit -kVt ambari.keytab ambari
 sudo chmod 400 ambari.keytab
 sudo chown ambari:hadoop ambari.keytab
 sudo cp ambari.keytab /etc/security/keytabs/
+```
+
+- Confirm the keytab can be used to successfully kinit as ambari
+```
+sudo kinit -kVt /etc/security/keytabs/ambari.keytab ambari
 ```
 
 - Stop Ambari and start security setup guide
