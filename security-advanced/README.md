@@ -1571,7 +1571,12 @@ sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /apps/hive-old/warehouse
 - To configure the Hive scratch directory (hive.exec.scratchdir) so that it resides inside the encryption zone:
   - Ambari > Hive > Configs > Advanced 
     - hive.exec.scratchdir = /apps/hive/tmp
-- Restart Hive
+  - Restart Hive
+  
+- Configure Tez for EZ    
+  - Ambari > Tez > Configs > Custom tez-site 
+   - tez.dag.recovery.enabled  = false
+  - Restart Tez
 
 - Make sure that the permissions for /apps/hive/tmp are set to 1777
 ```
@@ -1741,11 +1746,9 @@ logout
 
 - Goal: Setup Hive authorization policies to ensure sales users only have access to code, description columns in default.sample_07
 
-- Enble Hive on tez by setting below and restarting Hive and Tez
-  - Ambari > Hive > Configs  
+- Enble Hive on tez by setting below and restarting Hive 
+  - Ambari > Hive > Configs  	
     - Execution Engine = Tez
-  - Ambari > Tez > Configs > Custom tez-site 
-   - tez.dag.recovery.enabled  = false
 
 - Confirm the HIVE repo was setup correctly in Ranger
   - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
