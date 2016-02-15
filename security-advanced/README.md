@@ -2558,7 +2558,7 @@ export ambari_protocol=https
 source ambari_functions.sh
 ./ambari-views/create-views.sh
 ```
-- Restart HDFS, YARN, Hive via Ambari
+- Restart HDFS and YARN via Ambari
 
     
 -----------------
