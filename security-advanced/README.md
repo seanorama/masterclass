@@ -2525,8 +2525,9 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 - Test these users:
   - sales1/BadPass#1 should work
   - hr1/BadPass#1 should *not* work
+    - Will fail with:
     ```
-    Could not create http connection to jdbc:hive2://ip-172-30-0-74.us-west-2.compute.internal:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
+    Could not create http connection to jdbc:hive2://hostname:8443/;ssl=true;transportMode=http;httpPath=gateway/default/hive. HTTP Response code: 403 (state=08S01,code=0)
     ```
 
 - Check in Ranger Audits to confirm the requests were audited:
