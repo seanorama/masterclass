@@ -2594,6 +2594,9 @@ source ambari_functions.sh
   - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Files-view.png)
   - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view.png)
   - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view-viz.png)
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Pig-view.png)
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Tez-view.png)  
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Tez-view-viz.png)
     
 
 ###### Enable users to log into Ambari views
