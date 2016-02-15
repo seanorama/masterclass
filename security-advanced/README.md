@@ -2557,6 +2557,12 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 ## Other Security features for Ambari
 
 - Setup views using : http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html
+ 
+- Change transport mode back to binary in Hive settings:
+  - In Ambari, under Hive > Configs > set the below and restart Hive component.
+    - hive.server2.transport.mode = binary
+
+- You may also need to change proxy user settings to be less restrictive
 
 - Automation to install views (does not support Ambari running on HTTPS)
 ```
@@ -2572,6 +2578,21 @@ source ambari_functions.sh
 ./ambari-views/create-views.sh
 ```
 - Restart HDFS and YARN via Ambari
+
+- Access the views:
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Files-view.png)
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view.png)
+  - ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Hive-view-viz.png)
+    
+
+###### Enable users to log into Ambari views
+
+- In Ambari follow steps below:
+  - On top right of page, click "Manage Ambari"
+    - under 'Views': Navigate to Hive > Hive > Under 'Permissions' grant sales1 access to Hive view
+    - similarly you can give sales access to Files view   
+
+- At this point, you should be able to login to Ambari as sales1 user and navigate to the views
 
     
 -----------------
