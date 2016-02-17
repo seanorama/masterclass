@@ -400,12 +400,11 @@ EOF
     - Click 'Manage Ambari'
     - Under 'Users', select 'hadoopadmin'
     - Change 'Ambari Admin' to Yes 
-    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-make-user-admin.png)
-    
-- (optional) Disable local 'admin' user
+    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-make-user-admin.png)    
     
 - Sign out and then log back into Ambari, this time as 'hadoopadmin' and verify the user has rights to monitor/manage the cluster
 
+- (optional) Disable local 'admin' user using the same 'Manage Ambari' menu
 
 # Lab 3
  
