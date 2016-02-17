@@ -243,7 +243,7 @@ curl -sk -L "http://$(hostname -f):50070/webhdfs/v1/user/?op=LISTSTATUS"
 ### Manually install missing components
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
-- Use the 'Add Service' Wizard to install Knox, if not already installed
+- Use the 'Add Service' Wizard to install Knox (if not already installed) on any node in the cluster
   - When prompted for the `Knox Master Secret`, set it to `knox`
   - Do *not* use password with special characters (like #, $ etc) here as it seems beeline has problems with it
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-Knox-install.png)
