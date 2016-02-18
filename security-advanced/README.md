@@ -1110,7 +1110,7 @@ sudo /opt/ranger_audit_server/scripts/create_ranger_audits_collection.sh
 ```
 export host=$(curl -4 icanhazip.com)
 sudo wget https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/scripts/default.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
-# replace host/port in this line::: "server": "http://sandbox.hortonworks.com:6083/solr/",
+# Run the below sed command to replace host/port on this line -  "server": "http://sandbox.hortonworks.com:6083/solr/",
 sudo sed -i "s,sandbox.hortonworks.com,$host," \
    /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
