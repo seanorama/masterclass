@@ -341,8 +341,8 @@ ldapsearch -W -D ldap-reader@lab.hortonworks.net
 
 Run below on only Ambari node:
 
-- Add your AD properties as defaults for Ambari LDAP sync into ambari.properties  
-
+- Add your AD properties as defaults for Ambari LDAP sync into the bottom of ambari.properties  
+  - The below commands are just appending the authentication properties to bottom of the ambari.properties file
   ```
 ad_dc="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
