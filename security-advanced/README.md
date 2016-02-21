@@ -1009,7 +1009,9 @@ Ambari views setup on secure cluster will be covered in later lab ([here](https:
 
 # Lab 5
 
-## Ranger 
+## Ranger install
+
+Goal: In this lab we will install Apache Ranger via Ambari and setup Ranger plugins for Hadoop components: HDFS, Hive, Hbase, YARN, Knox. We will also enable Ranger audits to Solr and HDFS
 
 ### Ranger prereqs
 
@@ -1283,7 +1285,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 ## Ranger KMS/Data encryption setup
 
 
-- Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html)
+- Goal: In this lab we will install Ranger KMS via Ambari. Next we will create some encryption keys and use them to create encryption zones (EZs) and copy files into them. Reference: [docs](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.3.4/bk_Ranger_KMS_Admin_Guide/content/ch_ranger_kms_overview.html)
 
 - In this section we will have to setup proxyusers. This is done to enable *impersonation* whereby a superuser can submit jobs or access hdfs on behalf of another user (e.g. because superuser has kerberos credentials but user joe doesn’t have any)
   - For more details on this, refer to the [doc](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
@@ -1402,7 +1404,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     - Permissions: Read Write Execute
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-policy-kms-audit.png) 
 
-  - You can follow similar steps to give hadoopadmin admin access on HIVE
+  - You can follow similar steps to add the user hadoopadmin to the Ranger Hive global policies. (Hive has two global policies: one on Hive tables, and one on Hive UDFs)
     - Access Manager > HIVE > (clustername)_hive   
     - This will open the list of HIVE policies
     - Edit the 'global' policy (the first one) and add hadoopadmin to global HIVE policy and Save  
@@ -1452,8 +1454,8 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
    ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KMS-policy-add-nn.png)
   
     - Note that for simplicity we are giving the hadoop users more permissions than they need. At minimum:
-      - `nn` user  needs `GetMetaData` and `GenerateEEK` priviledge
-      - `hive` user needs `GetMetaData` and `DecryptEEK` priviledge
+      - `nn` user  needs `GetMetaData` and `GenerateEEK` privilege
+      - `hive` user needs `GetMetaData` and `DecryptEEK` privilege
 
   
 - Run below to create a zone using the key and perform basic key and encryption zone (EZ) exercises 
@@ -1546,7 +1548,7 @@ sudo -u hadoopadmin hadoop distcp -skipcrccheck -update /zone_encr2/test2.log /z
 ```
 - Lets now look at the contents of the raw file
 ```
-#View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted chacaters
+#View contents of raw file in encrypted zone as hdfs super user. This should show some encrypted characters
 sudo -u hdfs hdfs dfs -cat /.reserved/raw/zone_encr/test1.log
 
 #Prevent user hdfs from reading the file by setting security.hdfs.unreadable.by.superuser attribute. Note that this attribute can only be set on files and can never be removed.
@@ -1601,6 +1603,8 @@ sudo -u sales1 kdestroy
 # Lab 7
 
 ## Secured Hadoop exercises
+
+In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbase, Sqoop) running on a kerborized cluster and create Ranger appropriate authorization policies for access.
 
 #### Access secured HDFS
 
@@ -2187,6 +2191,8 @@ beeline> drop table persons purge;
 
 ## Knox 
 
+Goal: In this lab we will configure Apache Knox for AD authentication and make WebHDFS, Hive requests over Knox (after setting the appropriate Ranger authorization polices for access)
+
 ### Knox Configuration 
 
 #### Knox Configuration for AD authentication
@@ -2565,7 +2571,9 @@ beeline -u "jdbc:hive2://KnoxserverInternalHostName:8443/;ssl=true;transportMode
 
 ## Other Security features for Ambari
 
-- Setup views using : http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html
+### Ambari views
+
+- Goal: In this lab we will setup Ambari views on kerborized cluster. Reference [doc](http://docs.hortonworks.com/HDPDocuments/Ambari-2.2.0.0/bk_ambari_views_guide/content/ch_using_ambari_views.html)
  
 - Change transport mode back to binary in Hive settings:
   - In Ambari, under Hive > Configs > set the below and restart Hive component.
