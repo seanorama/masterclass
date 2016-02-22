@@ -84,6 +84,10 @@ Credentials will be provided for these services by the instructor:
 
 - Similarly login via SSH to each of the other nodes in your cluster as you will need to run commands on each node in a future lab
 
+- Tip: Since in the next labs you will be required to run *the same set of commands* on each of the cluster hosts, now would be a good time to setup your favorite tool to do so: examples [here](https://www.reddit.com/r/sysadmin/comments/3d8aou/running_linux_commands_on_multiple_servers/)
+  - On OSX, an easy way to do this is to use [iTerm](https://www.iterm2.com/): open multiple tabs/splits and then use 'Broadcast input' feature (under Shell -> Broadcast input)
+  - If you are not already familiar with such a tool, you can also just run the commands on the cluster, one host at a time
+
 #### Login to Ambari
 
 - Login to Ambari web UI by opening http://AMBARI_PUBLIC_IP:8080 and log in with admin/BadPass#1
