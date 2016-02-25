@@ -1184,38 +1184,38 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
   - No changes needed (skipping configuring Ranger authentication against AD for now)
 ![Image](https://raw.githubusercontent.com/abajwa-hw/security-workshops/master/screenshots/ranger-213-setup/ranger-213-10.png)
 
-- Do *NOT* click Next just yet. Now configure components so Ranger can use rangeradmin@LAB.HORTONWORKS.NET principal to query HDFS, YARN, Hive, Hbase, Knox. We will do this by clicking the tabs for each of these services and modifying Ranger specific properties. 
+- Do *NOT* click Next just yet. Now configure components so Ranger can use `rangeradmin@LAB.HORTONWORKS.NET` principal to query HDFS, YARN, Hive, Hbase, Knox. We will do this by clicking the tabs for each of these services and modifying Ranger specific properties. 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-install-configure-components.png)
 
   - HDFS > Advanced > Advanced ranger-hdfs-plugin-properties:
-    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HDFS = rangeradmin
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HDFS-plugin-config.png)
     
   - YARN > Advanced > Advanced ranger-yarn-plugin-properties:
-    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for YARN = rangeradmin
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-YARN-plugin-config.png)
     
 
   - HIVE > Advanced > Advanced ranger-hive-plugin-properties:
-    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HIVE = rangeradmin
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HIVE-plugin-config.png)
     
 
   - HBASE > Advanced > Advanced ranger-hbase-plugin-properties:
-    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for HBASE = rangeradmin
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-HBASE-plugin-config.png)
     
 
   - KNOX > Advanced > Advanced ranger-knox-plugin-properties:
-    - Ranger repository config user = rangeradmin@LAB.HORTONWORKS.NET
+    - Ranger repository config user = `rangeradmin@LAB.HORTONWORKS.NET`
     - Ranger repository config password = BadPass#1
     - Policy user for KNOX = rangeradmin
     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-KNOX-plugin-config.png)
@@ -1619,7 +1619,7 @@ In this lab we will see how to interact with Hadoop components (HDFS, Hive, Hbas
   - In Ranger > Under Service Manager > HDFS > Click the Edit icon (next to the trash icon) to edit the HDFS repo
   - Click 'Test connection' 
   - if it fails re-enter below fields and re-try:
-    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
     - Password: BadPass#1
   - Once the test passes, click Save  
   
@@ -1762,7 +1762,7 @@ logout
   - In Ranger > Service Manager > HIVE > Click the Edit icon (next to the trash icon) to edit the HIVE repo
   - Click 'Test connection' 
   - if it fails re-enter below fields and re-try:
-    - Username: rangeradmin@LAB.HORTONWORKS.NET
+    - Username: `rangeradmin@LAB.HORTONWORKS.NET`
     - Password: BadPass#1
   - Once the test passes, click Save  
 
