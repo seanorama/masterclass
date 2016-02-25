@@ -72,6 +72,7 @@ export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
   {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER SOLR AMBARI_METRICS HBASE"},
+  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
