@@ -982,15 +982,15 @@ sudo chmod 440 /etc/security/http_secret
 
 - In Ambari > HDFS > Configs, set the below
   - Under Advanced core-site:
-    - hadoop.http.authentication.simple.anonymous.allowed = false
+    - hadoop.http.authentication.simple.anonymous.allowed=false
   
   - Under Custom core-site, add the below (using bulk add tab):
-    - hadoop.http.authentication.signature.secret.file = /etc/security/http_secret
-    - hadoop.http.authentication.typ= kerberos
-    - hadoop.http.authentication.kerberos.keytab = /etc/security/keytabs/spnego.service.keytab
-    - hadoop.http.authentication.kerberos.principal = HTTP/_HOST@LAB.HORTONWORKS.NET
-    - hadoop.http.authentication.cookie.domain = lab.hortonworks.net
-    - hadoop.http.filter.initializers = org.apache.hadoop.security.AuthenticationFilterInitializer
+    - hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
+    - hadoop.http.authentication.typ=kerberos
+    - hadoop.http.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
+    - hadoop.http.authentication.kerberos.principal=HTTP/_HOST@LAB.HORTONWORKS.NET
+    - hadoop.http.authentication.cookie.domain=lab.hortonworks.net
+    - hadoop.http.filter.initializers=org.apache.hadoop.security.AuthenticationFilterInitializer
 
 - Save configs
 
