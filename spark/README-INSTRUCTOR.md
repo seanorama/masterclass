@@ -39,7 +39,7 @@ export cfn_parameters='
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
   {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER KAFKA SPARK ZEPPELIN"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash ; curl -sSL https://raw.githubusercontent.com/bernhard-42/Spark-Masterclass/master/prepare.sh | bash"},
-  {"ParameterKey":"InstanceType","ParameterValue":"m4.large"},
+  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
 ]
 '
@@ -51,4 +51,4 @@ export cfn_parameters='
 
 Further, you should verify deletion of the CloudFormations & EC2 instances from the AWS Console.
 
-## Issues: See ../README.md
+## Issues: See [../README.md](../README.md)
