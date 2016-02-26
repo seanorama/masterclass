@@ -1297,11 +1297,14 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - In this section we will have to setup proxyusers. This is done to enable *impersonation* whereby a superuser can submit jobs or access hdfs on behalf of another user (e.g. because superuser has kerberos credentials but user joe doesn’t have any)
   - For more details on this, refer to the [doc](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/Superusers.html)
 
-- Before starting KMS install, find and note down the value of ranger.audit.solr.zookeepers and internal hostname of namenode. These will be used during KMS install
+- Before starting KMS install, find and note down the below 3 pieces of information. These will be used during KMS install
   - Open Ambari > Ranger > Config > Filter for `ranger.audit.solr.zookeepers` and note down its value 
     - it will be something like `ip-172-30-0-180.us-west-2.compute.internal:2181,ip-172-30-0-182.us-west-2.compute.internal:2181,ip-172-30-0-181.us-west-2.compute.internal:2181/ranger_audits`
-  - Find the internal hostname of host running namenode and note it down
+  - Find the internal hostname of host running *namenode* and note it down
     - From Ambari > HDFS > click the 'NameNode' hyperlink. The internal hostname should appear in upper left of the page.
+  - Find the internal hostname of host running *Mysql* and note it down
+    - From Ambari > Mysql > click the 'Mysql Server' hyperlink. The internal hostname should appear in upper left of the page.
+
   
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
