@@ -1263,6 +1263,8 @@ sudo service ambari-agent restart
 - Confirm that audits appear under 'Audit' > 'Access' tab
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-audits.png)
 
+  - If audits do not show up here, you may need to restart Solr from Ambari
+  
 - Confirm that plugins for HDFS, YARN, Hive etc appear under 'Audit' > 'Plugins' tab 
 ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ranger-plugins.png)
 
@@ -1277,6 +1279,7 @@ sudo -u hdfs hdfs dfs -cat /ranger/audit/hdfs/*/*
 ```
 curl "http://localhost:6083/solr/ranger_audits/select?q=*%3A*&df=id&wt=csv"
 ```
+
 - Confirm Banana dashboard has start to show HDFS audits
 http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 
