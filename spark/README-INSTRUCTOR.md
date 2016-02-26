@@ -51,4 +51,4 @@ export cfn_parameters='
 
 Further, you should verify deletion of the CloudFormations & EC2 instances from the AWS Console.
 
-## Issues: See ../README.md
+## Issues: See [../README.md](../README.md)
