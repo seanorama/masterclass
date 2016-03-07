@@ -425,15 +425,15 @@ EOF
 - Enter the below details:
 
 - KDC:
-    - KDC host: ad01.lab.hortonworks.net
-    - Realm name: LAB.HORTONWORKS.NET
-    - LDAP url: ldaps://ad01.lab.hortonworks.net
-    - Container DN: ou=HadoopServices,dc=lab,dc=hortonworks,dc=net
-    - Domains: us-west-2.compute.internal,.us-west-2.compute.internal
+    - KDC host: `ad01.lab.hortonworks.net`
+    - Realm name: `LAB.HORTONWORKS.NET`
+    - LDAP url: `ldaps://ad01.lab.hortonworks.net`
+    - Container `DN: ou=HadoopServices,dc=lab,dc=hortonworks,dc=net`
+    - Domains: `us-west-2.compute.internal,.us-west-2.compute.internal`
 - Kadmin:
-    - Kadmin host: ad01.lab.hortonworks.net
+    - Kadmin host: `ad01.lab.hortonworks.net`
     - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
-    - Admin password: BadPass#1
+    - Admin password: `BadPass#1`
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
   - Notice that the "Save admin credentials" checkbox is grayed out. We will enable that later.
