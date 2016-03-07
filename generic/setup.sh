@@ -69,8 +69,7 @@ cat << EOF > configuration-custom.json
     },
     "zeppelin-ambari-config": {
         "zeppelin.executor.mem": "512m",
-        "zeppelin.executor.instances": "2",
-        "zeppelin.install.dir": "/opt"
+        "zeppelin.executor.instances": "2"
     },
     "core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
@@ -109,5 +108,3 @@ EOF
 
     fi
 fi
-
-exit 0

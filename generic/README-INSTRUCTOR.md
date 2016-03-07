@@ -41,7 +41,8 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER NIFI SOLR SPARK ZEPPELIN"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER"},
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
 ]
