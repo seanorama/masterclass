@@ -984,7 +984,7 @@ sudo chmod 440 /etc/security/http_secret
   - Under Advanced core-site:
     - hadoop.http.authentication.simple.anonymous.allowed=false
   
-  - Under Custom core-site, add the below (using bulk add tab):
+  - Under Custom core-site, add the below properties (using bulk add tab):
   
   ```
   hadoop.http.authentication.signature.secret.file=/etc/security/http_secret
