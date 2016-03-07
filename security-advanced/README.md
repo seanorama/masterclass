@@ -432,7 +432,7 @@ EOF
     - Domains: us-west-2.compute.internal,.us-west-2.compute.internal
 - Kadmin:
     - Kadmin host: ad01.lab.hortonworks.net
-    - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+    - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
     - Admin password: BadPass#1
 
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-kerberos-wizard-2.png)
@@ -1223,7 +1223,7 @@ sudo chown solr:solr /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/ba
 - Click Next > Proceed Anyway to proceed
     
 - On Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Notice that you can now save the admin credentials. Check this box too
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-configureidentities.png)
@@ -1346,7 +1346,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Click Next > Proceed Anyway to proceed with the wizard
 
 - On Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
   - Check the "Save admin credentials" checkbox
   
@@ -2089,7 +2089,7 @@ logout
 - If Sqoop is not already installed, install it via Ambari on same node where Mysql/Hive are installed:
   - Admin > Stacks and Versions > Sqoop > Add service > select node where Mysql/Hive are installed and accept all defaults
   - You will be asked to enter admin principal/password:
-    - hadoopadmin@LAB.HORTONWORKS.NET
+    - `hadoopadmin@LAB.HORTONWORKS.NET`
     - BadPass#1
   
 - *On the host running Mysql*: change user to root and download a sample csv and login to Mysql
@@ -2667,7 +2667,7 @@ sudo ambari-server restart
   ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/solr-service-configs.png)  
 
 - Under Configure Identities page, you will have to enter your AD admin credentials:
-  - Admin principal: hadoopadmin@LAB.HORTONWORKS.NET
+  - Admin principal: `hadoopadmin@LAB.HORTONWORKS.NET`
   - Admin password: BadPass#1
 
 - Then go through the rest of the install wizard by clicking Next to complete installation of Solr
