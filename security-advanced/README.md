@@ -1369,7 +1369,7 @@ sudo ln -s /etc/hadoop/conf/core-site.xml /etc/ranger/kms/conf/core-site.xml
     
 - Set the KMS proxy user
   - HDFS > Configs > Custom core-site:
-    - hadoop.proxyuser.kms.groups = *   
+    - hadoop.proxyuser.kms.groups=*   
 
 - Restart the services that require it e.g. HDFS, Mapreduce, YARN
 
