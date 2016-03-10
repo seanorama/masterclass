@@ -1311,7 +1311,7 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
 - Open Ambari > start 'Add service' wizard > select 'Ranger KMS'.
 - Pick any node to install on
 - Keep the default configs except for below properties 
-  - Advanced kms-properties
+  - Advanced kms-properties (for Ambari 2.2.0.0 and earlier)
     - KMS_MASTER_KEY_PASSWORD = BadPass#1
     - REPOSITORY_CONFIG_USERNAME = keyadmin@LAB.HORTONWORKS.NET
     - REPOSITORY_CONFIG_PASSWORD = BadPass#1
