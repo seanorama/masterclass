@@ -1318,10 +1318,14 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
     - db_host = Internal FQDN of MySQL node e.g. ip-172-30-0-181.us-west-2.compute.internal
     - db_password = BadPass#1
     - db_root_password = BadPass#1
-  - Note that from Ambari 2.2.1.0 onwards, the location of above configs has changed: the DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
+  - Note that from Ambari 2.2.1.0 onwards, the location of above configs has changed: 
+    - The DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig2.png) 
-    - the remaining below configurations would be done the same way  (regardless of your Ambari version)
+    - The repository config username/password would still need to be modified under "Advanced kms-properties"  
+     ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig3.png) 
+    
+    - the remaining below configurations would be performed the same way (regardless of your Ambari version)
     
   - advanced kms-site:
     - hadoop.kms.authentication.type=kerberos
