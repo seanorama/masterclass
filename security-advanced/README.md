@@ -1321,7 +1321,8 @@ http://PUBLIC_IP_OF_SOLRLEADER_NODE:6083/solr/banana/index.html#/dashboard
   - Note that from Ambari 2.2.1.0 onwards, the location of above configs has changed: the DB host and passwords would need to be specified under the new Ambari > Ranger KMS > Settings tab 
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig1.png) 
      ![Image](https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/screenshots/Ambari-KMS-enhancedconfig2.png) 
-  
+    - the remaining below configurations would be done the same way  (regardless of your Ambari version)
+    
   - advanced kms-site:
     - hadoop.kms.authentication.type=kerberos
     - hadoop.kms.authentication.kerberos.keytab=/etc/security/keytabs/spnego.service.keytab
