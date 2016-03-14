@@ -109,6 +109,12 @@
             "Description": "HDP Services to deploy",
             "Type": "String"
         },
+        "AmbariVersion": {
+            "AllowedPattern": "\\d\\.\\d\\.\\d\\.\\d",
+            "Default": "2.2.1.0",
+            "Description": "Ambari Version",
+            "Type": "String"
+        },
         "BootDiskSize": {
             "Default": "80",
             "Description": "Size of boot disk.",
@@ -123,6 +129,12 @@
             ],
             "Default": "true",
             "Description": "Deploy cluster with Ambari? If false, then Ambari is installed without cluster deployment.",
+            "Type": "String"
+        },
+        "HDPStack": {
+            "AllowedPattern": "\\d\\.\\d",
+            "Default": "2.4",
+            "Description": "Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
             "Type": "String"
         },
         "InstanceType": {
@@ -329,6 +341,16 @@
                                     ]
                                 },
                                 "'\n",
+                                "export ambari_version='",
+                                {
+                                    "Ref": "AmbariVersion"
+                                },
+                                "'\n",
+                                "export ambari_stack_version='",
+                                {
+                                    "Ref": "HDPStack"
+                                },
+                                "'\n",
                                 "export java_provider=",
                                 {
                                     "Ref": "JavaProvider"
@@ -393,6 +415,9 @@
                                 "yum install -y epel-release\n",
                                 "/usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
                                 "\n",
+                                "## Signal node is up\n",
+                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "\n",
                                 "########################################################################\n",
                                 "## AWS specific system modifications\n",
                                 "\n",
@@ -406,9 +431,6 @@
                                 "## disable swapping\n",
                                 "vm.swappiness=0\n",
                                 "EOF\n",
-                                "\n",
-                                "## Signal node is up\n",
-                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
                                 "\n",
                                 "## Remove existing mount points\n",
                                 "if [ -e '/dev/xvdb' ]; then\n",
@@ -651,6 +673,16 @@
                                 "export ambari_server='",
                                 "127.0.0.1",
                                 "'\n",
+                                "export ambari_version='",
+                                {
+                                    "Ref": "AmbariVersion"
+                                },
+                                "'\n",
+                                "export ambari_stack_version='",
+                                {
+                                    "Ref": "HDPStack"
+                                },
+                                "'\n",
                                 "export java_provider=",
                                 {
                                     "Ref": "JavaProvider"
@@ -715,6 +747,9 @@
                                 "yum install -y epel-release\n",
                                 "/usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
                                 "\n",
+                                "## Signal node is up\n",
+                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
+                                "\n",
                                 "########################################################################\n",
                                 "## AWS specific system modifications\n",
                                 "\n",
@@ -728,9 +763,6 @@
                                 "## disable swapping\n",
                                 "vm.swappiness=0\n",
                                 "EOF\n",
-                                "\n",
-                                "## Signal node is up\n",
-                                "cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}\n",
                                 "\n",
                                 "## Remove existing mount points\n",
                                 "if [ -e '/dev/xvdb' ]; then\n",

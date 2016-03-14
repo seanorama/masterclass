@@ -29,9 +29,11 @@ ref_java_provider = Ref('JavaProvider')
 ref_java_version = Ref('JavaVersion')
 ref_additional_instance_count = Ref('AdditionalInstanceCount')
 ref_ambari_pass = Ref('AmbariPass')
+ref_ambari_version = Ref('AmbariVersion')
 ref_ambari_services = Ref('AmbariServices')
 ref_deploy_cluster = Ref('DeployCluster')
 ref_wait_ambari = Ref('waitHandleAmbari')
+ref_hdp_stack = Ref('HDPStack')
 ref_post_command = Ref('PostCommand')
 
 # now the work begins
@@ -50,6 +52,22 @@ PostCommand = t.add_parameter(Parameter(
     Type="String",
     Description="Command to run during after nodes are deployed",
 ))
+
+AmbariVersion = t.add_parameter(Parameter(
+    "AmbariVersion",
+    Type="String",
+    Default="2.2.1.0",
+    Description="Ambari Version",
+    AllowedPattern="\\d\\.\\d\\.\\d\\.\\d",
+    ))
+
+HDPStack = t.add_parameter(Parameter(
+    "HDPStack",
+    Type="String",
+    Default="2.4",
+    Description="Password for Ambari Server. Must be at least 8 characters containing letters, numbers and symbols",
+    AllowedPattern="\\d\\.\\d",
+    ))
 
 BootDiskSize = t.add_parameter(Parameter(
     "BootDiskSize",
@@ -206,6 +224,9 @@ export TERM=xterm
 yum install -y epel-release
 /usr/bin/easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
 
+## Signal node is up
+cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}
+
 ########################################################################
 ## AWS specific system modifications
 
@@ -218,9 +239,6 @@ cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'
 ## disable swapping
 vm.swappiness=0
 EOF
-
-## Signal node is up
-cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}
 
 ## Remove existing mount points
 if [ -e '/dev/xvdb' ]; then
@@ -262,6 +280,8 @@ def my_bootstrap_script(resource,install_ambari_agent,install_ambari_server,amba
         "export stack='", ref_stack_name, "'\n",
         "export resource='", resource ,"'\n",
         "export ambari_server='", ambari_server ,"'\n",
+        "export ambari_version='", ref_ambari_version ,"'\n",
+        "export ambari_stack_version='", ref_hdp_stack ,"'\n",
         "export java_provider=", ref_java_provider ,"\n",
         "export java_version=", ref_java_version ,"\n",
         "export install_ambari_agent=", install_ambari_agent ,"\n",
