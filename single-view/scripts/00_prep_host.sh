@@ -14,27 +14,27 @@ git clone -b develop https://github.com/seanorama/ambari-bootstrap
 
 git clone https://github.com/seanorama/masterclass
 
-(
-cd /tmp
-wget http://hortonworks-masterclass.s3.amazonaws.com/single-view/data.zip
-unzip data.zip
-)
+#(
+#cd /tmp
+#wget http://hortonworks-masterclass.s3.amazonaws.com/single-view/data.zip
+#unzip data.zip
+#)
 
-yum -y -q install postgresql-server
-echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
+#yum -y -q install postgresql-server
+#echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
 
-service postgresql start
-chkconfig postgresql on
-sleep 5
+#service postgresql start
+#chkconfig postgresql on
+#sleep 5
 
-git clone https://github.com/abajwa-hw/single-view-demo
-sudo -i -u postgres psql -c "create database contoso;"
-sudo -i -u postgres psql -c "CREATE USER zeppelin WITH PASSWORD 'zeppelin';"
-sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE contoso to zeppelin;"
-sudo -i -u postgres psql -c "\du"
-export PGPASSWORD=zeppelin
-psql -U zeppelin -d contoso -h localhost -f ~/single-view-demo/contoso-psql.sql
-psql -U zeppelin -d contoso -h localhost -c "\dt"
+#git clone https://github.com/abajwa-hw/single-view-demo
+#sudo -i -u postgres psql -c "create database contoso;"
+#sudo -i -u postgres psql -c "CREATE USER zeppelin WITH PASSWORD 'zeppelin';"
+#sudo -i -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE contoso to zeppelin;"
+#sudo -i -u postgres psql -c "\du"
+#export PGPASSWORD=zeppelin
+#psql -U zeppelin -d contoso -h localhost -f ~/single-view-demo/contoso-psql.sql
+#psql -U zeppelin -d contoso -h localhost -c "\dt"
 
-echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+#echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
