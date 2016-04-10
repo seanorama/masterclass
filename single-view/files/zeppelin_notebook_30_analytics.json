@@ -1,0 +1,794 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Create Hive views of Twitter & Weblog data",
+      "dateUpdated": "Apr 10, 2016 9:50:32 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1460235293968_91001668",
+      "id": "20160409-205453_1278876678",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h2>Create Hive views of Twitter &amp; Weblog data</h2>\n"
+      },
+      "dateCreated": "Apr 9, 2016 8:54:53 PM",
+      "dateStarted": "Apr 10, 2016 9:50:32 AM",
+      "dateFinished": "Apr 10, 2016 9:50:32 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:86",
+      "focus": true
+    },
+    {
+      "title": "Update permissions for tweets & weblogs",
+      "text": "%sh\nsudo -u hdfs hadoop fs -chmod -R 777 /tmp/tweets_staging\nsudo -u hdfs hadoop fs -chmod -R 777 /tmp/weblog_staging",
+      "dateUpdated": "Apr 9, 2016 9:34:15 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/sh",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452713882797_-396249179",
+      "id": "20160113-193802_1253775053",
+      "dateCreated": "Jan 13, 2016 7:38:02 PM",
+      "dateStarted": "Apr 9, 2016 9:34:15 PM",
+      "dateFinished": "Apr 9, 2016 9:34:20 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:87",
+      "errorMessage": ""
+    },
+    {
+      "title": "Create Hive tables for tweets",
+      "text": "%hive\ncreate table if not exists tweets(\n  tweet_id bigint, \n  created_unixtime bigint, \n  created_time string, \n  displayname string, \n  msg string,\n  fulltext string\n)\nrow format delimited fields terminated by \"|\"\nlocation \"/tmp/tweets_staging\"",
+      "dateUpdated": "Apr 9, 2016 9:33:12 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452699657353_-1066675078",
+      "id": "20160113-154057_1955065161",
+      "dateCreated": "Jan 13, 2016 3:40:57 PM",
+      "dateStarted": "Apr 9, 2016 9:33:12 PM",
+      "dateFinished": "Apr 9, 2016 9:33:12 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:88",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "title": "Create Hive tables for weblogs",
+      "text": "%hive\ncreate table if not exists weblog(\n  clickid string,    \n  session int, \n  userid int, \n  visited timestamp, \n  product string\n)\nrow format delimited fields terminated by \",\"\nlocation \"/tmp/weblog_staging\"",
+      "dateUpdated": "Apr 9, 2016 9:34:48 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452713932897_-2124663831",
+      "id": "20160113-193852_41019454",
+      "dateCreated": "Jan 13, 2016 7:38:52 PM",
+      "dateStarted": "Apr 9, 2016 9:34:48 PM",
+      "dateFinished": "Apr 9, 2016 9:34:48 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:89",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "title": "Check tweets table",
+      "text": "%hive\nselect * from tweets limit 5",
+      "dateUpdated": "Apr 9, 2016 9:34:51 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452713839889_1762530927",
+      "id": "20160113-193719_921494912",
+      "dateCreated": "Jan 13, 2016 7:37:19 PM",
+      "dateStarted": "Apr 9, 2016 9:34:51 PM",
+      "dateFinished": "Apr 9, 2016 9:34:52 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:90",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "title": "Check weblog table",
+      "text": "%hive\nselect * from weblog limit 5",
+      "dateUpdated": "Apr 9, 2016 9:34:55 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452729023043_911222965",
+      "id": "20160113-235023_891487368",
+      "dateCreated": "Jan 13, 2016 11:50:23 PM",
+      "dateStarted": "Apr 9, 2016 9:34:55 PM",
+      "dateFinished": "Apr 9, 2016 9:34:55 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:91",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%md\n#### Analyze tables/columns for better performance\n\nNow lets run table level statistics on the tables we are interested in to improve query times\n",
+      "dateUpdated": "Apr 10, 2016 9:50:36 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452721433491_1920109337",
+      "id": "20160113-214353_719128300",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h4>Analyze tables/columns for better performance</h4>\n<p>Now lets run table level statistics on the tables we are interested in to improve query times</p>\n"
+      },
+      "dateCreated": "Jan 13, 2016 9:43:53 PM",
+      "dateStarted": "Apr 10, 2016 9:50:36 AM",
+      "dateFinished": "Apr 10, 2016 9:50:36 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:92",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table tweets compute statistics",
+      "dateUpdated": "Apr 9, 2016 9:35:03 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452717815305_-1694384342",
+      "id": "20160113-204335_1874970606",
+      "dateCreated": "Jan 13, 2016 8:43:35 PM",
+      "dateStarted": "Apr 9, 2016 9:35:03 PM",
+      "dateFinished": "Apr 9, 2016 9:35:18 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:93",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table weblog compute statistics",
+      "dateUpdated": "Apr 9, 2016 9:36:53 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "Update Count",
+              "index": 0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "Update Count",
+              "index": 0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452721373956_1663020451",
+      "id": "20160113-214253_1051568440",
+      "dateCreated": "Jan 13, 2016 9:42:53 PM",
+      "dateStarted": "Apr 9, 2016 9:36:39 PM",
+      "dateFinished": "Apr 9, 2016 9:36:40 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:94",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table factsales_final compute statistics",
+      "dateUpdated": "Apr 9, 2016 9:36:45 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452721472392_1433279385",
+      "id": "20160113-214432_1363478432",
+      "dateCreated": "Jan 13, 2016 9:44:32 PM",
+      "dateStarted": "Apr 9, 2016 9:36:45 PM",
+      "dateFinished": "Apr 9, 2016 9:36:45 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:95",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%md\nNext lets compute column statistics for the same tables",
+      "dateUpdated": "Apr 10, 2016 9:50:40 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452723689940_661502389",
+      "id": "20160113-222129_1782182444",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<p>Next lets compute column statistics for the same tables</p>\n"
+      },
+      "dateCreated": "Jan 13, 2016 10:21:29 PM",
+      "dateStarted": "Apr 10, 2016 9:50:40 AM",
+      "dateFinished": "Apr 10, 2016 9:50:40 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:96",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table tweets compute statistics for columns",
+      "dateUpdated": "Apr 9, 2016 9:36:49 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452723717803_-2109413217",
+      "id": "20160113-222157_507284179",
+      "dateCreated": "Jan 13, 2016 10:21:57 PM",
+      "dateStarted": "Apr 9, 2016 9:36:49 PM",
+      "dateFinished": "Apr 9, 2016 9:37:05 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:97",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table weblog compute statistics for columns",
+      "dateUpdated": "Apr 9, 2016 9:36:50 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452723747762_-1218872755",
+      "id": "20160113-222227_1514449570",
+      "dateCreated": "Jan 13, 2016 10:22:27 PM",
+      "dateStarted": "Apr 9, 2016 9:36:50 PM",
+      "dateFinished": "Apr 9, 2016 9:47:20 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:98",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%hive\nanalyze table factsales_final compute statistics for columns",
+      "dateUpdated": "Apr 9, 2016 9:36:51 PM",
+      "config": {
+        "colWidth": 4,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452723767145_-631699961",
+      "id": "20160113-222247_186145308",
+      "dateCreated": "Jan 13, 2016 10:22:47 PM",
+      "dateStarted": "Apr 9, 2016 9:36:52 PM",
+      "dateFinished": "Apr 9, 2016 9:58:30 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:99",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%md\n## Use Hive to correlate the data from different sources",
+      "dateUpdated": "Apr 10, 2016 9:50:39 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452723790574_-1153004072",
+      "id": "20160113-222310_1267394170",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h2>Use Hive to correlate the data from different sources</h2>\n"
+      },
+      "dateCreated": "Jan 13, 2016 10:23:10 PM",
+      "dateStarted": "Apr 10, 2016 9:50:39 AM",
+      "dateFinished": "Apr 10, 2016 9:50:39 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:100",
+      "focus": true
+    },
+    {
+      "title": "Query A: Top 10 most visited products",
+      "text": "%hive\nselect product,count(1) popular \nfrom weblog group by product order by popular desc limit 10",
+      "dateUpdated": "Apr 9, 2016 9:37:43 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "pieChart",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "product",
+              "index": 0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "popular",
+              "index": 1,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "product",
+              "index": 0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "popular",
+              "index": 1,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452724190719_-2066998893",
+      "id": "20160113-222950_1405982278",
+      "dateCreated": "Jan 13, 2016 10:29:50 PM",
+      "dateStarted": "Jan 15, 2016 3:44:08 AM",
+      "dateFinished": "Jan 15, 2016 3:46:41 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:101",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "title": "Query B: Top products with most time spent by year",
+      "text": "%hive\nselect product,year_visited, sum(time_spent) as total_time from\n(select table1.product,year(visited) as year_visited, \nmonth(visited) as month,unix_timestamp(table1.lead_window_0) - unix_timestamp(table1.visited) as time_spent\nfrom (select product,visited,lead(visited)  over (PARTITION BY session ORDER BY visited asc) from weblog) table1 \nwhere table1.lead_window_0 is not NULL) table2\ngroup by product,year_visited \norder by total_time desc limit 100",
+      "dateUpdated": "Apr 9, 2016 9:38:06 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "multiBarChart",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "product",
+              "index": 0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "total_time",
+              "index": 2,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "product",
+              "index": 0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "year_visited",
+              "index": 1,
+              "aggr": "sum"
+            }
+          }
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452724500772_-1601453844",
+      "id": "20160113-223500_319311539",
+      "dateCreated": "Jan 13, 2016 10:35:00 PM",
+      "dateStarted": "Jan 15, 2016 3:47:05 AM",
+      "dateFinished": "Jan 15, 2016 3:47:31 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:102",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "title": "Query C - most popular web_path",
+      "text": "%hive\nselect web_path,count(1) as path_count\nfrom\n(select session,concat_ws(\"->\",collect_list(product)) as web_path\nfrom weblog group by session) table1\ngroup by web_path\norder by path_count desc",
+      "dateUpdated": "Apr 9, 2016 9:38:23 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala",
+        "enabled": true,
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452725174403_1648549119",
+      "id": "20160113-224614_841055273",
+      "dateCreated": "Jan 13, 2016 10:46:14 PM",
+      "dateStarted": "Jan 14, 2016 11:42:21 PM",
+      "dateFinished": "Jan 14, 2016 11:42:37 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:103",
+      "errorMessage": "",
+      "focus": true
+    },
+    {
+      "text": "%md\n\n#### Conclusion\n\nThis concludes the demo. We have shown how you can use Hive to get a single view of product by combining: \n  - ETL/CRM data from EDW/DB (ingested using Sqoop)\n  - web traffic  (ingested using HDF)\n  - social media data (ingested using HDF)\n",
+      "dateUpdated": "Apr 10, 2016 9:50:54 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452829028487_1593174750",
+      "id": "20160115-033708_484971857",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h4>Conclusion</h4>\n<p>This concludes the demo. We have shown how you can use Hive to get a single view of product by combining:</p>\n<ul>\n<li>ETL/CRM data from EDW/DB (ingested using Sqoop)</li>\n<li>web traffic  (ingested using HDF)</li>\n<li>social media data (ingested using HDF)</li>\n</ul>\n"
+      },
+      "dateCreated": "Jan 15, 2016 3:37:08 AM",
+      "dateStarted": "Apr 10, 2016 9:50:54 AM",
+      "dateFinished": "Apr 10, 2016 9:50:54 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:104",
+      "focus": true
+    },
+    {
+      "text": "%md\n#### Next steps\n\nTry out the full lab available at: [https://github.com/abajwa-hw/single-view-demo](https://github.com/abajwa-hw/single-view-demo)",
+      "dateUpdated": "Apr 10, 2016 9:50:56 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452743693244_-474234196",
+      "id": "20160114-035453_1657563174",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h4>Next steps</h4>\n<p>Try out the full lab available at: <a href=\"https://github.com/abajwa-hw/single-view-demo\">https://github.com/abajwa-hw/single-view-demo</a></p>\n"
+      },
+      "dateCreated": "Jan 14, 2016 3:54:53 AM",
+      "dateStarted": "Apr 10, 2016 9:50:56 AM",
+      "dateFinished": "Apr 10, 2016 9:50:57 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:105",
+      "focus": true
+    },
+    {
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452829681525_-800442868",
+      "id": "20160115-034801_632479134",
+      "dateCreated": "Jan 15, 2016 3:48:01 AM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:106",
+      "errorMessage": ""
+    }
+  ],
+  "name": "Single view demo",
+  "id": "2BBBW75VS",
+  "angularObjects": {
+    "2BGZ7M5YA": [],
+    "2BG9BDJM2": [],
+    "2BHR46ZPZ": [],
+    "2BG8NTSMA": [],
+    "2BJQQUS6E": [],
+    "2BH5E31R7": [],
+    "2BJEVUME2": [],
+    "2BFJ39RK6": [],
+    "2BF81CBT4": [],
+    "2BJ97FAW8": [],
+    "2BFCFPXUU": [],
+    "2BF4674VZ": [],
+    "2BJE18R3N": [],
+    "2BJ2A5UGC": [],
+    "2BHD2KGN2": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}

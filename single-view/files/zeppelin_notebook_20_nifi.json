@@ -1,0 +1,231 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n## Ingest tweets and weblogs into HDFS using Nifi\n\nIn this section we will:\n\n1. Create a script which generates weblogs\n2. Setup Solr for twitter\n3. Create a Twitter App for accessing the Twitter API\n4. Use NiFi to load tweets & weblogs into HDFS & SOLR\n",
+      "dateUpdated": "Apr 10, 2016 9:50:20 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452698326170_-1702767869",
+      "id": "20160113-151846_689314597",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h2>Ingest tweets and weblogs into HDFS using Nifi</h2>\n<p>In this section we will:</p>\n<ol>\n<li>Create a script which generates weblogs</li>\n<li>Setup Solr for twitter</li>\n<li>Create a Twitter App for accessing the Twitter API</li>\n<li>Use NiFi to load tweets &amp; weblogs into HDFS &amp; SOLR</li>\n</ol>\n"
+      },
+      "dateCreated": "Jan 13, 2016 3:18:46 PM",
+      "dateStarted": "Apr 10, 2016 9:50:20 AM",
+      "dateFinished": "Apr 10, 2016 9:50:20 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:81",
+      "focus": true
+    },
+    {
+      "title": "1. Script \"weblog generator\" script",
+      "text": "%sh\ngit clone https://github.com/abajwa-hw/single-view-demo.git\ncp /home/zeppelin/single-view-demo/createlog-psql.sh /tmp\ncp /home/zeppelin/single-view-demo/DimCustomer.csv /tmp\n\necho \"/tmp/createlog-psql.sh /tmp/data/DimCustomer.csv 20 >> /tmp/webtraffic.log\" >> /tmp/generate-weblog.sh\n\nchmod 777 /tmp/createlog-psql.sh\nchmod 777 /tmp/generate-weblog.sh\nchmod 444 /tmp/DimCustomer.csv\n",
+      "dateUpdated": "Apr 9, 2016 8:55:51 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/sh",
+        "title": true,
+        "editorHide": false,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452714134778_453431803",
+      "id": "20160113-194214_575626716",
+      "dateCreated": "Jan 13, 2016 7:42:14 PM",
+      "dateStarted": "Apr 9, 2016 8:33:32 PM",
+      "dateFinished": "Apr 9, 2016 8:33:32 PM",
+      "status": "FINISHED",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:82"
+    },
+    {
+      "title": "2. Configure Solr for Twitter",
+      "text": "%sh\nsudo curl -ksSL https://raw.githubusercontent.com/abajwa-hw/single-view-demo/master/dashboard/default.json -o /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json\nsudo curl -L https://git.io/vVRPz -o /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf/solrconfig.xml\n\nsudo /etc/init.d/solr stop\nsudo /etc/init.d/solr start\nsleep 5\n\nsudo /opt/lucidworks-hdpsearch/solr/bin/solr create -c tweets \\\n   -d data_driven_schema_configs \\\n   -s 1 \\\n   -rf 1 ",
+      "dateUpdated": "Apr 9, 2016 9:20:32 PM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/sh",
+        "title": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1460236077185_1428134912",
+      "id": "20160409-210757_1927203000",
+      "dateCreated": "Apr 9, 2016 9:07:57 PM",
+      "dateStarted": "Apr 9, 2016 9:17:48 PM",
+      "dateFinished": "Apr 9, 2016 9:18:07 PM",
+      "status": "ERROR",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:83",
+      "errorMessage": ""
+    },
+    {
+      "text": "%md\n#### 3. Create Twitter app & access tokens\n\nTo monitor tweets, you will need to do the following on your Twitter account:\n- Create a Twitter account and app and get your consumer key/token and access keys/tokens:\n  - Open https://apps.twitter.com \n  - sign in\n  - create new app\n  - the \"Application Details\" do not matter. Put whatever you want.\n  - create access tokens\n\n#### 4. Load our prebuilt Tempalte into NiFI\n\n1. Download prebuilt Single_view_demo.xml template to your laptop from [here](https://github.com/abajwa-hw/single-view-demo/raw/master/template/Single_view_demo.xml)\n2. Open Nifi webui (http://:9090)\n3. Import the Single_view_demo.xml template info Nifi\n4. Fill out env specific configs e.g. your Twitter credentials (see note below)\n5. DO NOT start the flows yet\n\n#### Next we will create a \"weblog generator\" script",
+      "dateUpdated": "Apr 10, 2016 9:50:27 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1460235245123_-1688739474",
+      "id": "20160409-205405_1833540844",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h4>3. Create Twitter app &amp; access tokens</h4>\n<p>To monitor tweets, you will need to do the following on your Twitter account:</p>\n<ul>\n<li>Create a Twitter account and app and get your consumer key/token and access keys/tokens:</li>\n<li>Open https://apps.twitter.com</li>\n<li>sign in</li>\n<li>create new app</li>\n<li>the &ldquo;Application Details&rdquo; do not matter. Put whatever you want.</li>\n<li>create access tokens</li>\n</ul>\n<h4>4. Load our prebuilt Tempalte into NiFI</h4>\n<ol>\n<li>Download prebuilt Single_view_demo.xml template to your laptop from <a href=\"https://github.com/abajwa-hw/single-view-demo/raw/master/template/Single_view_demo.xml\">here</a></li>\n<li>Open Nifi webui (http://:9090)</li>\n<li>Import the Single_view_demo.xml template info Nifi</li>\n<li>Fill out env specific configs e.g. your Twitter credentials (see note below)</li>\n<li>DO NOT start the flows yet</li>\n</ol>\n<h4>Next we will create a &ldquo;weblog generator&rdquo; script</h4>\n"
+      },
+      "dateCreated": "Apr 9, 2016 8:54:05 PM",
+      "dateStarted": "Apr 10, 2016 9:50:26 AM",
+      "dateFinished": "Apr 10, 2016 9:50:26 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:84",
+      "focus": true
+    },
+    {
+      "text": "%md\n#### Now start the flows in Nifi using the play button.\n\n## Done! NiFi is now:\n\n  - ingesting the tweets under /tmp/weblog_staging in HDFS\n  - ingest the weblogs under /tmp/tweets_staging in HDFS",
+      "dateUpdated": "Apr 10, 2016 9:50:31 AM",
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452714525669_1209213271",
+      "id": "20160113-194845_498349085",
+      "result": {
+        "code": "SUCCESS",
+        "type": "HTML",
+        "msg": "<h4>Now start the flows in Nifi using the play button.</h4>\n<h2>Done! NiFi is now:</h2>\n<ul>\n<li>ingesting the tweets under /tmp/weblog_staging in HDFS</li>\n<li>ingest the weblogs under /tmp/tweets_staging in HDFS</li>\n</ul>\n"
+      },
+      "dateCreated": "Jan 13, 2016 7:48:45 PM",
+      "dateStarted": "Apr 10, 2016 9:50:31 AM",
+      "dateFinished": "Apr 10, 2016 9:50:31 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:85",
+      "focus": true
+    },
+    {
+      "config": {
+        "colWidth": 12,
+        "graph": {
+          "mode": "table",
+          "height": 300,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1452829681525_-800442868",
+      "id": "20160115-034801_632479134",
+      "dateCreated": "Jan 15, 2016 3:48:01 AM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500,
+      "$$hashKey": "object:106",
+      "errorMessage": ""
+    }
+  ],
+  "name": "Single view demo",
+  "id": "2BBBW75VS",
+  "angularObjects": {
+    "2BGZ7M5YA": [],
+    "2BG9BDJM2": [],
+    "2BHR46ZPZ": [],
+    "2BG8NTSMA": [],
+    "2BJQQUS6E": [],
+    "2BH5E31R7": [],
+    "2BJEVUME2": [],
+    "2BFJ39RK6": [],
+    "2BF81CBT4": [],
+    "2BJ97FAW8": [],
+    "2BFCFPXUU": [],
+    "2BF4674VZ": [],
+    "2BJE18R3N": [],
+    "2BJ2A5UGC": [],
+    "2BHD2KGN2": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}
