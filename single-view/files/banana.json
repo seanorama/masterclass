@@ -41,8 +41,8 @@
           "to": "NOW/MINUTE%2B1MINUTE",
           "field": "created_at_dt",
           "type": "time",
-          "fromDateObj": "2016-04-10T18:53:38.471Z",
-          "toDateObj": "2016-04-10T19:08:38.471Z",
+          "fromDateObj": "2016-04-10T19:25:44.328Z",
+          "toDateObj": "2016-04-10T19:40:44.328Z",
           "mandate": "must",
           "active": true,
           "alias": "",
@@ -169,7 +169,7 @@
       "collapsable": true,
       "panels": [
         {
-          "span": 12,
+          "span": 8,
           "editable": true,
           "type": "histogram",
           "loadingEditor": false,
@@ -188,7 +188,7 @@
           "group_field": "polarity_s",
           "auto_int": true,
           "resolution": 100,
-          "interval": "10s",
+          "interval": "1m",
           "intervals": [
             "auto",
             "1s",
@@ -226,6 +226,35 @@
           "title": "Tweet Histogram",
           "lines_smooth": false,
           "show_queries": true
+        },
+        {
+          "span": 4,
+          "editable": true,
+          "type": "map",
+          "loadingEditor": false,
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*%3A*&df=id&wt=json&fq=created_at_dt:[NOW/MINUTE-15MINUTE%20TO%20NOW/MINUTE%2B1MINUTE]&fq=-tweet_text_t:RT&rows=0&facet=true&facet.field=tweet_place_country_code_s&facet.limit=100",
+            "custom": ""
+          },
+          "mode": "count",
+          "field": "tweet_place_country_code_s",
+          "stats_field": "",
+          "decimal_points": 0,
+          "map": "world",
+          "colors": [
+            "#A0E2E2",
+            "#265656"
+          ],
+          "size": 100,
+          "exclude": [],
+          "spyable": true,
+          "index_limit": 0,
+          "show_queries": true,
+          "title": "Tweeter Locations"
         }
       ]
     },
