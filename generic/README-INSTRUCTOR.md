@@ -32,7 +32,7 @@ cd masterclass/generic
 
    ```sh
 export AWS_DEFAULT_REGION=eu-west-1  ## region to deploy in
-export lab_prefix=mc-hdf-hdp         ## template for naming the cloudformation stacks
+export lab_prefix=test         ## template for naming the cloudformation stacks
 export lab_first=100                 ## number to start at in naming
 export lab_count=1                   ## number of clusters to create
 
@@ -41,42 +41,10 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN ZOOKEEPER"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
-]
-'
-   ```
-
-3. You can then execute ../bin/clusters-create.sh and the other cluster scripts as explained in ../README.md
-
-### b) Deploy the NiFi node
-
-In the 2nd shell:
-
-1. Switch to the 'generic' directory
-
-    ```
-cd masterclass/generic
-    ```
-
-2. Set these variables, updating the values as appropriate:
-
-    ```sh
-export AWS_DEFAULT_REGION=eu-west-1  ## region to deploy in
-export lab_prefix=mc        ## template for naming the cloudformation stacks
-export lab_first=100                 ## number to start at in naming
-export lab_count=1                   ## number of clusters to create
-
-export cfn_parameters='
-[
-  {"ParameterKey":"KeyName","ParameterValue":"secloud"},
-  {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
-  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS YARN MAPREDUCE2 HIVE PIG"},
-  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"DeployCluster","ParameterValue":"true"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
 ]
 '
@@ -89,3 +57,7 @@ export cfn_parameters='
 Further, you should verify deletion of the CloudFormations & EC2 instances from the AWS Console.
 
 ## Issues: See ../README.md
+
+## Advanced usage
+
+1. Only deploy the infrastructure by setting PostCommand to /bin/true

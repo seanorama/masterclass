@@ -232,29 +232,56 @@ cfn-signal -e ${?} --region ${region} --stack ${stack} --resource ${resource}
 
 printf 'Defaults !requiretty\n' > /etc/sudoers.d/888-dont-requiretty
 
-## swappiness to 0
-sysctl -w vm.swappiness=0
-mkdir -p /etc/sysctl.d
-cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'
-## disable swapping
-vm.swappiness=0
+setenforce Permissive
+
+# ## swappiness to 0
+# sysctl -w vm.swappiness=0
+# mkdir -p /etc/sysctl.d
+# cat > /etc/sysctl.d/50-swappiness.conf <<-'EOF'
+# ## disable swapping
+# vm.swappiness=0
+# EOF
+
+cat >> ~/masterclass.env <<EOF
+export region="${region}"
+export stack="${stack}"
+export cluster_name="${stack}"
+export resource="${resource}"
+export ambari_server="${ambari_server}"
+export ambari_version="${ambari_version}"
+export ambari_stack_version="${ambari_stack_version}"
+export java_provider="${java_provider}"
+export java_version="${java_version}"
+export install_ambari_agent="${install_ambari_agent}"
+export install_ambari_server="${install_ambari_server}"
+export ref_wait_ambari="${ref_wait_ambari}"
+export ambari_services="${ambari_services}"
+export post_command="${post_command}"
+export ambari_pass="${ambari_pass}"
+export deploy="${deploy}"
+export ref_additional_instance_count="${ref_additional_instance_count}"
 EOF
+chmod 600 ~/masterclass.env
 
 ## Remove existing mount points
 if [ -e '/dev/xvdb' ]; then
     sed '/^\/dev\/xvd[b-z]/d' -i /etc/fstab
 
     ## Format ephemeral drives and create mounts
-    for drv in /dev/xvd[b-z]; do
-      umount ${drv} || true
-      mkdir -p /mnt${drv}
-      echo "${drv} /mnt${drv} ext4 defaults,noatime,nodiratime 0 0" >> /etc/fstab
-      nohup mkfs.ext4 -m 0 -T largefile4 $drv &
+    i=0
+    for disk in /dev/xvd[b-z]; do
+        mount=/grid/$(printf "%0*d\n" 2 $i)
+        umount ${disk} || true
+        mkdir -p ${mount}
+        echo "${disk} ${mount} ext4 defaults,noatime,nodiratime 0 0" >> /etc/fstab
+        nohup mkfs.ext4 -m 0 -T largefile4 ${disk} &
+        i=$((i+1))
     done
     wait
 
-    for drv in /dev/xvd[b-z]; do
-      mount ${drv}
+    for disk in /dev/xvd[b-z]; do
+        tune2fs -c0 -i0 ${disk}
+        mount ${disk}
     done
 fi
 
