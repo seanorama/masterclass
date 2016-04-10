@@ -11,7 +11,7 @@ for user in ${users}; do
     usermod -a -G users "${user}"
     if ! ${dfs_cmd} -stat /user/${user} 2> /dev/null; then
       ${dfs_cmd} -mkdir -p "/user/${user}"
-      ${dfs_cmd} -chown "${user}" "/user/${user}"
+      ${dfs_cmd} -chown "${user}" "/user/${user}" &
     fi
 done
 
@@ -34,4 +34,6 @@ psql -U zeppelin -d contoso -h localhost -f ~/single-view-demo/contoso-psql.sql
 psql -U zeppelin -d contoso -h localhost -c "\dt"
 
 echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+wait
 
