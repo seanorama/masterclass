@@ -2,7 +2,9 @@
 
 cd ~
 
-export ambari_pass=${ambari_pass:-BadPass#1}
+test -f ~/masterclass.env && source ~/masterclass.env
+export ambari_pass="${ambari_pass:-BadPass#1}"
+export cluster_name="${cluster_name:-mycluster}"
 
 ## Install Python in virtualenv
 VERSION=15.0.1
@@ -20,6 +22,7 @@ printf "[master-nodes]\nlocalhost ansible_ssh_host=localhost\n" \
   > inventory/static
 
 sed -i.bak \
+  -e "s/^\(cluster_name: \).*/\1'${cluster_name}'/" \
   -e "s/^\(admin_password: \).*/\1'${ambari_pass}'/" \
   -e "s/^\(update_etc_hosts: \).*/\1false/" \
   -e "s/^\(java_type: \).*/\1open/" \
