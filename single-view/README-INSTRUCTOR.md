@@ -21,7 +21,7 @@ export cfn_parameters='
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -ksSL https://raw.githubusercontent.com/seanorama/masterclass/master/single-view/scripts/00_prep_host.sh | bash"},
-  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
+  {"ParameterKey":"InstanceType","ParameterValue":"m4.2xlarge"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"100"}
 ]
 '

@@ -29,7 +29,7 @@ sed -i.bak \
   -e "s/^\(tech_preview: \).*/\1true/" \
   -e "s/^\(install_nifi: \).*/\1true/" \
   -e "s/^\(install_solr: \).*/\1true/" \
-  -e "s/^\(install_ams: \).*/\1false/" \
+  -e "s/^\(install_ams: \).*/\1true/" \
   -e "s/^\(install_zeppelin: \).*/\1true/" \
   -e "s/^\(install_falcon: \).*/\1false/" \
   -e "s/^\(install_flume: \).*/\1false/" \
