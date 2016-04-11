@@ -43,6 +43,8 @@ sed -i.bak \
 ansible-playbook -i inventory/static -c local playbooks/bootstrap.yml
 ansible-playbook -i inventory/static -c local playbooks/hortonworks.yml
 
+sleep 60
+
 ## Wait until cluster is built
 echo "export ambari_pass=BadPass#1" >> ~/.ambari.conf
 chmod 600 ~/.ambari.conf
