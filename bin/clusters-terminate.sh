@@ -38,7 +38,7 @@ do
 ########################################################
 # change the value below to increase/decrease batch size
 ########################################################
-  if [ $batchcount -eq 8 ]
+  if [ $batchcount -eq 20 ]
   then
 # this is the sleep interval between batches of instances
     sleep 20
