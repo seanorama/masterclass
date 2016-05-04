@@ -25,41 +25,88 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
 
+sleep 30
+
 cd ${__dir}/../deploy/
 
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
-      "hdfs-site": {
+    "hdfs-site": {
         "dfs.replication": "1",
-        "dfs.datanode.data.dir" : "/mnt/dev/xvdb/dn,/mnt/dev/xvdc/dn",
-        "dfs.namenode.name.dir" : "/mnt/dev/xvdb/nn,/mnt/dev/xvdc/nn"
-      }
+        "dfs.datanode.data.dir" : "/mnt/dev/xvdb/dn",
+        "dfs.namenode.name.dir" : "/mnt/dev/xvdb/nn"
+    },
+    "yarn-site": {
+        "yarn.scheduler.minimum-allocation-vcores": "1",
+        "yarn.scheduler.maximum-allocation-vcores": "1",
+        "yarn.scheduler.minimum-allocation-mb": "512",
+        "yarn.scheduler.maximum-allocation-mb": "2048",
+        "yarn.nodemanager.resource.memory-mb": "32768"
+    },
+    "capacity-scheduler": {
+        "yarn.scheduler.capacity.maximum-am-resource-percent": "0.25"
+    },
+    "mapred-site": {
+        "mapreduce.map.memory.mb": "2048",
+        "mapreduce.reduce.memory.mb": "2048",
+        "mapreduce.reduce.java.opts": "-Xmx1228m",
+        "mapreduce.map.java.opts": "-Xmx1228m",
+        "mapreduce.task.io.sort.mb": "859",
+        "yarn.app.mapreduce.am.resource.mb" : "2048"
+    },
+    "hive-site": {
+        "hive.tez.container.size": "2048",
+        "hive.auto.convert.join.noconditionaltask.size": "536870912"
+    },
+    "tez-site": {
+        "tez.task.resource.memory.mb": "2048",
+        "tez.am.resource.memory.mb": "2048"
+    },
+    "core-site": {
+        "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.HTTP.hosts" : "*",
+        "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hbase.hosts" : "*",
+        "hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hcat.hosts" : "*",
+        "hadoop.proxyuser.hive.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.hive.hosts" : "*",
+        "hadoop.proxyuser.knox.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.knox.hosts" : "*",
+        "hadoop.proxyuser.oozie.groups" : "users",
+        "hadoop.proxyuser.oozie.hosts" : "*",
+        "hadoop.proxyuser.root.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.root.hosts" : "*"
+    }
   }
 }
 EOF
 
-sleep 30
-
 export ambari_services="KNOX YARN ZOOKEEPER TEZ PIG SLIDER MAPREDUCE2 HIVE HDFS HBASE SQOOP FLUME OOZIE SPARK"
 export host_count=skip
 ./deploy-recommended-cluster.bash
+sleep 5
 
-sleep 30
-
-source ${__dir}/ambari_functions.sh
 source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
-echo "export ambari_pass=BadPass#1" > ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
+echo "export ambari_pass=BadPass#1" >> ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 source ${__dir}/ambari_functions.sh
 ambari-configs
 ambari_wait_request_complete 1
 
-usermod -a -G users ${USER}
+sleep 30
 
 ## Generic setup
+usermod -a -G users ${USER}
 chkconfig mysqld on; service mysqld start
 ${__dir}/onboarding.sh
-${__dir}/ambari-views/create-views.sh
 config_proxyuser=true ${__dir}/ambari-views/create-views.sh
 ${__dir}/configs/proxyusers.sh
+
+cd /opt
+git clone https://github.com/seanorama/masterclass
+cd masterclass/sql
+./labs-setup.sh
+
+exit 0
 
