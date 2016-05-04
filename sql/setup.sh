@@ -25,8 +25,6 @@ source ~/ambari-bootstrap/extras/ambari_functions.sh
 ${__dir}/deploy/prep-hosts.sh
 ${__dir}/../ambari-bootstrap.sh
 
-sleep 30
-
 cd ${__dir}/../deploy/
 
 cat << EOF > configuration-custom.json
@@ -94,8 +92,6 @@ source ${__dir}/ambari_functions.sh
 ambari-configs
 ambari_wait_request_complete 1
 
-sleep 30
-
 ## Generic setup
 usermod -a -G users ${USER}
 chkconfig mysqld on; service mysqld start
@@ -109,4 +105,3 @@ cd masterclass/sql
 ./labs-setup.sh
 
 exit 0
-
