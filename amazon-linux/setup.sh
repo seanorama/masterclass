@@ -35,6 +35,29 @@ if [ "${install_ambari_server}" = "true" ]; then
         export ambari_services="${ambari_services:-HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER}"
 
         cd ~/ambari-bootstrap/deploy
+
+cat << EOF > configuration-custom.json
+{
+  "configurations" : {
+    "hst-server-conf": {
+          "customer.account.name" : "Internal AWS Marketplace sroberts",
+          "customer.smartsense.id" : "A-00000000-C-00000000",
+          "customer.notification.email" : "sroberts@hortonworks.com",
+          "server.storage.dir" : "/var/lib/smartsense/hst-server/data",
+          "server.tmp.dir" : "/var/lib/smartsense/hst-server/tmp"
+    },
+    "hst-agent-conf": {
+          "agent.tmp_dir" : "/var/lib/smartsense/hst-agent/data/tmp"
+    },
+    "hdfs-site" : {
+        "dfs.namenode.name.dir" : "/grid/00/hadoop/hdfs/nn,/grid/01/hadoop/hdfs/nn",
+        "dfs.journalnode.edits.dir" : "/grid/00/hadoop/hdfs/jn,/grid/01/hadoop/hdfs/jn",
+        "dfs.datanode.data.dir" : "/grid/00/hadoop/hdfs/dn,/grid/01/hadoop/hdfs/dn",
+        "dfs.datanode.failed.volumes.tolerated" : "1"
+    }
+  }
+}
+EOF
         ./deploy-recommended-cluster.bash
     fi
 fi
