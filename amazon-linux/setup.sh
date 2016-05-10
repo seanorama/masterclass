@@ -5,6 +5,7 @@ export HOME=${HOME:-/root}
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 #export ambari_server_custom_script="sed -i 's/amazon2015/amazon2016/' /usr/lib/ambari-*/lib/ambari_commons/resources/os_family.json /var/lib/ambari-server/resources/stacks/HDP/*/services/*/metainfo.xml /var/lib/ambari-server/resources/common-services/*/*/metainfo.xml /var/lib/ambari-agent/cache/common-services/*/*/metainfo.xml /var/lib/ambari-agent/cache/stacks/HDP/*/services/*/metainfo.xml; ambari-server refresh-stack-hash; ambari-agent restart"
+export ambari_server_custom_script="yum -y -q install smartsense-hst"
 export ambari_version=2.2.2.0
 
 cd
