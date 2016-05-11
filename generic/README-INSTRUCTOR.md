@@ -1,25 +1,11 @@
 # Instructor notes
 ========================================
 
-These instructions will create lab environments for:
-
-a. HDP Cluster: 1 node with HDFS, YARN, HIVE, NIFI, SOLR, SPARK, ZEPPELIN
-b. Nifi: 1 node with NiFi
-
-You will want to have 2 separate shells open for deploying each environment. This is due to the management scripts depending on environment variables.
-
 ## Before you start
 
-See ../README.md for instructions on using the cluster management scripts (step 3 in the processes below):
+See ../README.md for instructions on using the cluster management scripts.
 
-    - ../bin/cluster-create.sh
-    - ../bin/cluster-report.sh
-    - ../bin/cluster-terminate.sh
-
-## Deploy clusters
-Open 2 clean shell environments on a host where the AWS CLI has been configured.
-
-### a) Deploy the HDP node
+### a) Deploy cluster(s)
 
 1. Get the repo and switch to the 'generic' directory
 
@@ -41,7 +27,7 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN ZOOKEEPER"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN ZOOKEEPER HIVE SPARK"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
@@ -50,7 +36,11 @@ export cfn_parameters='
 '
    ```
 
-3. You can then execute ../bin/clusters-create.sh and the other cluster scripts as explained in ../README.md
+3. Create the cluster(s): `../bin/clusters-create.sh`
+
+4. List cluster host(s): `../bin/clusters-report.sh`
+
+5. Terminate cluster(s): `../bin/clusters-terminate.sh`
 
 ## REMEMBER to terminate the clusters immediately after the class is over, or be prepared to pay $$$!
 
