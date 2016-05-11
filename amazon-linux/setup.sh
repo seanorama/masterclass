@@ -42,7 +42,7 @@ cat << EOF > configuration-custom.json
   "configurations" : {
     "hst-server-conf": {
           "customer.account.name" : "Internal AWS Marketplace sroberts",
-          "customer.smartsense.id" : "A-00000000-C-00000000",
+          "customer.smartsense.id" : "A-99900000-C-00000000",
           "customer.notification.email" : "sroberts@hortonworks.com",
           "server.storage.dir" : "/var/lib/smartsense/hst-server/data",
           "server.tmp.dir" : "/var/lib/smartsense/hst-server/tmp"
