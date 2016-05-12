@@ -13,15 +13,10 @@ yum -y -q install git patch
 
 ## monkeypatching ambari-agent for Amazon Linux 2016.03
 ##                smartsense for Python=>2.7.9
-export ambari_server_custom_script='\
-    curl -sSL \
-        https://gist.githubusercontent.com/seanorama/fdd64d9648ad3d7897d5115e02f532bd/raw/656ced85f2145b8659a64b3ae5dd5a79ed6a7376/BUG-57329.diff.sh \
-        | bash \
-    ; ambari-agent restart \
-    ; yum -y -q install smartsense-hst \
-    ; URL="https://gist.githubusercontent.com/seanorama/bbe936cff511d8e5b98f1c8b6c155f55/raw/5446e0747e0a6e99b49c881e23a70748aec97b19/security.py.diff" \
-    ; curl -sSL "${URL}" | patch -b /usr/hdp/share/hst/hst-agent/lib/hst_agent/security.py
-'
+
+yum -y -q install smartsense-hst
+URL="https://gist.githubusercontent.com/seanorama/bbe936cff511d8e5b98f1c8b6c155f55/raw/5446e0747e0a6e99b49c881e23a70748aec97b19/security.py.diff"
+curl -sSL "${URL}" | patch -b /usr/hdp/share/hst/hst-agent/lib/hst_agent/security.py
 
 git clone -b feature/amazon-linux http://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
@@ -29,9 +24,20 @@ cd ambari-bootstrap
 # export install_ambari_server=true
 ./ambari-bootstrap.sh
 
+URL="https://gist.githubusercontent.com/seanorama/fdd64d9648ad3d7897d5115e02f532bd/raw/00b11e7cb87c5d9e5662eb3634ce41f9889a5fcb/BUG-57329.diff"
+curl -sSL -O "${URL}"
+for a in agent server; do
+    patch -b \
+        /usr/lib/ambari-${a}/lib/ambari_commons/resources/os_family.json \
+        BUG-57329.diff || true
+done
+rm BUG-57329.diff
+
+bash -c "nohup ambari-agent restart" || true
+
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
-    bash -c "nohup ambari-server start" || true
+    bash -c "nohup ambari-server restart" || true
 
     sleep 60
 
