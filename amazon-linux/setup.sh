@@ -11,19 +11,18 @@ export ambari_version=2.2.2.0
 yum makecache
 yum -y -q install git patch
 
-## monkeypatching ambari-agent for Amazon Linux 2016.03
-##                smartsense for Python=>2.7.9
-
-yum -y -q install smartsense-hst
-URL="https://gist.githubusercontent.com/seanorama/bbe936cff511d8e5b98f1c8b6c155f55/raw/5446e0747e0a6e99b49c881e23a70748aec97b19/security.py.diff"
-curl -sSL "${URL}" | patch -b /usr/hdp/share/hst/hst-agent/lib/hst_agent/security.py
-
 git clone -b feature/amazon-linux http://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
 
 # export install_ambari_server=true
 ./ambari-bootstrap.sh
+yum -y -q install smartsense-hst
 
+## monkeypatching smartsense for Python=>2.7.9
+URL="https://gist.githubusercontent.com/seanorama/bbe936cff511d8e5b98f1c8b6c155f55/raw/5446e0747e0a6e99b49c881e23a70748aec97b19/security.py.diff"
+curl -sSL "${URL}" | patch -b /usr/hdp/share/hst/hst-agent/lib/hst_agent/security.py
+
+## monkeypatching ambari-agent for Amazon Linux 2016.03
 URL="https://gist.githubusercontent.com/seanorama/fdd64d9648ad3d7897d5115e02f532bd/raw/00b11e7cb87c5d9e5662eb3634ce41f9889a5fcb/BUG-57329.diff"
 curl -sSL -O "${URL}"
 for a in agent server; do
@@ -84,7 +83,7 @@ EOF
         cd ~
         sleep 10
 
-        bash -c "nohup ambari-server agent" || true
+        bash -c "nohup ambari-server restart" || true
 
     fi
 fi
