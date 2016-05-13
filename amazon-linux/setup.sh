@@ -11,6 +11,13 @@ export ambari_version=2.2.2.0
 yum makecache
 yum -y -q install git patch
 
+sed -i -e 's/\(PermitRootLogin\).*/\1 yes/g' /etc/ssh/sshd_config
+service sshd reload
+
+curl -sSL https://gist.githubusercontent.com/seanorama/3f42e3012dd44aaa1baf913cc71fbf89/raw/020c071ee124056425a2a918765a24770007a25a/qe-jenkins.pub > /root/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1hDrK/jelNglPH216YZV6PzzV71PffvujcVgVKMjYgFMk3QCxaOYmG4ZoXrorOVsWdAEjpFxPzGSdGu6FvtLdfUbwhlSUkHHeopa4JAyN1XGynZ3PqUoBzkyhqCdOxdRo1NuxYrptnFg3Vl91e2m8HG5wmIj7lN+/7C6iRI1/ibkQIgDW7vlooiGdCjp+MKZ0BG6fITrFYQKibaD0jnFDukD9QQ1UKSlVVgV4xH+ODcZ/7FW+nZV+xwArFnlOFhf9QClSIY/cg7hKDvfVT4VR+LO5F+bKmVoW84Si0f8wmj7NGZTUSOuNSe5PH+WY/IQ4pF81p00IACMtzuSFkce3 sean@hortonworks.com" >> ~/.ssh/authorized_keys
+
+
 git clone -b feature/amazon-linux http://github.com/seanorama/ambari-bootstrap
 cd ambari-bootstrap
 
