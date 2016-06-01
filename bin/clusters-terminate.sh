@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export lab_prefix=${lab_prefix:-mc-sql}
-lab_first=${lab_first:-1}
+export lab_prefix=${lab_prefix:-${USER}}
+lab_first=${lab_first:-100}
 lab_count=${lab_count:-1}
 
 clusters=$(seq -w ${lab_first} $((lab_first+lab_count-1)))
