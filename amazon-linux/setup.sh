@@ -6,7 +6,7 @@ cd
 
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
-export ambari_version=2.2.2.0
+#export ambari_version=2.2.2.0
 
 yum makecache
 yum -y -q install git patch
@@ -14,8 +14,16 @@ yum -y -q install git patch
 sed -i -e 's/\(PermitRootLogin\).*/\1 yes/g' /etc/ssh/sshd_config
 service sshd reload
 
-curl -ssL https://gist.githubusercontent.com/seanorama/3f42e3012dd44aaa1baf913cc71fbf89/raw/69825248ee33e9bd0083c4e25c7d91d788615823/qe-jenkins.pub > /root/.ssh/authorized_keys
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1hDrK/jelNglPH216YZV6PzzV71PffvujcVgVKMjYgFMk3QCxaOYmG4ZoXrorOVsWdAEjpFxPzGSdGu6FvtLdfUbwhlSUkHHeopa4JAyN1XGynZ3PqUoBzkyhqCdOxdRo1NuxYrptnFg3Vl91e2m8HG5wmIj7lN+/7C6iRI1/ibkQIgDW7vlooiGdCjp+MKZ0BG6fITrFYQKibaD0jnFDukD9QQ1UKSlVVgV4xH+ODcZ/7FW+nZV+xwArFnlOFhf9QClSIY/cg7hKDvfVT4VR+LO5F+bKmVoW84Si0f8wmj7NGZTUSOuNSe5PH+WY/IQ4pF81p00IACMtzuSFkce3 sean@hortonworks.com" >> ~/.ssh/authorized_keys
+cat <<'EOF' > /root/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDB/hBQfzF91SExZ4MglU7eX26RfIEsz5aCGzzbaGeQG7Jch5XIWHE192A/5jRUZy2eU5sFMsYS32LEqKSVJn5N/5P7yE2QvcTUosM7wHWQW4JrImL0PTJTPXRc/QvkGPka3LvBCL6PlVENyGGo+C3D+dgSloaBeZ9URk0I+Yc/VsihQoMdkVOYIKAGxZlG/JBEBBjCZ5ng4WlzdfcsKgtUGbr6nOn3mqK8/Pkv8CeWguEYaibj5Os6ydmHVZ30w0tLD6Gu7UH14M3M3LnNlCndSLG4bRzUP6OxGEFWlG8GPJnv3Z3h3obqK3jIAsx8GHR9ExR8YdNlvkigbQg8xDGJ Generated-by-Nova
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwK5PtfU60ZWtLCRmBODs1KX1Y7sup1acaO98P/uE3QFZauvFFqo+z2R4w/WT6i4zHpH/bHP6tGPeTjph6eX1jJ+l030e9CbFD2Dw5/d3oj/snP7QCl/nyzqozYJ2lxY3j+/5wXDXHrBxM5MKfONY1MUQmTr1naVhu+ud5Ar1vtIH4zFm3Z1/akLZUWaYJVpDVpPDyJo4gEC9z8of4SFKHntNnPHsFoyXptb5yiGAwljVdRc0P4cMsSqxHkU6OLkuKY9Uxu6btB9fE4FerPj8jleahjPVaViGm2yRE2UJd0dOzerJ7W0dCwiOmJbsDMVxuiPg/tf785AqlL3t/9PW5Q== qe-jenkins@10.10.11.69
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0oYPLnbHdwPBSGebDXncxXdPvxKG0v4n9B2eFTk1qlkrp2nlRvghAfb69f68unDr/2ywoY/7IsPD4ITubponZlgwxZ6xOiwNu3WVHsU3Ot9PdC+YdCp+BeTJVBCbRmW+JGK44E00vYn6Yc/Mfqwnv/cbZGDztTXuNJWO9S2ETFQY8hl1IUL/oUBYtDdsoKUMRNKeceDKzYIc6yVJ6UgqmBTWCl2MYBd29wAFlUkr1Ynv3h1ZxwVv0ZzlUeJVhKc8o1/QLkWMzL7kCGQCy6r2lZLXKFPBBBHZVm0x0IDiessB7hjI/8UMjHsug/MkvTrw995wLQHnz6MDihuBfCUcd jenkins@10.10.10.66-hortworksre
+EOF
+
+useradd hrt_qa
+export AWS_DEFAULT_REGION=${region}
+echo 
+# put ip of all nodes /tmp/all_internal_nodes
 
 
 git clone -b feature/amazon-linux http://github.com/seanorama/ambari-bootstrap
@@ -62,15 +70,31 @@ if [ "${install_ambari_server}" = "true" ]; then
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
+    "core-site": {
+        "fs.trash.interval" : "4320"
+    },
+    "hdfs-site": {
+        "dfs.namenode.safemode.threshold-pct" : "0.99",
+        "dfs.datanode.du.reserved" : "4294967296"
+    },
+    "hive-site" : {
+        "hive.exec.compress.intermediate" : "true",
+        "hive.exec.compress.output" : "true",
+        "hive.merge.mapfiles" : "false",
+        "hive.server2.tez.initialize.default.sessions" : "true"
+    },
+    "yarn-site": {
+        "yarn.acl.enable" : "true"
+    },
+    "mapred-site": {
+        "mapreduce.job.reduce.slowstart.completedmaps" : "0.7",
+        "mapreduce.map.output.compress" : "true",
+        "mapreduce.output.fileoutputformat.compress" : "true"
+    },
     "hst-server-conf": {
           "customer.account.name" : "Internal: AWS Marketplace",
           "customer.smartsense.id" : "A-99900000-C-00000001",
-          "customer.notification.email" : "sroberts@hortonworks.com",
-          "server.storage.dir" : "/var/lib/smartsense/hst-server/data",
-          "server.tmp.dir" : "/var/lib/smartsense/hst-server/tmp"
-    },
-    "hst-agent-conf": {
-          "agent.tmp_dir" : "/var/lib/smartsense/hst-agent/data/tmp"
+          "customer.notification.email" : "sroberts@hortonworks.com"
     },
     "hdfs-site" : {
         "dfs.namenode.name.dir" : "/grid/00/hadoop/hdfs/nn,/grid/01/hadoop/hdfs/nn",
