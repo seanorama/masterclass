@@ -56,7 +56,7 @@ if [ "${install_ambari_server}" = "true" ]; then
     sleep 60
 
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
-    ambari-change-pass admin admin ${ambari_pass}
+    ambari_change_pass admin admin ${ambari_pass}
 
     if [ "${deploy}" = "true" ]; then
 
@@ -108,11 +108,18 @@ EOF
         ./deploy-recommended-cluster.bash
 
         source ~/ambari-bootstrap/extras/ambari_functions.sh
-        ambari-configs
+        ambari_configs
         ambari_wait_request_complete 1
 
         cd ~
         sleep 10
+
+        useradd -G users admin
+        echo "${ambari_pass}" | passwd admin --stdin
+        sudo -u hdfs bash -c "
+            hadoop fs -mkdir /user/admin;
+            hadoop fs -chown admin /user/admin;
+            hdfs dfsadmin -refreshUserToGroupsMappings"
 
         bash -c "nohup ambari-server restart" || true
 
