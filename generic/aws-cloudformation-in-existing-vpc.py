@@ -19,6 +19,7 @@ from troposphere.cloudformation import WaitCondition, WaitConditionHandle
 # things you may want to change
 
 # Don't touch these
+ref_os = 'CENTOS7'
 ref_boot_disk_size = Ref('BootDiskSize')
 ref_stack_id = Ref('AWS::StackId')
 ref_region = Ref('AWS::Region')
@@ -172,6 +173,11 @@ t.add_mapping("CENTOS7", {
     "us-west-2": {"AMI": "ami-d440a6e7"}
 })
 
+t.add_mapping("AMAZONLINUX2015", {
+    "eu-west-1": {"AMI": "ami-d1f482b1"},
+    "us-east-1": {"AMI": "ami-8fcee4e5"},
+    "us-west-2": {"AMI": "ami-63b25203"}
+})
 
 
 waitHandleAmbari = t.add_resource(WaitConditionHandle("waitHandleAmbari"))
@@ -325,7 +331,7 @@ def my_bootstrap_script(resource,install_ambari_agent,install_ambari_server,amba
 AmbariNode = t.add_resource(ec2.Instance(
     "AmbariNode",
     UserData=Base64(Join("", my_bootstrap_script('AmbariNode','true','true','127.0.0.1'))),
-    ImageId=FindInMap("CENTOS7", Ref("AWS::Region"), "AMI"),
+    ImageId=FindInMap(ref_os, Ref("AWS::Region"), "AMI"),
     BlockDeviceMappings=my_block_device_mappings_ephemeral(24,"/dev/sd"),
     CreationPolicy=CreationPolicy(
         ResourceSignal=ResourceSignal(
@@ -344,7 +350,7 @@ AmbariNode = t.add_resource(ec2.Instance(
 AdditionalNodeLaunchConfig = t.add_resource(LaunchConfiguration(
     "AdditionalNodeLaunchConfig",
     UserData=Base64(Join("", my_bootstrap_script('AdditionalNodes','true','false',ref_ambariserver))),
-    ImageId=FindInMap("CENTOS7", Ref("AWS::Region"), "AMI"),
+    ImageId=FindInMap(ref_os, Ref("AWS::Region"), "AMI"),
     BlockDeviceMappings=my_block_device_mappings_ephemeral(24,"/dev/sd"),
     KeyName=Ref(KeyName),
     SecurityGroups=Ref(SecurityGroups),
