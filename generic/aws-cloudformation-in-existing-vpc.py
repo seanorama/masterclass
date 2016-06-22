@@ -299,7 +299,7 @@ fi
 def my_bootstrap_script(resource,install_ambari_agent,install_ambari_server,ambari_server):
     exports = [
         "#!/usr/bin/env bash\n",
-        "exec &> >(tee -a /root/cloudformation.log)\n"
+        "exec > >(tee /root/cloudformation.log|logger -t user-data -s 2>/dev/console) 2>&1\n"
         "set -o nounset\n",
         "set -o errexit\n",
         "set -o xtrace\n",
