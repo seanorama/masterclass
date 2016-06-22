@@ -23,7 +23,7 @@ if [ ! -d ~/ambari-bootstrap ]; then
 fi
 
 source ~/ambari-bootstrap/extras/ambari_functions.sh
-ambari-configs
+ambari_configs
 
 ${ambari_config_get} hive-env \
     | sed -e '1,3d' \

@@ -2,6 +2,17 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "CloudFormation template to Deploy Hortonworks Data Platform on VPC with a public subnet",
     "Mappings": {
+        "AMAZONLINUX2015": {
+            "eu-west-1": {
+                "AMI": "ami-d1f482b1"
+            },
+            "us-east-1": {
+                "AMI": "ami-8fcee4e5"
+            },
+            "us-west-2": {
+                "AMI": "ami-63b25203"
+            }
+        },
         "CENTOS7": {
             "ap-northeast-1": {
                 "AMI": "ami-b80b6db8"
@@ -317,7 +328,7 @@
                             "",
                             [
                                 "#!/usr/bin/env bash\n",
-                                "exec &> >(tee -a /root/cloudformation.log)\nset -o nounset\n",
+                                "exec > >(tee /root/cloudformation.log|logger -t user-data -s 2>/dev/console) 2>&1\nset -o nounset\n",
                                 "set -o errexit\n",
                                 "set -o xtrace\n",
                                 "export region='",
@@ -682,7 +693,7 @@
                             "",
                             [
                                 "#!/usr/bin/env bash\n",
-                                "exec &> >(tee -a /root/cloudformation.log)\nset -o nounset\n",
+                                "exec > >(tee /root/cloudformation.log|logger -t user-data -s 2>/dev/console) 2>&1\nset -o nounset\n",
                                 "set -o errexit\n",
                                 "set -o xtrace\n",
                                 "export region='",

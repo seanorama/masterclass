@@ -14,10 +14,10 @@ export ambari_services="YARN ZOOKEEPER TEZ OOZIE FLUME PIG SLIDER MAPREDUCE2 HIV
 sleep 30
 
 source ${__dir}/ambari_functions.sh
-source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1
+source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_change_pass admin admin BadPass#1
 echo "export ambari_pass=BadPass#1" > ~/ambari-bootstrap/extras/.ambari.conf; chmod 660 ~/ambari-bootstrap/extras/.ambari.conf
 source ${__dir}/ambari_functions.sh
-ambari-configs
+ambari_configs
 ambari_wait_request_complete 1
 
 ## Generic setup

@@ -49,6 +49,6 @@ sleep 60
 echo "export ambari_pass=BadPass#1" >> ~/.ambari.conf
 chmod 600 ~/.ambari.conf
 source ~/ambari-bootstrap/extras/ambari_functions.sh
-ambari-configs
+ambari_configs
 ambari_wait_request_complete 1
 

@@ -41,7 +41,7 @@ read -p "Press [Enter] key to continue"
 #### 5) deploy HDP (a few minutes after above to account for the reboot)
 command="curl https://raw.githubusercontent.com/seanorama/masterclass/master/prepare/google/scripts/deploy-hdp.sh | bash"
 time pdsh -w ${hosts_hdp} "${command}"
-command="source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-change-pass admin admin BadPass#1"
+command="source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_change_pass admin admin BadPass#1"
 time pdsh -w ${hosts_hdp} "${command}"
 #command="echo export ambari_pass=BadPass#1 > ~/.ambari.conf; chmod 600 ~/.ambari.conf"
 #time pdsh -w ${hosts_hdp} "${command}"
@@ -50,16 +50,16 @@ for dest in $(echo ${hosts_hdp} | tr ',' ' '); do
 done
 
 sleep 600
-command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_get_cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
 time pdsh -w ${hosts_hdp} "${command}"
 read -p "Press [Enter] key to continue"
-command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_get_cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
 time pdsh -w ${hosts_hdp} "${command}"
 read -p "Press [Enter] key to continue"
-command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_get_cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
 time pdsh -w ${hosts_hdp} "${command}"
 read -p "Press [Enter] key to continue"
-command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari-get-cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
+command='source ~/ambari-bootstrap/extras/ambari_functions.sh; ambari_get_cluster; ${ambari_curl}/clusters/${ambari_cluster}/requests/1 | grep request_status'
 time pdsh -w ${hosts_hdp} "${command}"
 read -p "Press [Enter] key to continue"
 
