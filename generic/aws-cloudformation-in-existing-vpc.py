@@ -59,7 +59,7 @@ AmbariVersion = t.add_parameter(Parameter(
     Type="String",
     Default="2.2.1.0",
     Description="Ambari Version",
-    AllowedPattern="\\d\\.\\d\\.\\d\\.\\d",
+    AllowedPattern="\\d\\.\\d\\.\\d\\.\\d|\\d\\.\\d\\.\\d",
     ))
 
 HDPStack = t.add_parameter(Parameter(
