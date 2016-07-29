@@ -6,6 +6,7 @@ export TERM=xterm
 
 : ${install_ambari_server:=true}
 : ${ambari_pass:="BadPass#1"}
+: ${ambari_stack_version:=2.5}
 ambari_password="${ambari_pass}"
 : ${host_count:=skip}
 : ${ambari_services:="HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER TEZ"}
@@ -35,8 +36,9 @@ if [ "${install_ambari_server}" = "true" ]; then
 
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari_change_pass admin admin ${ambari_pass}
+    sleep 5
 
-  alias curl="curl -L -H X-Requested-By:blah -u admin:${ambari_pass}"
+  alias curl="curl -u admin:${ambari_pass} -L -H X-Requested-By:blah"
   # register utils repo
 cat > /tmp/repo.json <<-'EOF'
 {
@@ -55,7 +57,7 @@ EOF
 cat > /tmp/repo.json <<-'EOF'
 {
   "Repositories": {
-    "base_url": "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/2.5.0.0-4/centos6",
+    "base_url": "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/2.5.0.0-2/centos6",
     "verify_base_url": true
   }
 }
