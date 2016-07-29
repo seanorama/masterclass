@@ -16,7 +16,7 @@ export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name
 
 #export ambari_repo=http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/updates/2.4.0.0/ambariqe.repo
-export ambari_repo=http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/ambari/2.4.0.0-4/centos6/ambari.repo
+export ambari_repo=http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/ambari/2.4.0.0-2/centos6/ambari.repo
 export recommendation_strategy="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"
 
 cd
@@ -57,7 +57,7 @@ EOF
 cat > /tmp/repo.json <<-'EOF'
 {
   "Repositories": {
-    "base_url": "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/2.5.0.0-2/centos6",
+    "base_url": "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/2.5.0.0-4/centos6",
     "verify_base_url": true
   }
 }
