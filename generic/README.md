@@ -18,7 +18,7 @@ cd masterclass/generic
 
    ```sh
 export AWS_DEFAULT_REGION=eu-west-1  ## region to deploy in
-export lab_prefix=test         ## template for naming the cloudformation stacks
+export lab_prefix="${USER}"          ## template for naming the cloudformation stacks
 export lab_first=100                 ## number to start at in naming
 export lab_count=1                   ## number of clusters to create
 
