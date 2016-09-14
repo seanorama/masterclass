@@ -4,7 +4,7 @@ set -o xtrace
 export HOME=${HOME:-/root}
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
-export ambari_server_custom_script=${ambari_server_custom_script:-~/ambari-bootstrap/ambari-extras.sh}
+#export ambari_server_custom_script=${ambari_server_custom_script:-~/ambari-bootstrap/ambari-extras.sh}
 
 cd
 
@@ -49,9 +49,21 @@ cat << EOF > configuration-custom.json
         "yarn.scheduler.minimum-allocation-vcores": "1",
         "yarn.scheduler.maximum-allocation-vcores": "1",
         "yarn.scheduler.minimum-allocation-mb": "256",
+        "yarn.acl.enable" : "true",
         "yarn.scheduler.maximum-allocation-mb": "2048"
     },
+    "hdfs-site": {
+      "dfs.namenode.safemode.threshold-pct": "0.99"
+    },
+    "mapred-site": {
+        "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
+        "mapreduce.map.output.compress": "true",
+        "mapreduce.output.fileoutputformat.compress": "true"
+    }
     "hive-site": {
+        "hive.exec.compress.output": "true",
+        "hive.merge.mapfiles": "true",
+        "hive.server2.tez.initialize.default.sessions": "true",
         "hive.support.concurrency": "true",
         "hive.enforce.bucketing": "true",
         "hive.exec.dynamic.partition.mode": "nonstrict",
@@ -59,17 +71,9 @@ cat << EOF > configuration-custom.json
         "hive.compactor.initiator.on": "true",
         "hive.compactor.worker.threads": "1"
     },
-    "solr-config": {
-        "solr.download.location": "HDPSEARCH",
-        "solr.znode": "/solr",
-        "solr.cloudmode": "true"
-    },
-    "kafka-broker": {
-        "listeners": "PLAINTEXT://0.0.0.0:6667"
-    },
-    "zeppelin-ambari-config": {
-        "zeppelin.executor.mem": "512m",
-        "zeppelin.executor.instances": "2"
+    "hive-interactive-env": {
+        "enable_hive_interactive": "true",
+        "llap_queue_capacity": "75"
     },
     "core-site": {
         "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
@@ -85,7 +89,8 @@ cat << EOF > configuration-custom.json
         "hadoop.proxyuser.oozie.groups" : "users",
         "hadoop.proxyuser.oozie.hosts" : "*",
         "hadoop.proxyuser.root.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.root.hosts" : "*"
+        "hadoop.proxyuser.root.hosts" : "*",
+        "fs.trash.interval": "4320"
     }
   }
 }
