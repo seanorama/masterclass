@@ -59,7 +59,7 @@ cat << EOF > configuration-custom.json
         "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
         "mapreduce.map.output.compress": "true",
         "mapreduce.output.fileoutputformat.compress": "true"
-    }
+    },
     "hive-site": {
         "hive.exec.compress.output": "true",
         "hive.merge.mapfiles": "true",
@@ -99,6 +99,7 @@ EOF
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack:-mycluster}
         export host_count=${host_count:-skip}
+        : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
 
         ./deploy-recommended-cluster.bash
         cd ~

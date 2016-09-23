@@ -29,6 +29,9 @@ export cfn_parameters='
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
   {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN ZOOKEEPER HIVE SPARK"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
+  {"ParameterKey":"DeployCluster","ParameterValue":"true"},
+  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
+  {"ParameterKey":"HDPStack","ParameterValue":"2.4"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}

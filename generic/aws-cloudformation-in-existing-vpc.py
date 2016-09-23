@@ -57,7 +57,7 @@ PostCommand = t.add_parameter(Parameter(
 AmbariVersion = t.add_parameter(Parameter(
     "AmbariVersion",
     Type="String",
-    Default="2.2.1.0",
+    Default="2.4.1.0",
     Description="Ambari Version",
     AllowedPattern="\\d\\.\\d\\.\\d\\.\\d|\\d\\.\\d\\.\\d",
     ))
