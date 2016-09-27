@@ -5,6 +5,8 @@ export HOME=${HOME:-/root}
 export TERM=xterm
 export ambari_pass=${ambari_pass:-BadPass#1}
 #export ambari_server_custom_script=${ambari_server_custom_script:-~/ambari-bootstrap/ambari-extras.sh}
+: ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
+export recommendation_strategy
 
 cd
 
@@ -54,6 +56,7 @@ cat << EOF > configuration-custom.json
         "fs.trash.interval": "4320"
     },
     "hive-interactive-env": {
+        "hive.server2.tez.default.queues": "llap",
         "enable_hive_interactive": "true",
         "llap_queue_capacity": "75"
     },
@@ -77,7 +80,7 @@ cat << EOF > configuration-custom.json
 }
 EOF
 
-        export ambari_services="${ambari_services:-"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH"}"
+        export ambari_services="${ambari_services:-"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}"
         export ambari_password="${ambari_pass}"
         export cluster_name=${stack:-mycluster}
         export host_count=${host_count:-skip}
