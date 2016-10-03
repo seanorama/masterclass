@@ -13,15 +13,15 @@ cd
 yum makecache
 yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack
 
-el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
-case ${el_version} in
-  "6")
-    sed -i "s/mirrorlist=https/mirrorlist=http/" /etc/yum.repos.d/epel.repo || true
-  ;;
-  "7")
-    rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
-  ;;
-esac
+#el_version=$(sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release | cut -d. -f1)
+#case ${el_version} in
+  #"6")
+    #sed -i "s/mirrorlist=https/mirrorlist=http/" /etc/yum.repos.d/epel.repo || true
+  #;;
+  #"7")
+    #rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+  #;;
+#esac
 
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 
