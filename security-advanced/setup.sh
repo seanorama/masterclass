@@ -19,7 +19,7 @@ case ${el_version} in
     sed -i "s/mirrorlist=https/mirrorlist=http/" /etc/yum.repos.d/epel.repo || true
   ;;
   "7")
-    rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-9.noarch.rpm
+    rpm -Uvh https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
   ;;
 esac
 
