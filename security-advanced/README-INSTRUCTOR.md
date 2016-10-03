@@ -55,9 +55,9 @@ screen
 
    ```sh
 export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
-export lab_prefix=sec      ## template for naming the cloudformation stacks
+export lab_prefix=${USER}      ## template for naming the cloudformation stacks
 export lab_first=100                  ## number to start at in naming
-export lab_count=2                  ## number of clusters to create
+export lab_count=1                  ## number of clusters to create
    ```
 
 2. Set parameters which are passed to CloudFormation:
@@ -71,12 +71,17 @@ export lab_count=2                  ## number of clusters to create
 export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER SOLR AMBARI_METRICS HBASE"},
+  {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
+  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"},
+  {"ParameterKey":"DeployCluster","ParameterValue":"true"},
+  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
+  {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
+  {"ParameterKey":"BootDiskSize","ParameterValue":"80"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
-  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"},
-  {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
-  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"}
+]
 '
    ```
 
