@@ -42,17 +42,18 @@ if [ "${install_ambari_server}" = "true" ]; then
         cd ~/ambari-bootstrap/deploy
 
         ## various configuration changes for demo environments, and fixes to defaults
+        #"hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.hive.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.knox.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.oozie.groups" : "users,hadoop-users",
+        #"hadoop.proxyuser.root.groups" : "users,hadoop-users",
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
     "core-site": {
-        "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hive.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.knox.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.oozie.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.root.groups" : "users,hadoop-users",
+        "hadoop.proxyuser.root.users" : "admin",
         "fs.trash.interval": "4320"
     },
     "hive-interactive-env": {
