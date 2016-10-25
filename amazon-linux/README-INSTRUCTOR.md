@@ -34,11 +34,13 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_METRICS SQOOP TEZ SMARTSENSE"},
-  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER AMBARI_METRICS SPARK SLIDER SQOOP AMBARI_INFRA LOGSEARCH TEZ KNOX"},
   {"ParameterKey":"PostCommand","ParameterValue":"/bin/true"},
+  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
+  {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"BootDiskSize","ParameterValue":"30"}
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"3"},
+  {"ParameterKey":"BootDiskSize","ParameterValue":"100"}
 ]
 '
    ```

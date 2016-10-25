@@ -3,30 +3,30 @@ set -o xtrace
 
 export HOME=${HOME:-/root}
 export TERM=xterm
-
-: ${install_ambari_server:=true}
 : ${ambari_pass:="BadPass#1"}
+: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
+: ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
-ambari_password="${ambari_pass}"
-: ${host_count:=skip}
-: ${ambari_services:="HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER TEZ"}
 cluster_name=${stack:-mycluster}
 
-export install_ambari_server ambari_pass host_count ambari_services
-export ambari_password cluster_name
+ambari_password="${ambari_pass}"
+: ${install_ambari_server:=true}
+: ${ambari_stack_version:=2.5}
+: ${host_count:=skip}
 
-#export ambari_repo=http://dev.hortonworks.com.s3.amazonaws.com/ambari/centos6/2.x/updates/2.4.0.0/ambariqe.repo
-export ambari_repo=http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/ambari/2.4.0.0-2/centos6/ambari.repo
-export recommendation_strategy="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"
+: ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
+
+export install_ambari_server ambari_pass host_count ambari_services
+export ambari_password cluster_name recommendation_strategy
 
 cd
 
 yum makecache
-yum -y -q install git
+yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack
 
-git clone http://github.com/seanorama/ambari-bootstrap
-cd ambari-bootstrap
-./ambari-bootstrap.sh
+curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
+
+~/ambari-bootstrap/ambari-bootstrap.sh
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
@@ -38,36 +38,6 @@ if [ "${install_ambari_server}" = "true" ]; then
     ambari_change_pass admin admin ${ambari_pass}
     sleep 5
 
-  alias curl="curl -u admin:${ambari_pass} -L -H X-Requested-By:blah"
-  # register utils repo
-cat > /tmp/repo.json <<-'EOF'
-{
-  "Repositories": {
-    "base_url": "http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos6",
-    "verify_base_url": true
-  }
-}
-EOF
-  url="http://localhost:8080/api/v1/stacks/HDP/versions/2.5/operating_systems/redhat6/repositories/HDP-UTILS-1.1.0.21"
-  curl -X PUT "${url}" -d @/tmp/repo.json
-  curl "${url}"
-  rm -f /tmp/repo.json
-
-  # register HDP repo
-cat > /tmp/repo.json <<-'EOF'
-{
-  "Repositories": {
-    "base_url": "http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/2.5.0.0-4/centos6",
-    "verify_base_url": true
-  }
-}
-EOF
-  url="http://localhost:8080/api/v1/stacks/HDP/versions/2.5/operating_systems/redhat6/repositories/HDP-2.5"
-  curl -X PUT "${url}" -d @/tmp/repo.json
-  curl "${url}"
-  rm -f /tmp/repo.json
-  unalias curl
-
     if [ "${deploy}" = "true" ]; then
 
         cd ~/ambari-bootstrap/deploy
@@ -76,20 +46,7 @@ cat << EOF > configuration-custom.json
 {
   "configurations" : {
     "core-site": {
-        "hadoop.proxyuser.HTTP.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.HTTP.hosts" : "*",
-        "hadoop.proxyuser.hbase.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hbase.hosts" : "*",
-        "hadoop.proxyuser.hcat.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hcat.hosts" : "*",
-        "hadoop.proxyuser.hive.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.hive.hosts" : "*",
-        "hadoop.proxyuser.knox.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.knox.hosts" : "*",
-        "hadoop.proxyuser.oozie.groups" : "users",
-        "hadoop.proxyuser.oozie.hosts" : "*",
-        "hadoop.proxyuser.root.groups" : "users,hadoop-users",
-        "hadoop.proxyuser.root.hosts" : "*",
+        "hadoop.proxyuser.root.users" : "admin",
         "fs.trash.interval": "4320"
     },
     "yarn-site": {
