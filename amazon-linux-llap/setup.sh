@@ -8,13 +8,13 @@ export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
 ambari_password="${ambari_pass}"
 : ${host_count:=skip}
-: ${ambari_services:="HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_METRICS SQOOP TEZ FALCON KAFKA STORM ATLAS OOZIE"}
+: ${ambari_services:="HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER TEZ SLIDER"}
 cluster_name=${stack:-mycluster}
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name
 
-export ambari_repo=http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.4.0.1/ambari.repo
+#export ambari_repo=http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.4.1.0/ambari.repo
 #export ambari_repo=http://public-repo-1.hortonworks.com/HDP-LABS/Projects/Erie-Preview/ambari/2.4.0.0-2/centos6/ambari.repo
 export recommendation_strategy="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"
 
@@ -129,4 +129,5 @@ EOF
             hdfs dfsadmin -refreshUserToGroupsMappings"
     fi
 fi
+
 

@@ -36,6 +36,7 @@ if [ "${install_ambari_server}" = "true" ]; then
 
     sleep 60
 
+    ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari_change_pass admin admin ${ambari_pass}
     sleep 1

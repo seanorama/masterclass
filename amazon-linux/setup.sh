@@ -4,12 +4,12 @@ set -o xtrace
 export HOME=${HOME:-/root}
 export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
+ambari_password="${ambari_pass}"
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
 cluster_name=${stack:-mycluster}
 
-ambari_password="${ambari_pass}"
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
@@ -36,12 +36,13 @@ if [ "${install_ambari_server}" = "true" ]; then
 
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari_change_pass admin admin ${ambari_pass}
-    sleep 5
+    sleep 1
 
     if [ "${deploy}" = "true" ]; then
 
         cd ~/ambari-bootstrap/deploy
 
+        ## various configuration changes for demo environments, and fixes to defaults
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
@@ -49,11 +50,12 @@ cat << EOF > configuration-custom.json
         "hadoop.proxyuser.root.users" : "admin",
         "fs.trash.interval": "4320"
     },
-    "yarn-site": {
-        "yarn.acl.enable" : "true"
-    },
     "hdfs-site": {
       "dfs.namenode.safemode.threshold-pct": "0.99"
+    },
+    "hive-interactive-env": {
+        "enable_hive_interactive": "true",
+        "llap_queue_capacity": "75"
     },
     "hive-site": {
         "hive.exec.compress.output": "true",
@@ -64,22 +66,28 @@ cat << EOF > configuration-custom.json
         "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
         "mapreduce.map.output.compress": "true",
         "mapreduce.output.fileoutputformat.compress": "true"
+    },
+    "yarn-site": {
+        "yarn.acl.enable" : "true"
     }
   }
 }
 EOF
+
         ./deploy-recommended-cluster.bash
+        cd ~
+        sleep 5
 
         source ~/ambari-bootstrap/extras/ambari_functions.sh
         ambari_configs
         ambari_wait_request_complete 1
-
         cd ~
         sleep 10
 
-        useradd -G users admin
+        usermod -a -G users ${USER}
+        useradd -a -G users admin
         echo "${ambari_pass}" | passwd admin --stdin
-        sudo -u hdfs bash -c "
+        sudo sudo -u hdfs bash -c "
             hadoop fs -mkdir /user/admin;
             hadoop fs -chown admin /user/admin;
             hdfs dfsadmin -refreshUserToGroupsMappings"

@@ -21,19 +21,26 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_METRICS SQOOP TEZ SMARTSENSE"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_METRICS SQOOP TEZ"},
   {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
+  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
+  {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/amazon-linux/setup.sh | bash"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"BootDiskSize","ParameterValue":"30"}
+  {"ParameterKey":"BootDiskSize","ParameterValue":"100"}
 ]
 '
+
+export AWS_DEFAULT_REGION=us-west-2  ## region to deploy in
+export lab_prefix=${USER}         ## template for naming the cloudformation stacks
+export lab_first=100                 ## number to start at in naming
+export lab_count=1                   ## number of clusters to create
 
 export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
-  {"ParameterKey":"SubnetId","ParameterValue":"subnet-7e49641b"},
-  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-f915bc9d"},
+  {"ParameterKey":"SubnetId","ParameterValue":"subnet-76f4222f"},
+  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-1cb3f678"},
   {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER AMBARI_METRICS SPARK SLIDER SQOOP AMBARI_INFRA LOGSEARCH TEZ KNOX"},
   {"ParameterKey":"PostCommand","ParameterValue":"/bin/true"},
   {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},

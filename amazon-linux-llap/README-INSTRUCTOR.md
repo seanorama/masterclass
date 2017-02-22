@@ -11,7 +11,7 @@ cd masterclass/amazon-linux
 2. Set these variables, updating the values as appropriate:
 
    ```sh
-export AWS_DEFAULT_REGION=us-east-1  ## region to deploy in
+export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
 export lab_prefix=${USER}         ## template for naming the cloudformation stacks
 export lab_first=100                 ## number to start at in naming
 export lab_count=1                   ## number of clusters to create
@@ -19,14 +19,14 @@ export lab_count=1                   ## number of clusters to create
 export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
-  {"ParameterKey":"SubnetId","ParameterValue":"subnet-dff56386"},
-  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-cbd092af"},
+  {"ParameterKey":"SubnetId","ParameterValue":"subnet-76f4222f"},
+  {"ParameterKey":"SecurityGroups","ParameterValue":"sg-1cb3f678"},
   {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SQOOP TEZ SLIDER"},
-  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"0"},
-  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://gist.github.com/seanorama/f964302c0abc6159c5e4df2cb25b71d4/raw | bash"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_METRICS SQOOP TEZ FALCON KAFKA STORM OOZIE SLIDER"},
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"3"},
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/amazon-linux-llap/setup.sh | bash"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.2xlarge"},
-  {"ParameterKey":"BootDiskSize","ParameterValue":"30"}
+  {"ParameterKey":"BootDiskSize","ParameterValue":"100"}
 ]
 '
    ```

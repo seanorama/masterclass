@@ -73,13 +73,13 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG YARN ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ KNOX"},
   {"ParameterKey":"DeployCluster","ParameterValue":"true"},
   {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
   {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
-  {"ParameterKey":"BootDiskSize","ParameterValue":"80"},
+  {"ParameterKey":"BootDiskSize","ParameterValue":"100"},
   {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"2"},
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"3"},
   {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/security-advanced/setup.sh | bash"}
 ]
 '
