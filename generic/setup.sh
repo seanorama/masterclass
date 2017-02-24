@@ -8,10 +8,10 @@ ambari_password="${ambari_pass}"
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
+export ambari_repo=https://gist.githubusercontent.com/seanorama/c63def5411618148aaff7180470c0af7/raw/9e6108f413f5e4d2ca18d7ed3cb44423bc6f7929/ambari.repo
+export ambari_stack_version=2.6
 cluster_name=${stack:-mycluster}
 
-: ${install_ambari_server:=true}
-: ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
 
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
