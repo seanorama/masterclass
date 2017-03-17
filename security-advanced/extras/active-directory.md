@@ -205,7 +205,8 @@ Import-Csv "Users.csv" | ForEach-Object {
 
 
 1. Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully)
-  ```
+
+```
 # CorpUsers > Properties > Security > Advanced > 
 #    Add > 'Select a principal' > registersssd > Check names > Ok > Select below checkboxes > OK
 #           Create Computer Objects
@@ -219,7 +220,7 @@ Import-Csv "Users.csv" | ForEach-Object {
 #           Reset Password
 #           Validated write to DNS host name
 #           Validated write to service principle name
-  ```
+```
 
 For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/
 
