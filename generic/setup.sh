@@ -7,9 +7,8 @@ export TERM=xterm
 ambari_password="${ambari_pass}"
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
 : ${install_ambari_server:=true}
-: ${ambari_stack_version:=2.5}
-export ambari_repo=https://gist.githubusercontent.com/seanorama/c63def5411618148aaff7180470c0af7/raw/9e6108f413f5e4d2ca18d7ed3cb44423bc6f7929/ambari.repo
-export ambari_stack_version=2.6
+: ${ambari_stack_version:=2.6}
+export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
 cluster_name=${stack:-mycluster}
 
 : ${host_count:=skip}
