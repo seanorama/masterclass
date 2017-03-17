@@ -8,8 +8,9 @@ ambari_password="${ambari_pass}"
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.6}
-export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
+export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.1/ambariqe.repo
 cluster_name=${stack:-mycluster}
+export ambari_stack_version=2.6
 
 : ${host_count:=skip}
 
