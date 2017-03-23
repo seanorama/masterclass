@@ -5,15 +5,16 @@ export HOME=${HOME:-/root}
 export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
 ambari_password="${ambari_pass}"
+: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
+: ${install_ambari_server:=true}
+: ${ambari_stack_version:=2.5}
 cluster_name=${stack:-mycluster}
-: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ SPARK ZEPPELIN"}
+
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
 
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
-
-export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.1/ambariqe.repo
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name recommendation_strategy
@@ -28,13 +29,6 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 ~/ambari-bootstrap/extras/deploy/prep-hosts.sh
 
 ~/ambari-bootstrap/ambari-bootstrap.sh
-
-sudo git clone https://github.com/abajwa-hw/ambari-nifi-service /var/lib/ambari-server/resources/stacks/HDP/${ambari_stack_version}/services/NIFIDEMO
-
-cat << EOF > custom_order.json
-    "NIFI_MASTER-START" : ["ZOOKEEPER_SERVER-START"],
-EOF
-sed -i.bak '/"dependencies for all cases",/ r custom_order.json' /var/lib/ambari-server/resources/stacks/HDP/${hdp_ver}/role_command_order.json
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
@@ -52,7 +46,6 @@ if [ "${install_ambari_server}" = "true" ]; then
         cd ~/ambari-bootstrap/deploy
 
         ## various configuration changes for demo environments, and fixes to defaults
-
 cat << EOF > configuration-custom.json
 {
   "configurations" : {
@@ -64,7 +57,7 @@ cat << EOF > configuration-custom.json
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
     "hive-interactive-env": {
-        "enable_hive_interactive": "false",
+        "enable_hive_interactive": "true",
         "llap_queue_capacity": "75"
     },
     "hive-site": {
@@ -85,8 +78,15 @@ cat << EOF > configuration-custom.json
 EOF
 
         ./deploy-recommended-cluster.bash
+
+        cd /opt
+        nifi_version=1.1.2
+        wget http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
+        tar -xzvf nifi-${nifi_version}-bin.tar.gz
+        sed -i 's/^\(nifi.web.http.port=\).*/\19090/' nifi-${nifi_version}/conf/nifi.properties
+        /opt/nifi-1.1.1/bin/nifi.sh start
+
         cd ~
-        sleep 5
 
         source ~/ambari-bootstrap/extras/ambari_functions.sh
         ambari_configs
