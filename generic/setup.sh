@@ -13,6 +13,8 @@ cluster_name=${stack:-mycluster}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
+export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.1/ambariqe.repo
+
 
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
 
