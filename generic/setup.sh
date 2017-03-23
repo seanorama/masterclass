@@ -8,13 +8,9 @@ ambari_password="${ambari_pass}"
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
-cluster_name=${stack:-mycluster}
-
-: ${install_ambari_server:=true}
-: ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
-export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.1/ambariqe.repo
-
+cluster_name=${stack:-mycluster}
+#export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.1/ambariqe.repo
 
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
 
@@ -58,14 +54,12 @@ cat << EOF > configuration-custom.json
     "hdfs-site": {
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
-    "hive-interactive-env": {
-        "enable_hive_interactive": "true",
-        "llap_queue_capacity": "75"
-    },
     "hive-site": {
         "hive.exec.compress.output": "true",
         "hive.merge.mapfiles": "true",
-        "hive.server2.tez.initialize.default.sessions": "true"
+        "hive.server2.tez.initialize.default.sessions": "true",
+        "hive.server2.transport.mode": "http"
+
     },
     "mapred-site": {
         "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
@@ -86,7 +80,7 @@ EOF
         curl -ssLO http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
         tar -xzvf nifi-${nifi_version}-bin.tar.gz
         sed -i 's/^\(nifi.web.http.port=\).*/\19090/' nifi-${nifi_version}/conf/nifi.properties
-        /opt/nifi-1.1.1/bin/nifi.sh start
+        /opt/nifi-${nifi_version}/bin/nifi.sh start
 
         cd ~
 
