@@ -83,7 +83,7 @@ EOF
 
         cd /opt
         nifi_version=1.1.2
-        wget http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
+        curl -ssLO http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
         tar -xzvf nifi-${nifi_version}-bin.tar.gz
         sed -i 's/^\(nifi.web.http.port=\).*/\19090/' nifi-${nifi_version}/conf/nifi.properties
         /opt/nifi-1.1.1/bin/nifi.sh start
