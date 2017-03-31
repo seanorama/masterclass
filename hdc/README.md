@@ -1,9 +1,25 @@
+# Deploy many clusters with HDCloud Controller
+
+## If running from the HDCloud Controller:
+```
+sudo yum -y install git
+git clone https://github.com/seanorama/masterclass
+cd masterclass/hdc
+```
+
+## Deploy clusters
+
+Set below before executing other commands:
+```
 export lab_prefix="crashcourse"            ## template for naming the cloudformation stacks
 export lab_first=10                        ## number to start at in naming
 export lab_count=3                         ## number of clusters to create
 export cluster_type=hdp26-data-science-spark2
 export ambari_pass=BadPass#1
+```
 
+Commands to manage clusters:
+```
 ## create clusters
 ../bin/hdc-clusters-create.sh
 
@@ -24,4 +40,4 @@ clusters=$(hdc list-clusters)
 for cluster in ${clusters}; do
   hdc terminate-cluster --cluster-name ${cluster}
 done
-
+```
