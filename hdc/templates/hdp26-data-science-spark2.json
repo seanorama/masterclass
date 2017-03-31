@@ -1,0 +1,47 @@
+{
+    "ClusterName": "crashcourse11",
+    "HDPVersion": "2.6",
+    "ClusterType": "Data Science: Apache Spark 2.1, Apache Zeppelin 0.7.0",
+    "Master": {
+        "InstanceType": "m4.4xlarge",
+        "VolumeType": "gp2",
+        "VolumeSize": 32,
+        "VolumeCount": 1
+    },
+    "Worker": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 1,
+        "RecoveryMode": "AUTO"
+    },
+    "Compute": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 0,
+        "RecoveryMode": "AUTO"
+    },
+    "SSHKeyName": "field",
+    "RemoteAccess": "0.0.0.0/0",
+    "WebAccess": true,
+    "HiveJDBCAccess": true,
+    "ClusterComponentAccess": false,
+    "ClusterAndAmbariUser": "admin",
+    "ClusterAndAmbariPassword": "",
+    "Tags": {},
+    "Autoscaling": {
+        "Configurations": {
+            "CooldownTime": 30,
+            "ClusterMinSize": 3,
+            "ClusterMaxSize": 100
+        }
+    },
+    "InstanceRole": "CREATE",
+    "Network": {
+        "VpcId": "vpc-7a2b2813",
+        "SubnetId": "subnet-e719e68f"
+    }
+}
