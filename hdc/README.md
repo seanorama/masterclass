@@ -27,6 +27,7 @@ Commands to manage clusters:
 hdc list-clusters -output table
 
 ## get name & master's IP for all available clusters
+unset clusters
 clusters=$(hdc list-clusters | jq -r '.[]|select(.Status=="AVAILABLE")|.ClusterName')
 for cluster in ${clusters}; do
   printf "${cluster}\t$(hdc describe-cluster instances --cluster-name ${cluster} | jq -r '.[] | select(.Type =="master - ambari server")|.PublicIP')\n"
@@ -36,7 +37,8 @@ done
 ../bin/hdc-clusters-terminate.sh
 
 ## terminate ALL clusters managed by this HDCloud controller
-clusters=$(hdc list-clusters)
+unset clusters
+clusters=$(hdc list-clusters | jq -r '.[].ClusterName')
 for cluster in ${clusters}; do
   hdc terminate-cluster --cluster-name ${cluster}
 done
