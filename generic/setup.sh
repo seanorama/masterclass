@@ -91,11 +91,13 @@ EOF
         sleep 10
 
         usermod -a -G users ${USER}
-        useradd -a -G users admin
+        useradd -G users admin
         echo "${ambari_pass}" | passwd admin --stdin
         sudo sudo -u hdfs bash -c "
             hadoop fs -mkdir /user/admin;
             hadoop fs -chown admin /user/admin;
+            hadoop fs -mkdir /user/maria_dev;
+            hadoop fs -chown admin /user/maria_dev;
             hdfs dfsadmin -refreshUserToGroupsMappings"
     fi
 fi
