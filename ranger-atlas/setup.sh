@@ -6,11 +6,16 @@ export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
 ambari_password="${ambari_pass}"
 : ${cluster_name:="mycluster"}
-: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA TEZ RANGER ATLAS KAFKA SMARTSENSE"}
+: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA TEZ RANGER ATLAS KAFKA SPARK ZEPPELIN"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
+: ${deploy:=true}
 : ${host_count:=skip}
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
+
+## overrides
+ambari_stack_version=2.6
+export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
 
 : ${install_nifi:=false}
 nifi_version=1.1.2
@@ -31,18 +36,22 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
+    sudo -u postgres createuser -U postgres -d -e -E -l -r -s admin
+    sudo -u postgres psql -c "ALTER USER admin PASSWORD 'BadPass#1'";
+    printf "\nhost\tall\tall\t0.0.0.0/0\tmd5\n" >> /var/lib/pgsql/data/pg_hba.conf
+    systemctl restart postgresql
     bash -c "nohup ambari-server restart" || true
 
     sleep 60
 
+    yum -y install postgresql-jdbc
+    ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari_change_pass admin admin ${ambari_pass}
     sleep 1
 
-    if [ "${deploy}" = "true" ]; then
-
-        cd ~/ambari-bootstrap/deploy
+    cd ~/ambari-bootstrap/deploy
 
         ## various configuration changes for demo environments, and fixes to defaults
 cat << EOF > configuration-custom.json
@@ -72,8 +81,9 @@ cat << EOF > configuration-custom.json
         "yarn.acl.enable" : "true"
     },
     "admin-properties": {
-        "db_root_user": "ambari",
-        "db_root_password": "bigdata",
+        "policymgr_external_url": "http://localhost:6080",
+        "db_root_user": "admin",
+        "db_root_password": "BadPass#1",
         "DB_FLAVOR": "POSTGRES",
         "db_user": "rangeradmin",
         "db_password": "BadPass#1",
@@ -87,8 +97,8 @@ cat << EOF > configuration-custom.json
         "ranger-yarn-plugin-enabled" : "No",
         "xasecure.audit.destination.solr" : "false",
         "xasecure.audit.destination.hdfs" : "false",
-        "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432",
-        "create_db_dbuser": "false"
+        "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432/postgres",
+        "create_db_dbuser": "true"
     },
     "ranger-admin-site": {
         "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
@@ -131,7 +141,10 @@ cat << EOF > configuration-custom.json
 }
 EOF
 
-        ./deploy-recommended-cluster.bash
+    ./deploy-recommended-cluster.bash
+
+    if [ "${deploy}" = "true" ]; then
+
 
         if [ "${install_nifi}" = "true" ]; then
             cd /opt
