@@ -16,6 +16,7 @@ ambari_password="${ambari_pass}"
 ## overrides
 ambari_stack_version=2.6
 export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
+#export ambari_repo=http://private-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.0-1096/ambari.repo
 
 : ${install_nifi:=false}
 nifi_version=1.1.2
@@ -36,10 +37,16 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
+    ## add admin user to postgres for other services, such as Ranger
+    cd /tmp
     sudo -u postgres createuser -U postgres -d -e -E -l -r -s admin
     sudo -u postgres psql -c "ALTER USER admin PASSWORD 'BadPass#1'";
     printf "\nhost\tall\tall\t0.0.0.0/0\tmd5\n" >> /var/lib/pgsql/data/pg_hba.conf
     systemctl restart postgresql
+
+    ## bug workaround:
+    sed "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
+
     bash -c "nohup ambari-server restart" || true
 
     sleep 60
@@ -79,6 +86,9 @@ cat << EOF > configuration-custom.json
     },
     "yarn-site": {
         "yarn.acl.enable" : "true"
+    },
+    "ams-site": {
+      "timeline.metrics.cache.size": "100"
     },
     "admin-properties": {
         "policymgr_external_url": "http://localhost:6080",
@@ -131,7 +141,10 @@ cat << EOF > configuration-custom.json
         "atlas.graph.index.search.elasticsearch.client-only": "false",
         "atlas.graph.index.search.elasticsearch.local-mode": "true",
         "atlas.graph.index.search.elasticsearch.create.sleep": "2000",
-        "atlas.notification.embedded": "true",
+        "atlas.notification.embedded": "false",
+        "atlas.graph.index.search.solr.zookeeper-url": "localhost:2181/infra-solr",
+        "atlas.audit.hbase.zookeeper.quorum": "localhost",
+        "atlas.graph.storage.hostname": "localhost",
         "atlas.kafka.data": "/tmp/data/kafka"
     },
     "atlas-env" : {
