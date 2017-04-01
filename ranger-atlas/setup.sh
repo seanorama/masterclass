@@ -45,7 +45,7 @@ if [ "${install_ambari_server}" = "true" ]; then
     systemctl restart postgresql
 
     ## bug workaround:
-    sed "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
+    sed -i "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
 
     bash -c "nohup ambari-server restart" || true
 
@@ -105,8 +105,8 @@ cat << EOF > configuration-custom.json
         "ranger-hdfs-plugin-enabled" : "No",
         "ranger-hive-plugin-enabled" : "Yes",
         "ranger-yarn-plugin-enabled" : "No",
-        "xasecure.audit.destination.solr" : "false",
-        "xasecure.audit.destination.hdfs" : "false",
+        "xasecure.audit.destination.solr" : "true",
+        "xasecure.audit.destination.hdfs" : "true",
         "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432/postgres",
         "create_db_dbuser": "true"
     },
@@ -119,7 +119,7 @@ cat << EOF > configuration-custom.json
     },
     "ranger-hive-audit" : {
         "xasecure.audit.is.enabled" : "true",
-        "xasecure.audit.destination.hdfs" : "false",
+        "xasecure.audit.destination.hdfs" : "true",
         "xasecure.audit.destination.solr" : "true",
         "xasecure.audit.destination.solr.zookeepers" : "localhost:2181/infra-solr"
     },
