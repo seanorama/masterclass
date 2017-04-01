@@ -11,8 +11,8 @@
 lab_prefix=${lab_prefix:-$USER}
 lab_first=${lab_first:-100}
 lab_count=${lab_count:-1}
-lab_batch=${lab_batch:-20} ## how many cluster to deploy at a time
-lab_batch_delay=${lab_batch_delay:-300} ## seconds to wait between batches
+lab_batch=${lab_batch:-5} ## how many cluster to deploy at a time
+lab_batch_delay=${lab_batch_delay:-150} ## seconds to wait between batches
 
 clusters=$(seq -w ${lab_first} $((lab_first+lab_count-1)))
 clusters=$(for cluster in ${clusters}; do echo ${lab_prefix}${cluster}; done)
