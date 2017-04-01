@@ -105,6 +105,7 @@ cat << EOF > configuration-custom.json
         "ranger-hdfs-plugin-enabled" : "No",
         "ranger-hive-plugin-enabled" : "Yes",
         "ranger-yarn-plugin-enabled" : "No",
+        "is_solrCloud_enabled": "true",
         "xasecure.audit.destination.solr" : "true",
         "xasecure.audit.destination.hdfs" : "true",
         "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432/postgres",
