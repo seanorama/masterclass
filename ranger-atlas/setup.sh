@@ -102,7 +102,7 @@ cat << EOF > configuration-custom.json
     },
     "ranger-env": {
         "ranger_admin_password": "BadPass#1",
-        "ranger-hdfs-plugin-enabled" : "No",
+        "ranger-hdfs-plugin-enabled" : "Yes",
         "ranger-hive-plugin-enabled" : "Yes",
         "ranger-yarn-plugin-enabled" : "No",
         "is_solrCloud_enabled": "true",
@@ -114,6 +114,9 @@ cat << EOF > configuration-custom.json
     "ranger-admin-site": {
         "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
         "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
+    },
+    "ranger-hdfs-security" : {
+        "ranger.plugin.hdfs.service.name" : "hdfs"
     },
     "ranger-hive-security" : {
         "ranger.plugin.hive.service.name" : "hive"
