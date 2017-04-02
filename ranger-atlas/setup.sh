@@ -27,9 +27,21 @@ export ambari_password cluster_name recommendation_strategy
 cd
 
 yum makecache
-yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack
+yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack bzip2
 
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
+
+ad_ip=172.31.28.220
+echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+
+sudo yum -y install openldap-clients ca-certificates
+echo | openssl s_client -connect ad01.lab.hortonworks.net:636  2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ad.crt
+cp -a ad.crt /etc/pki/ca-trust/source/anchors/
+
+sudo update-ca-trust force-enable
+sudo update-ca-trust extract
+sudo update-ca-trust check
+
 
 ~/ambari-bootstrap/extras/deploy/prep-hosts.sh
 
@@ -128,7 +140,24 @@ cat << EOF > configuration-custom.json
         "xasecure.audit.destination.solr.zookeepers" : "localhost:2181/infra-solr"
     },
     "ranger-ugsync-site": {
-        "ranger.usersync.enabled" : "false"
+          "ranger.usersync.enabled" : "true",
+          "ranger.usersync.group.memberattributename" : "member",
+          "ranger.usersync.group.nameattribute" : "cn",
+          "ranger.usersync.group.objectclass" : "groupofnames",
+          "ranger.usersync.group.search.first.enabled" : "false",
+          "ranger.usersync.group.searchbase" : "dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.group.searchenabled" : "true",
+          "ranger.usersync.group.searchfilter" : "(|(cn=hadoop-users)(cn=hr)(cn=sales)(cn=legal)(cn=hadoop-admins)(cn=compliance)(cn=analyst)(cn=eu_employees,us_employees))",
+          "ranger.usersync.group.usermapsyncenabled" : "true",
+          "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
+          "ranger.usersync.ldap.groupname.caseconversion" : "none",
+          "ranger.usersync.ldap.searchBase" : "dc=hadoop,dc=apache,dc=org",
+          "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
+          "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
+          "ranger.usersync.ldap.user.objectclass" : "person",
+          "ranger.usersync.ldap.user.searchbase" : "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
         "atlas.cluster.name":"mycluster",
@@ -180,12 +209,38 @@ EOF
         sleep 10
 
         usermod -a -G users ${USER}
-        useradd -G users admin
+        usermod -a -G users admin
         echo "${ambari_pass}" | passwd admin --stdin
         sudo sudo -u hdfs bash -c "
             hadoop fs -mkdir /user/admin;
             hadoop fs -chown admin /user/admin;
             hdfs dfsadmin -refreshUserToGroupsMappings"
+
+        ad_host="ad01.lab.hortonworks.net"
+        ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
+        ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
+
+        sudo ambari-server setup-ldap \
+          --ldap-url=${ad_host}:389 \
+          --ldap-secondary-url= \
+          --ldap-ssl=false \
+          --ldap-base-dn=${ad_root} \
+          --ldap-manager-dn=${ad_user} \
+          --ldap-bind-anonym=false \
+          --ldap-dn=distinguishedName \
+          --ldap-member-attr=member \
+          --ldap-group-attr=cn \
+          --ldap-group-class=group \
+          --ldap-user-class=user \
+          --ldap-user-attr=sAMAccountName \
+          --ldap-save-settings \
+          --ldap-bind-anonym=false \
+          --ldap-referral=
+
+        echo hadoop-users,hr,sales,legal,hadoop-admins,compliance,analyst,eu_employees,us_employees > groups.txt
+        #sudo ambari-server restart
+        #sudo ambari-server sync-ldap --groups groups.txt
+
     fi
 fi
 
