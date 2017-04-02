@@ -170,7 +170,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.group.search.first.enabled" : "false",
           "ranger.usersync.group.searchbase" : "dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.group.searchenabled" : "true",
-          "ranger.usersync.group.searchfilter" : "(|(cn=hadoop-users)(cn=hr)(cn=sales)(cn=legal)(cn=hadoop-admins)(cn=compliance)(cn=analyst)(cn=eu_employees,us_employees))",
+          "ranger.usersync.group.searchfilter" : " ",
           "ranger.usersync.group.usermapsyncenabled" : "true",
           "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
