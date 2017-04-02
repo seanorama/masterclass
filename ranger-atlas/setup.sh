@@ -41,6 +41,20 @@ for user in ${users}; do
     printf "${ambari_pass}\n${ambari_pass}" | sudo passwd --stdin ${user}
     echo "${user} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/99-masterclass
 done
+groups="hr analyst compliance us_employees eu_employees hadoop-users hadoop-admins"
+for group in ${groups}; do
+  groupadd ${group}
+done
+usermod -a -G hr kate-hr
+usermod -a -G hr ivana-eu-hr
+usermod -a -G analyst joe-analyst
+usermod -a -G compliance compliance-admin
+usermod -a -G us_employees kate-hr
+usermod -a -G us_employees joe-analyst
+usermod -a -G us_employees compliance-admin
+usermod -a -G eu_employees ivana-eu-hr
+usermod -a -G hadoop-admins hadoopadmin
+usermod -a -G hadoop-admins hadoop-admin
 
 
 sudo yum -y install openldap-clients ca-certificates
@@ -228,6 +242,7 @@ EOF
         UID_MIN=$(awk '$1=="UID_MIN" {print $2}' /etc/login.defs)
         users="$(getent passwd|awk -v UID_MIN="${UID_MIN}" -F: '$3>=UID_MIN{print $1}')"
         for user in ${users}; do sudo usermod -a -G users ${user}; done
+        for user in ${users}; do sudo usermod -a -G hadoop-users ${user}; done
         ~/ambari-bootstrap/extras/onboarding.sh
 
         #ad_host="ad01.lab.hortonworks.net"
