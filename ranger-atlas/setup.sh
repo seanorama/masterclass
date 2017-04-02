@@ -5,7 +5,8 @@ export HOME=${HOME:-/root}
 export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
 ambari_password="${ambari_pass}"
-: ${cluster_name:="mycluster"}
+: ${stack:="mycluster"}
+: ${cluster_name:=${stack}}
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA TEZ RANGER ATLAS KAFKA SPARK ZEPPELIN"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
@@ -34,6 +35,14 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 ad_ip=172.31.28.220
 echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
 
+users="kate-hr ivana-eu-hr joe-analyst hadoop-admin compliance-admin hadoopadmin"
+for user in ${users}; do
+    sudo useradd ${user}
+    printf "${ambari_pass}\n${ambari_pass}" | sudo passwd --stdin ${user}
+    echo "${user} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/99-masterclass
+done
+
+
 sudo yum -y install openldap-clients ca-certificates
 echo | openssl s_client -connect ad01.lab.hortonworks.net:636  2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ad.crt
 cp -a ad.crt /etc/pki/ca-trust/source/anchors/
@@ -41,7 +50,6 @@ cp -a ad.crt /etc/pki/ca-trust/source/anchors/
 sudo update-ca-trust force-enable
 sudo update-ca-trust extract
 sudo update-ca-trust check
-
 
 ~/ambari-bootstrap/extras/deploy/prep-hosts.sh
 
@@ -141,6 +149,7 @@ cat << EOF > configuration-custom.json
     },
     "ranger-ugsync-site": {
           "ranger.usersync.enabled" : "true",
+          "ranger.usersync.source.impl.class" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
           "ranger.usersync.group.memberattributename" : "member",
           "ranger.usersync.group.nameattribute" : "cn",
           "ranger.usersync.group.objectclass" : "groupofnames",
@@ -216,28 +225,33 @@ EOF
             hadoop fs -chown admin /user/admin;
             hdfs dfsadmin -refreshUserToGroupsMappings"
 
-        ad_host="ad01.lab.hortonworks.net"
-        ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
-        ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
+        UID_MIN=$(awk '$1=="UID_MIN" {print $2}' /etc/login.defs)
+        users="$(getent passwd|awk -v UID_MIN="${UID_MIN}" -F: '$3>=UID_MIN{print $1}')"
+        for user in ${users}; do sudo usermod -a -G users ${user}; done
+        ~/ambari-bootstrap/extras/onboarding.sh
 
-        sudo ambari-server setup-ldap \
-          --ldap-url=${ad_host}:389 \
-          --ldap-secondary-url= \
-          --ldap-ssl=false \
-          --ldap-base-dn=${ad_root} \
-          --ldap-manager-dn=${ad_user} \
-          --ldap-bind-anonym=false \
-          --ldap-dn=distinguishedName \
-          --ldap-member-attr=member \
-          --ldap-group-attr=cn \
-          --ldap-group-class=group \
-          --ldap-user-class=user \
-          --ldap-user-attr=sAMAccountName \
-          --ldap-save-settings \
-          --ldap-bind-anonym=false \
-          --ldap-referral=
+        #ad_host="ad01.lab.hortonworks.net"
+        #ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
+        #ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"
 
-        echo hadoop-users,hr,sales,legal,hadoop-admins,compliance,analyst,eu_employees,us_employees > groups.txt
+        #sudo ambari-server setup-ldap \
+          #--ldap-url=${ad_host}:389 \
+          #--ldap-secondary-url= \
+          #--ldap-ssl=false \
+          #--ldap-base-dn=${ad_root} \
+          #--ldap-manager-dn=${ad_user} \
+          #--ldap-bind-anonym=false \
+          #--ldap-dn=distinguishedName \
+          #--ldap-member-attr=member \
+          #--ldap-group-attr=cn \
+          #--ldap-group-class=group \
+          #--ldap-user-class=user \
+          #--ldap-user-attr=sAMAccountName \
+          #--ldap-save-settings \
+          #--ldap-bind-anonym=false \
+          #--ldap-referral=
+
+        #echo hadoop-users,hr,sales,legal,hadoop-admins,compliance,analyst,eu_employees,us_employees > groups.txt
         #sudo ambari-server restart
         #sudo ambari-server sync-ldap --groups groups.txt
 
