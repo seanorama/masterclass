@@ -150,7 +150,7 @@ openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cry
 ```
 $my_base = "DC=lab,DC=hortonworks,DC=net"
 $my_ous = "CorpUsers","HadoopNodes","HadoopServices","ServiceUsers"
-$my_groups = "hadoop-users","ldap-users","legal","hr","sales","hadoop-admins"
+$my_groups = "hadoop-users","ldap-users","legal","hr","sales","hadoop-admins","analyst","compliance","us_employees","eu_employees"
 
 $my_ous | ForEach-Object {
   NEW-ADOrganizationalUnit $_;
@@ -177,6 +177,10 @@ sales3,"Sales3 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","sales"
 hr1,"Hr1 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
 hr2,"Hr2 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
 hr3,"Hr3 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
+kate-hr,"kate-hr","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
+ivana-eu-hr,"ivana-eu-hr","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
+joe-analyst,"joe-analyst","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","analyst"
+compliance-admin,"compliance-admin","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","compliance"
 "@
 
 $UserCSV > Users.csv
