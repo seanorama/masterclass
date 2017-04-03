@@ -24,8 +24,7 @@ ambari_password="${ambari_pass}"
 
 ## overrides
 export ambari_stack_version=2.6
-export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
-#export ambari_repo=http://private-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.0-1096/ambari.repo
+export ambari_repo=https://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name recommendation_strategy
