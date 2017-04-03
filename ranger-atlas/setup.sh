@@ -182,13 +182,13 @@ cat << EOF > configuration-custom.json
     "ranger-ugsync-site": {
           "ranger.usersync.enabled" : "true",
           "ranger.usersync.unix.minUserId":"1000",
-          "ranger.usersync.source.impl.class.off" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
+          "ranger.usersync.source.impl.class" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
           "ranger.usersync.group.memberattributename" : "member",
           "ranger.usersync.group.nameattribute" : "cn",
           "ranger.usersync.group.objectclass" : "group",
           "ranger.usersync.group.search.first.enabled" : "false",
           "ranger.usersync.group.searchbase" : "dc=lab,dc=hortonworks,dc=net",
-          "ranger.usersync.group.searchenabled" : "true",
+          "ranger.usersync.group.searchenabled" : "false",
           "ranger.usersync.group.searchfilter" : "(|(cn=sales)(cn=hadoop-admins)(cn=hadoop-users)(cn=hadoop-user)(cn=hr)(cn=compliance)(cn=analyst)(cn=us_employees)(cn=eu_employees))",
           "ranger.usersync.group.usermapsyncenabled" : "true",
           "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
@@ -209,6 +209,7 @@ cat << EOF > configuration-custom.json
         "atlas.kafka.zookeeper.session.timeout.ms": "40000",
         "atlas.rest.address": "http://localhost:21000",
         "atlas.graph.storage.backend": "berkeleyje",
+        "atlas.graph.storage.hostname": "localhost",
         "atlas.graph.storage.directory": "/tmp/data/berkeley",
         "atlas.EntityAuditRepository.impl": "org.apache.atlas.repository.audit.NoopEntityAuditRepository",
         "atlas.graph.index.search.backend": "elasticsearch",
@@ -263,6 +264,14 @@ EOF
         for user in ${users}; do sudo usermod -a -G users ${user}; done
         for user in ${users}; do sudo usermod -a -G hadoop-users ${user}; done
         ~/ambari-bootstrap/extras/onboarding.sh
+
+        cd ~/
+        git clone https://github.com/seanorama/masterclass
+        cd ~/masterclass/ranger-atlas/Scripts/
+        ./create-secgovdemo-hortoniabank-userfolders.sh
+        ./load-secgovdemo-hortoniabank-files.sh
+
+        # TODO
 
         #ad_host="ad01.lab.hortonworks.net"
         #ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
