@@ -4,7 +4,7 @@ Create database hortoniabank;
 drop database if exists finance cascade;
 Create database finance;
 
-drop database if exists claims cascade;
+drop database if exists claim cascade;
 create database claim;
 
 drop database if exists cost_savings cascade;
