@@ -1,0 +1,378 @@
+{
+  "metaDataInfo": {
+    "Host name": "ip-172-31-20-219.eu-central-1.compute.internal",
+    "Exported by": "admin",
+    "Export time": "Apr 3, 2017 8:23:23 PM",
+    "Ranger apache version": "0.7.0.2.6.0.3-8"
+  },
+  "policies": [
+    {
+      "service": "tags",
+      "name": "EXPIRES_ON",
+      "policyType": 0,
+      "description": "Policy for data with EXPIRES_ON tag",
+      "isAuditEnabled": true,
+      "resources": {
+        "tag": {
+          "values": [
+            "EXPIRES_ON"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [
+        {
+          "accesses": [
+            {
+              "type": "hive:select",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:update",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:create",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:drop",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:alter",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:index",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:lock",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:all",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "compliance"
+          ],
+          "conditions": [
+            {
+              "type": "accessed-after-expiry",
+              "values": [
+                "yes"
+              ]
+            }
+          ],
+          "delegateAdmin": false
+        }
+      ],
+      "denyPolicyItems": [
+        {
+          "accesses": [
+            {
+              "type": "hdfs:read",
+              "isAllowed": true
+            },
+            {
+              "type": "hdfs:write",
+              "isAllowed": true
+            },
+            {
+              "type": "hdfs:execute",
+              "isAllowed": true
+            },
+            {
+              "type": "hbase:read",
+              "isAllowed": true
+            },
+            {
+              "type": "hbase:write",
+              "isAllowed": true
+            },
+            {
+              "type": "hbase:create",
+              "isAllowed": true
+            },
+            {
+              "type": "hbase:admin",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:select",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:update",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:create",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:drop",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:alter",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:index",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:lock",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:all",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:create",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:delete",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:rollover",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:setkeymaterial",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:get",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:getkeys",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:getmetadata",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:generateeek",
+              "isAllowed": true
+            },
+            {
+              "type": "kms:decrypteek",
+              "isAllowed": true
+            },
+            {
+              "type": "knox:allow",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:submitTopology",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:fileUpload",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:fileDownload",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:killTopology",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:rebalance",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:activate",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:deactivate",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:getTopologyConf",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:getTopology",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:getUserTopology",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:getTopologyInfo",
+              "isAllowed": true
+            },
+            {
+              "type": "storm:uploadNewCredentials",
+              "isAllowed": true
+            },
+            {
+              "type": "yarn:submit-app",
+              "isAllowed": true
+            },
+            {
+              "type": "yarn:admin-queue",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:publish",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:consume",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:configure",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:describe",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:create",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:delete",
+              "isAllowed": true
+            },
+            {
+              "type": "kafka:kafka_admin",
+              "isAllowed": true
+            },
+            {
+              "type": "solr:query",
+              "isAllowed": true
+            },
+            {
+              "type": "solr:update",
+              "isAllowed": true
+            },
+            {
+              "type": "solr:others",
+              "isAllowed": true
+            },
+            {
+              "type": "solr:solr_admin",
+              "isAllowed": true
+            },
+            {
+              "type": "atlas:read",
+              "isAllowed": true
+            },
+            {
+              "type": "atlas:create",
+              "isAllowed": true
+            },
+            {
+              "type": "atlas:update",
+              "isAllowed": true
+            },
+            {
+              "type": "atlas:delete",
+              "isAllowed": true
+            },
+            {
+              "type": "atlas:all",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "public"
+          ],
+          "conditions": [
+            {
+              "type": "accessed-after-expiry",
+              "values": [
+                "yes"
+              ]
+            }
+          ],
+          "delegateAdmin": false
+        }
+      ],
+      "allowExceptions": [],
+      "denyExceptions": [
+        {
+          "accesses": [
+            {
+              "type": "hive:select",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:update",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:create",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:drop",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:alter",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:index",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:lock",
+              "isAllowed": true
+            },
+            {
+              "type": "hive:all",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "compliance"
+          ],
+          "conditions": [
+            {
+              "type": "accessed-after-expiry",
+              "values": [
+                "yes"
+              ]
+            }
+          ],
+          "delegateAdmin": false
+        }
+      ],
+      "dataMaskPolicyItems": [],
+      "rowFilterPolicyItems": [],
+      "id": 17,
+      "isEnabled": true,
+      "version": 6
+    }
+  ],
+  "startIndex": 0,
+  "pageSize": 0,
+  "totalCount": 0,
+  "resultSize": 0,
+  "queryTimeMS": 1491251003366
+}
