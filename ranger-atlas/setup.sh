@@ -74,7 +74,6 @@ usermod -a -G eu_employees ivana-eu-hr
 usermod -a -G hadoop-admins hadoopadmin
 usermod -a -G hadoop-admins hadoop-admin
 
-
 ########################################################################
 ########################################################################
 ## 
@@ -298,6 +297,8 @@ EOF
         ${ranger_curl} -i \
           -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --d @hive.json ${url}/public/v2/servicedef/name/hive
 
+        sleep 30
+
         ## import ranger policies
         ${ranger_curl} -X POST \
         -H "Content-Type: multipart/form-data" \
@@ -305,6 +306,7 @@ EOF
         -F 'file=@ranger-policies.json' \
                   "${ranger_url}/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType=hdfs,hive"
 
+        sleep 30
         ./create-secgovdemo-hortoniabank-tables.sh
 
         # TODO
