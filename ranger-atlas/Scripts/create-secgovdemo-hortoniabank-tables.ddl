@@ -1,9 +1,13 @@
+drop database if exists hortoniabank cascade;
 Create database hortoniabank;
 
+drop database if exists finance cascade;
 Create database finance;
 
+drop database if exists claims cascade;
 create database claim;
 
+drop database if exists cost_savings cascade;
 Create database cost_savings;
 
 ---------
@@ -164,13 +168,13 @@ LOCATION '/user/admin/hortoniabank_data/ww_customers'
 tblproperties("skip.header.line.count"="1");
 
 
-/*ALTER TABLE hortoniabank.ww_customers_temp SET SERDEPROPERTIES ('serialization.encoding'='SJIS');
+-- ALTER TABLE hortoniabank.ww_customers_temp SET SERDEPROPERTIES ('serialization.encoding'='SJIS');
 
-INSERT OVERWRITE LOCAL DIRECTORY '/home/hive/ww_customers' 
-ROW FORMAT DELIMITED 
-FIELDS TERMINATED BY ',' 
-select * from hortoniabank.ww_customers;
-*/
+-- INSERT OVERWRITE LOCAL DIRECTORY '/home/hive/ww_customers' 
+-- ROW FORMAT DELIMITED 
+-- FIELDS TERMINATED BY ',' 
+-- select * from hortoniabank.ww_customers;
+-- */
 
 DROP TABLE IF EXISTS hortoniabank.ww_customers;
 
@@ -319,10 +323,9 @@ DROP TABLE finance.tax_2015_temp;
 ---
 use cost_savings;
 
-/*INSERT OVERWRITE LOCAL DIRECTORY '~/claim-savings.csv' 
-ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
-SELECT * FROM claim_savings;
-*/
+-- INSERT OVERWRITE LOCAL DIRECTORY '~/claim-savings.csv' 
+-- ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+-- SELECT * FROM claim_savings;
 
 DROP TABLE IF EXISTS cost_savings.claim_savings_temp;
 
@@ -365,10 +368,9 @@ DROP TABLE cost_savings.claim_savings_temp;
 
 use claim;
 
-/*INSERT OVERWRITE LOCAL DIRECTORY '~/provider_summary.csv' 
-ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
-SELECT * FROM provider_summary;
-*/
+-- INSERT OVERWRITE LOCAL DIRECTORY '~/provider_summary.csv' 
+-- ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+-- SELECT * FROM provider_summary;
 
 DROP TABLE IF EXISTS claim.provider_summary_temp;
 
