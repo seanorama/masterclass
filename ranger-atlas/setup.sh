@@ -271,7 +271,7 @@ EOF
         ## update ranger to support deny policies
         ranger_curl="curl -u admin:admin"
         ranger_url="http://localhost:6080/service"
-        ${ranger_curl} ${ranger_url}/public/v2/api/servicedef/name/${cluster_name}_hive \
+        ${ranger_curl} ${ranger_url}/public/v2/api/servicedef/name/hive \
           | jq '.options = {"enableDenyAndExceptionsInPolicies":"true"}' \
           | jq '.policyConditions = [
         {
@@ -292,7 +292,8 @@ EOF
         ]' > hive.json
 
         ${ranger_curl} -i \
-          -X PUT -H "Accept: application/json" -H "Content-Type: application/json" -d @hive.json ${ranger_url}/public/v2/api/servicedef/name/${cluster_name}_hive
+          -X PUT -H "Accept: application/json" -H "Content-Type: application/json" \
+          -d @hive.json ${ranger_url}/public/v2/api/servicedef/name/hive
         sleep 5
 
         ## import ranger policies
