@@ -194,7 +194,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
           "ranger.usersync.ldap.groupname.caseconversion" : "none",
-          "ranger.usersync.ldap.searchBase" : "dc=hadoop,dc=apache,dc=org",
+          "ranger.usersync.ldap.searchBase" : "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
           "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
           "ranger.usersync.ldap.user.objectclass" : "user",
