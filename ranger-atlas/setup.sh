@@ -147,6 +147,8 @@ cat << EOF > configuration-custom.json
         "db_host": "localhost"
     },
     "ranger-env": {
+        "ranger_admin_username": "admin",
+        "ranger_admin_password": "admin",
           "ranger-knox-plugin-enabled" : "No",
           "ranger-storm-plugin-enabled" : "No",
           "ranger-kafka-plugin-enabled" : "No",
@@ -179,14 +181,15 @@ cat << EOF > configuration-custom.json
     },
     "ranger-ugsync-site": {
           "ranger.usersync.enabled" : "true",
-          "ranger.usersync.source.impl.class" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
+          "ranger.usersync.unix.minUserId":"1000",
+          "ranger.usersync.source.impl.class.off" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
           "ranger.usersync.group.memberattributename" : "member",
           "ranger.usersync.group.nameattribute" : "cn",
-          "ranger.usersync.group.objectclass" : "groupofnames",
+          "ranger.usersync.group.objectclass" : "group",
           "ranger.usersync.group.search.first.enabled" : "false",
           "ranger.usersync.group.searchbase" : "dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.group.searchenabled" : "true",
-          "ranger.usersync.group.searchfilter" : " ",
+          "ranger.usersync.group.searchfilter" : "(|(cn=sales)(cn=hadoop-admins)(cn=hadoop-users)(cn=hadoop-user)(cn=hr)(cn=compliance)(cn=analyst)(cn=us_employees)(cn=eu_employees))",
           "ranger.usersync.group.usermapsyncenabled" : "true",
           "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
@@ -194,7 +197,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.searchBase" : "dc=hadoop,dc=apache,dc=org",
           "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
           "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
-          "ranger.usersync.ldap.user.objectclass" : "person",
+          "ranger.usersync.ldap.user.objectclass" : "user",
           "ranger.usersync.ldap.user.searchbase" : "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
