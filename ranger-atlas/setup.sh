@@ -203,6 +203,7 @@ cat << EOF > configuration-custom.json
     },
     "application-properties": {
         "atlas.cluster.name":"mycluster",
+        "atlas.feature.taxonomy.enable":"true",
         "atlas.kafka.bootstrap.servers": "localhost:6667",
         "atlas.kafka.zookeeper.connect": "localhost:2181",
         "atlas.kafka.zookeeper.connection.timeout.ms": "20000",
@@ -270,6 +271,41 @@ EOF
         cd ~/masterclass/ranger-atlas/Scripts/
         ./create-secgovdemo-hortoniabank-userfolders.sh
         ./load-secgovdemo-hortoniabank-files.sh
+
+        ## update ranger to support deny policies
+        ranger_curl="curl -u admin:admin"
+        ranger_url="http://localhost:6080/service"
+        ${ranger_curl} ${ranger_url}/public/v2/servicedef/name/hive \
+          | jq '.options = {"enableDenyAndExceptionsInPolicies":"true"}' \
+          | jq '.policyConditions = [
+        {
+              "itemId": 1,
+              "name": "resources-accessed-together",
+              "evaluator": "org.apache.ranger.plugin.conditionevaluator.RangerHiveResourcesAccessedTogetherCondition",
+              "evaluatorOptions": {},
+              "label": "Resources Accessed Together?",
+              "description": "Resources Accessed Together?"
+        },{
+            "itemId": 2,
+            "name": "not-accessed-together",
+            "evaluator": "org.apache.ranger.plugin.conditionevaluator.RangerHiveResourcesNotAccessedTogetherCondition",
+            "evaluatorOptions": {},
+            "label": "Resources Not Accessed Together?",
+            "description": "Resources Not Accessed Together?"
+        }
+        ]' > hive.json
+
+        ${ranger_curl} -i \
+          -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --d @hive.json ${url}/public/v2/servicedef/name/hive
+
+        ## import ranger policies
+        ${ranger_curl} -X POST \
+        -H "Content-Type: multipart/form-data" \
+        -H "Content-Type: application/json" \
+        -F 'file=@ranger-policies.json' \
+                  "${ranger_url}/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType=hdfs,hive"
+
+        ./create-secgovdemo-hortoniabank-tables.sh
 
         # TODO
 
