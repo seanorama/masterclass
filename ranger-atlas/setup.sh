@@ -13,7 +13,7 @@ ambari_password="${ambari_pass}"
 : ${cluster_name:=${stack}}
 : ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA TEZ RANGER ATLAS KAFKA SPARK ZEPPELIN"}
 : ${install_ambari_server:=true}
-: ${ambari_stack_version:=2.5}
+: ${ambari_stack_version:=2.6}
 : ${deploy:=true}
 : ${host_count:=skip}
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
@@ -23,8 +23,8 @@ ambari_password="${ambari_pass}"
 : ${ad_host:="ad01.lab.hortonworks.net"}
 
 ## overrides
-export ambari_stack_version=2.6
-export ambari_repo=https://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
+#export ambari_stack_version=2.6
+#export ambari_repo=https://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name recommendation_strategy
@@ -162,6 +162,9 @@ cat << EOF > configuration-custom.json
         "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432/postgres",
         "create_db_dbuser": "true"
     },
+    "ranger-tagsync-site": {
+        "ranger.tagsync.atlas.default.cluster.name.off":"mycluster"
+    },
     "ranger-admin-site": {
         "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
         "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
@@ -201,7 +204,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
-        "atlas.cluster.name":"mycluster",
+        "atlas.cluster.name.off":"mycluster",
         "atlas.feature.taxonomy.enable":"true",
         "atlas.kafka.bootstrap.servers": "localhost:6667",
         "atlas.kafka.zookeeper.connect": "localhost:2181",
