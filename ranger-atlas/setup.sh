@@ -163,17 +163,11 @@ cat << EOF > configuration-custom.json
         "create_db_dbuser": "true"
     },
     "ranger-tagsync-site": {
-        "ranger.tagsync.atlas.default.cluster.name.off":"mycluster"
+        "ranger.tagsync.atlas.default.cluster.name.off":"${cluster_name}"
     },
     "ranger-admin-site": {
         "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
         "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
-    },
-    "ranger-hdfs-security" : {
-        "ranger.plugin.hdfs.service.name" : "hdfs"
-    },
-    "ranger-hive-security" : {
-        "ranger.plugin.hive.service.name" : "hive"
     },
     "ranger-hive-audit" : {
         "xasecure.audit.is.enabled" : "true",
@@ -204,7 +198,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
-        "atlas.cluster.name.off":"mycluster",
+        "atlas.cluster.name.off":"${cluster_name}",
         "atlas.feature.taxonomy.enable":"true",
         "atlas.kafka.bootstrap.servers": "localhost:6667",
         "atlas.kafka.zookeeper.connect": "localhost:2181",
@@ -277,7 +271,7 @@ EOF
         ## update ranger to support deny policies
         ranger_curl="curl -u admin:admin"
         ranger_url="http://localhost:6080/service"
-        ${ranger_curl} ${ranger_url}/public/v2/servicedef/name/hive \
+        ${ranger_curl} ${ranger_url}/public/v2/api/servicedef/name/${cluster_name}_hive \
           | jq '.options = {"enableDenyAndExceptionsInPolicies":"true"}' \
           | jq '.policyConditions = [
         {
@@ -298,15 +292,15 @@ EOF
         ]' > hive.json
 
         ${ranger_curl} -i \
-          -X PUT -H "Accept: application/json" -H "Content-Type: application/json" --d @hive.json ${url}/public/v2/servicedef/name/hive
-
-        sleep 30
+          -X PUT -H "Accept: application/json" -H "Content-Type: application/json" -d @hive.json ${ranger_url}/public/v2/api/servicedef/name/${cluster_name}_hive
+        sleep 5
 
         ## import ranger policies
+        < ranger-policies.json jq '.policies[].service = "'${cluster_name}'_hive"' > ranger-policies-apply.json
         ${ranger_curl} -X POST \
         -H "Content-Type: multipart/form-data" \
         -H "Content-Type: application/json" \
-        -F 'file=@ranger-policies.json' \
+        -F 'file=@ranger-policies-apply.json' \
                   "${ranger_url}/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType=hdfs,hive"
 
         sleep 30
