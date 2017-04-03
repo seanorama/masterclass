@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -o xtrace
 
+########################################################################
+########################################################################
+## variables
+
 export HOME=${HOME:-/root}
 export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
@@ -13,28 +17,43 @@ ambari_password="${ambari_pass}"
 : ${deploy:=true}
 : ${host_count:=skip}
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
+: ${install_nifi:=false}
+: ${nifi_version:=1.1.2}
+: ${ad_ip:="172.31.28.220"}
+: ${ad_host:="ad01.lab.hortonworks.net"}
 
 ## overrides
-ambari_stack_version=2.6
+export ambari_stack_version=2.6
 export ambari_repo=https://s3.amazonaws.com/dev.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.1/ambariqe.repo
 #export ambari_repo=http://private-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.0-1096/ambari.repo
-
-: ${install_nifi:=false}
-nifi_version=1.1.2
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name recommendation_strategy
 
+########################################################################
+########################################################################
+## 
 cd
 
 yum makecache
 yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack bzip2
-
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 
-ad_ip=172.31.28.220
-echo "${ad_ip} ad01.lab.hortonworks.net ad01" | sudo tee -a /etc/hosts
+########################################################################
+########################################################################
+## trust active directory
+echo "${ad_ip} ${ad_host} $(echo ${ad_host} | cut -d "." -f1)" | sudo tee -a /etc/hosts
+sudo yum -y install openldap-clients ca-certificates
+echo | openssl s_client -connect ${ad_host}:636  2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ad.crt
+cp -a ad.crt /etc/pki/ca-trust/source/anchors/
 
+sudo update-ca-trust force-enable
+sudo update-ca-trust extract
+sudo update-ca-trust check
+
+########################################################################
+########################################################################
+## tutorial users
 users="kate-hr ivana-eu-hr joe-analyst hadoop-admin compliance-admin hadoopadmin"
 for user in ${users}; do
     sudo useradd ${user}
@@ -57,20 +76,15 @@ usermod -a -G hadoop-admins hadoopadmin
 usermod -a -G hadoop-admins hadoop-admin
 
 
-sudo yum -y install openldap-clients ca-certificates
-echo | openssl s_client -connect ad01.lab.hortonworks.net:636  2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ad.crt
-cp -a ad.crt /etc/pki/ca-trust/source/anchors/
-
-sudo update-ca-trust force-enable
-sudo update-ca-trust extract
-sudo update-ca-trust check
-
+########################################################################
+########################################################################
+## 
 ~/ambari-bootstrap/extras/deploy/prep-hosts.sh
-
 ~/ambari-bootstrap/ambari-bootstrap.sh
 
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
+
     ## add admin user to postgres for other services, such as Ranger
     cd /tmp
     sudo -u postgres createuser -U postgres -d -e -E -l -r -s admin
@@ -80,7 +94,6 @@ if [ "${install_ambari_server}" = "true" ]; then
 
     ## bug workaround:
     sed -i "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
-
     bash -c "nohup ambari-server restart" || true
 
     sleep 60
@@ -135,10 +148,14 @@ cat << EOF > configuration-custom.json
         "db_host": "localhost"
     },
     "ranger-env": {
-        "ranger_admin_password": "BadPass#1",
+          "ranger-knox-plugin-enabled" : "No",
+          "ranger-storm-plugin-enabled" : "No",
+          "ranger-kafka-plugin-enabled" : "No",
         "ranger-hdfs-plugin-enabled" : "Yes",
         "ranger-hive-plugin-enabled" : "Yes",
-        "ranger-yarn-plugin-enabled" : "No",
+        "ranger-hbase-plugin-enabled" : "Yes",
+        "ranger-atlas-plugin-enabled" : "Yes",
+        "ranger-yarn-plugin-enabled" : "Yes",
         "is_solrCloud_enabled": "true",
         "xasecure.audit.destination.solr" : "true",
         "xasecure.audit.destination.hdfs" : "true",
