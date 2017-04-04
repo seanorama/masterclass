@@ -2,7 +2,7 @@
   "metaDataInfo": {
     "Host name": "ip-172-31-25-190.eu-central-1.compute.internal",
     "Exported by": "admin",
-    "Export time": "Apr 4, 2017 7:07:14 AM",
+    "Export time": "Apr 4, 2017 6:45:27 AM",
     "Ranger apache version": "0.7.0.2.6.0.3-8"
   },
   "policies": [
@@ -218,8 +218,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 12,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -273,8 +273,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 13,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -341,8 +341,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 14,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -409,8 +409,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 15,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -460,8 +460,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 16,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -556,8 +556,8 @@
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
       "id": 17,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -623,8 +623,8 @@
         }
       ],
       "id": 18,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -662,9 +662,7 @@
       "dataMaskPolicyItems": [
         {
           "dataMaskInfo": {
-            "dataMaskType": "MASK_SHOW_LAST_4",
-            "conditionExpr": "",
-            "valueExpr": ""
+            "dataMaskType": "MASK_SHOW_LAST_4"
           },
           "accesses": [
             {
@@ -682,8 +680,8 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 19,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -721,9 +719,7 @@
       "dataMaskPolicyItems": [
         {
           "dataMaskInfo": {
-            "dataMaskType": "MASK",
-            "conditionExpr": "",
-            "valueExpr": ""
+            "dataMaskType": "MASK"
           },
           "accesses": [
             {
@@ -741,8 +737,8 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 20,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -780,9 +776,7 @@
       "dataMaskPolicyItems": [
         {
           "dataMaskInfo": {
-            "dataMaskType": "MASK_HASH",
-            "conditionExpr": "",
-            "valueExpr": ""
+            "dataMaskType": "MASK_HASH"
           },
           "accesses": [
             {
@@ -800,8 +794,8 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 21,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -839,9 +833,7 @@
       "dataMaskPolicyItems": [
         {
           "dataMaskInfo": {
-            "dataMaskType": "MASK_NULL",
-            "conditionExpr": "",
-            "valueExpr": ""
+            "dataMaskType": "MASK_NULL"
           },
           "accesses": [
             {
@@ -859,8 +851,8 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 22,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -918,8 +910,8 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 23,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     },
     {
       "service": "hive",
@@ -977,13 +969,13 @@
       ],
       "rowFilterPolicyItems": [],
       "id": 24,
-      "isEnabled": false,
-      "version": 2
+      "isEnabled": true,
+      "version": 1
     }
   ],
   "startIndex": 0,
   "pageSize": 0,
   "totalCount": 0,
   "resultSize": 0,
-  "queryTimeMS": 1491289634860
+  "queryTimeMS": 1491288327505
 }
