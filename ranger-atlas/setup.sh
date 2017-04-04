@@ -117,6 +117,7 @@ cat << EOF > configuration-custom.json
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
     "hive-site": {
+        "hive.server2.enable.doAs": "true",
         "hive.server2.transport.mode": "http",
         "hive.exec.compress.output": "true",
         "hive.merge.mapfiles": "true",
@@ -313,7 +314,49 @@ EOF
 
         ## update zeppelin notebooks
         curl -sSL https://raw.githubusercontent.com/hortonworks-gallery/zeppelin-notebooks/master/update_all_notebooks.sh | sudo -E sh 
-        /usr/hdp/current/zeppelin-server/bin/zeppelin-daemon.sh restart &> /dev/null
+host=$(hostname -f)
+  sudo curl -u admin:${ambari_pass} -H 'X-Requested-By: blah' -X POST -d "
+{
+   \"RequestInfo\":{
+      \"command\":\"RESTART\",
+      \"context\":\"Restart Zeppelin\",
+      \"operation_level\":{
+         \"level\":\"HOST\",
+         \"cluster_name\":\"${cluster_name}\"
+      }
+   },
+   \"Requests/resource_filters\":[
+      {
+         \"service_name\":\"ZEPPELIN\",
+         \"component_name\":\"ZEPPELIN_MASTER\",
+         \"hosts\":\"${host}\"
+      }
+   ]
+}" http://localhost:8080/api/v1/clusters/$cluster_name/requests  
+
+        ${ranger_curl} -v ${ranger_url}/users/1/passwordchange \
+          -H 'Content-Type: application/json' \
+          -d '{"loginId":"admin","emailAddress":"","oldPassword":"admin","updPassword":"BadPass#1"}'
+        sed -i.backup 's/\(admin=ADMIN::\).*/\19cf30fbdf6297c772d2724f2e81a423c09deb8f70a0ee92a0f6bbd03ad3e151b/' /usr/hdp/current/atlas-server/conf/users-credentials.properties
+
+        sudo curl -u admin:${ambari_pass} -H 'X-Requested-By: blah' -X POST -d "
+{
+   \"RequestInfo\":{
+      \"command\":\"RESTART\",
+      \"context\":\"Restart Atlas\",
+      \"operation_level\":{
+         \"level\":\"HOST\",
+         \"cluster_name\":\"${cluster_name}\"
+      }
+   },
+   \"Requests/resource_filters\":[
+      {
+         \"service_name\":\"ATLAS\",
+         \"component_name\":\"ATLAS_SERVER\",
+         \"hosts\":\"${host}\"
+      }
+   ]
+}" http://localhost:8080/api/v1/clusters/$cluster_name/requests  
 
         # TODO
 
