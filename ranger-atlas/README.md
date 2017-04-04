@@ -9,7 +9,6 @@ Ensure you can access the following.
   - [ ] Ranger
   - [ ] Atlas
   - [ ] Zeppelin
-- [ ] SSH
 
 Credentials will be provided by the instructor.
 
@@ -89,7 +88,41 @@ Credentials will be provided by the instructor.
   - Click Audit
     - Notice, in the far right column, the '[EXPIRES_ON]' tag policy being used
 
-## Lab 08: Zeppelin Notebooks
+## Lab 08: Confirm policies from Ambari
+
+From Ambari:
+
+1. [ ]	Login joe-analyst
+  - Go to the Hive View and execute the following:
+    ```
+select givenname, age, birthday, ccnumber, streetaddress, nationalid, password, mrn from hortoniabank.us_customers;
+    ```
+  - You should see masked data
+
+2. [ ] Login kate-hr
+  - Go to the Hive View and execute the following:
+    ```
+select givenname, age, birthday, ccnumber, streetaddress, nationalid, password, mrn from hortoniabank.us_customers;
+    ```
+  - You should see all the data
+
+
+3. [ ] Login as kate-hr.
+  - Go to the Hive View and execute the following:
+    ```
+select gender, title, givenname, country from hortoniabank.ww_customers;
+    ```
+  - You should only see US country data
+
+4. [ ] Login as ivana-eu-hr
+  - Go to the Hive View and execute the following:
+    ```
+select gender, title, givenname, country from hortoniabank.ww_customers;
+    ```
+  - You should see EU country data
+
+
+## Lab 09: Import Zeppelin Notebooks
 
 - [ ] Import Notebooks
   - Login to Zeppelin as 'compliance-admin'
