@@ -117,7 +117,7 @@ cat << EOF > configuration-custom.json
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
     "hive-interactive-site": {
-        "hive.server2.enable.doAs" : "true",
+        "hive.server2.enable.doAs" : "true"
     },
     "hive-site": {
         "hive.server2.enable.doAs" : "true",
