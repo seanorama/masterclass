@@ -26,7 +26,7 @@ Credentials will be provided by the instructor.
   - Open Ranger
   - Click Access Manager -> Tag Based Policies
   - Click the + icon and create a service named 'tags'
-    - ![[][]](./media/creenshot-ranger-add-tag-service.png)
+    - ![](./media/screenshot-ranger-add-tag-service.png)
 
 - [ ] Configure Hive for Tag based Policies
   - Open Ranger
