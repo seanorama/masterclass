@@ -197,11 +197,11 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
           "ranger.usersync.ldap.groupname.caseconversion" : "none",
-          "ranger.usersync.ldap.searchBase" : "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.ldap.searchBase" : "ou=dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
           "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
           "ranger.usersync.ldap.user.objectclass" : "user",
-          "ranger.usersync.ldap.user.searchbase" : "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.ldap.user.searchbase" : "ou=dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
@@ -346,33 +346,34 @@ EOF
 host=$(hostname -f)
 
   #update zeppelin configs by uncommenting admin user, enabling sessionManager/securityManager, switching from anon to authc
-  ${ambari_config_get} zeppelin-shiro-ini \
-    | sed -e '1,4d' \
-    -e "s/^admin = admin, admin/admin = ${ambari_pass}, admin/"  \
-    -e "s/^user1 = .*/ivana-eu-hr = ${ambari_pass}, admin/" \
-    -e "s/^user2 = .*/compliance-admin = ${ambari_pass}, admin/" \
-    -e "s/^user3 = .*/joe-analyst = ${ambari_pass}, admin/" \
-    > /tmp/zeppelin-env.json
+  #${ambari_config_get} zeppelin-shiro-ini \
+    #| sed -e '1,4d' \
+    #-e "s/^admin = admin, admin/admin = ${ambari_pass}, admin/"  \
+    #-e "s/^user1 = .*/ivana-eu-hr = ${ambari_pass}, admin/" \
+    #-e "s/^user2 = .*/compliance-admin = ${ambari_pass}, admin/" \
+    #-e "s/^user3 = .*/joe-analyst = ${ambari_pass}, admin/" \
+    #> /tmp/zeppelin-env.json
 
-  ${ambari_config_set}  zeppelin-env /tmp/zeppelin-env.json
-  sudo curl -u admin:${ambari_pass} -H 'X-Requested-By: blah' -X POST -d "
-{
-   \"RequestInfo\":{
-      \"command\":\"RESTART\",
-      \"context\":\"Restart Zeppelin\",
-      \"operation_level\":{
-         \"level\":\"HOST\",
-         \"cluster_name\":\"${cluster_name}\"
-      }
-   },
-   \"Requests/resource_filters\":[
-      {
-         \"service_name\":\"ZEPPELIN\",
-         \"component_name\":\"ZEPPELIN_MASTER\",
-         \"hosts\":\"${host}\"
-      }
-   ]
-}" http://localhost:8080/api/v1/clusters/$cluster_name/requests  
+  #${ambari_config_set}  zeppelin-env /tmp/zeppelin-env.json
+  #sleep 5
+  #sudo curl -u admin:${ambari_pass} -H 'X-Requested-By: blah' -X POST -d "
+#{
+   #\"RequestInfo\":{
+      #\"command\":\"RESTART\",
+      #\"context\":\"Restart Zeppelin\",
+      #\"operation_level\":{
+         #\"level\":\"HOST\",
+         #\"cluster_name\":\"${cluster_name}\"
+      #}
+   #},
+   #\"Requests/resource_filters\":[
+      #{
+         #\"service_name\":\"ZEPPELIN\",
+         #\"component_name\":\"ZEPPELIN_MASTER\",
+         #\"hosts\":\"${host}\"
+      #}
+   #]
+#}" http://localhost:8080/api/v1/clusters/${cluster_name}/requests  
         # TODO
 
         #ad_host="ad01.lab.hortonworks.net"
