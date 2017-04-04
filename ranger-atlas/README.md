@@ -91,22 +91,17 @@ FROM hortoniabank.ww_customers LIMIT 50;
 SELECT surname, streetaddress, age, password, nationalid, ccnumber, mrn, birthday
 FROM hortoniabank.us_customers LIMIT 20;
 ```
-
   - [ ] Execute this query
-
 ```
 select gender, title, givenname, streetaddress, city, state, country from hortoniabank.ww_customers
 limit 100;
 ```
-
   - [ ] Execute this query to test denied row combinations
-
 ```
 select givenname, surname, emailaddress, zipcode, mrn, bloodtype
 from hortoniabank.ww_customers
 limit 50;
 ```
-
   - [ ] Execute this query to confirm access denied for tax_2015
 ```
 select * from finance.tax_2015;
@@ -127,9 +122,9 @@ limit 50;
 
 2.	Login as compliance-admin
 - [ ] Execute this query to confirm access to expired data
-    ```
+```
 select * from finance.tax_2015;
-    ```
+```
 
 ## Lab 08: Review Ranger audits
 
