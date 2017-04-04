@@ -1,8 +1,8 @@
 {
   "metaDataInfo": {
-    "Host name": "ip-172-31-30-57.eu-central-1.compute.internal",
+    "Host name": "ip-172-31-25-190.eu-central-1.compute.internal",
     "Exported by": "admin",
-    "Export time": "Apr 3, 2017 3:01:19 PM",
+    "Export time": "Apr 4, 2017 6:45:27 AM",
     "Ranger apache version": "0.7.0.2.6.0.3-8"
   },
   "policies": [
@@ -86,7 +86,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 43,
+      "id": 10,
       "isEnabled": true,
       "version": 1
     },
@@ -163,7 +163,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 44,
+      "id": 11,
       "isEnabled": true,
       "version": 1
     },
@@ -217,7 +217,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 46,
+      "id": 12,
       "isEnabled": true,
       "version": 1
     },
@@ -272,7 +272,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 47,
+      "id": 13,
       "isEnabled": true,
       "version": 1
     },
@@ -340,7 +340,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 48,
+      "id": 14,
       "isEnabled": true,
       "version": 1
     },
@@ -408,7 +408,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 49,
+      "id": 15,
       "isEnabled": true,
       "version": 1
     },
@@ -459,7 +459,7 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 50,
+      "id": 16,
       "isEnabled": true,
       "version": 1
     },
@@ -555,14 +555,427 @@
       "denyExceptions": [],
       "dataMaskPolicyItems": [],
       "rowFilterPolicyItems": [],
-      "id": 51,
+      "id": 17,
       "isEnabled": true,
-      "version": 2
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "filter_ww_customers_table",
+      "policyType": 2,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "ww_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [],
+      "rowFilterPolicyItems": [
+        {
+          "rowFilterInfo": {
+            "filterExpr": "country in ('US')"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "us_employees"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        },
+        {
+          "rowFilterInfo": {
+            "filterExpr": "country in (select countrycode from hortoniabank.eu_countries)"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "eu_employees"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "id": 18,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_creditcardnum_first4",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "ccnumber"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "MASK_SHOW_LAST_4"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 19,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_streetaddress_redact",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "streetaddress"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "MASK"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 20,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_password_hash",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "password"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "MASK_HASH"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 21,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_mrn_nullify",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "mrn"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "MASK_NULL"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 22,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_dob_custom",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "birthday"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "CUSTOM",
+            "conditionExpr": "concat('01-01-',  cast( year(TO_DATE(from_unixtime(UNIX_TIMESTAMP({col},'dd/MM/yy')))) as string) )",
+            "valueExpr": "concat('01-01-',  cast( year(TO_DATE(from_unixtime(UNIX_TIMESTAMP({col},'dd/MM/yy')))) as string) )"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 23,
+      "isEnabled": true,
+      "version": 1
+    },
+    {
+      "service": "hive",
+      "name": "mask_age_custom",
+      "policyType": 1,
+      "description": "",
+      "isAuditEnabled": true,
+      "resources": {
+        "database": {
+          "values": [
+            "hortoniabank"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "column": {
+          "values": [
+            "age"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        },
+        "table": {
+          "values": [
+            "us_customers"
+          ],
+          "isExcludes": false,
+          "isRecursive": false
+        }
+      },
+      "policyItems": [],
+      "denyPolicyItems": [],
+      "allowExceptions": [],
+      "denyExceptions": [],
+      "dataMaskPolicyItems": [
+        {
+          "dataMaskInfo": {
+            "dataMaskType": "CUSTOM",
+            "conditionExpr": "{col} + cast(round(rand()*20) as int)",
+            "valueExpr": "{col} + cast(round(rand()*20) as int)"
+          },
+          "accesses": [
+            {
+              "type": "select",
+              "isAllowed": true
+            }
+          ],
+          "users": [],
+          "groups": [
+            "analyst"
+          ],
+          "conditions": [],
+          "delegateAdmin": false
+        }
+      ],
+      "rowFilterPolicyItems": [],
+      "id": 24,
+      "isEnabled": true,
+      "version": 1
     }
   ],
   "startIndex": 0,
   "pageSize": 0,
   "totalCount": 0,
   "resultSize": 0,
-  "queryTimeMS": 1491231679632
+  "queryTimeMS": 1491288327505
 }

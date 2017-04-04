@@ -35,7 +35,7 @@ export ambari_password cluster_name recommendation_strategy
 cd
 
 yum makecache
-yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack bzip2
+yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 
 ########################################################################
@@ -220,6 +220,9 @@ cat << EOF > configuration-custom.json
         "atlas.graph.storage.hostname": "localhost",
         "atlas.kafka.data": "/tmp/data/kafka"
     },
+    "zeppelin-shiro-ini": {
+      "shiro_ini_content" : "\n[users]\n# List of users with their password allowed to access Zeppelin.\n# To use a different strategy (LDAP / Database / ...) check the shiro doc at http://shiro.apache.org/configuration.html#Configuration-INISections\nadmin = BadPass#1, admin\njoe-analyst = BadPass#1, admin\nkate-hr = BadPass#1, admin\nhadoop-admin = BadPass#1, admin\ncompliance-admin = BadPass#1, admin\nivana-eu-hr = BadPass#1, admin\nuser1 = user1, role1, role2\nuser2 = user2, role3\nuser3 = user3, role2\n\n# Sample LDAP configuration, for user Authentication, currently tested for single Realm\n[main]\n### A sample for configuring Active Directory Realm\n#activeDirectoryRealm = org.apache.zeppelin.realm.ActiveDirectoryGroupRealm\n#activeDirectoryRealm.systemUsername = userNameA\n\n#use either systemPassword or hadoopSecurityCredentialPath, more details in http://zeppelin.apache.org/docs/latest/security/shiroauthentication.html\n#activeDirectoryRealm.systemPassword = passwordA\n#activeDirectoryRealm.hadoopSecurityCredentialPath = jceks://file/user/zeppelin/zeppelin.jceks\n#activeDirectoryRealm.searchBase = CN=Users,DC=SOME_GROUP,DC=COMPANY,DC=COM\n#activeDirectoryRealm.url = ldap://ldap.test.com:389\n#activeDirectoryRealm.groupRolesMap = \"CN=admin,OU=groups,DC=SOME_GROUP,DC=COMPANY,DC=COM\":\"admin\",\"CN=finance,OU=groups,DC=SOME_GROUP,DC=COMPANY,DC=COM\":\"finance\",\"CN=hr,OU=groups,DC=SOME_GROUP,DC=COMPANY,DC=COM\":\"hr\"\n#activeDirectoryRealm.authorizationCachingEnabled = false\n\n### A sample for configuring LDAP Directory Realm\n#ldapRealm = org.apache.zeppelin.realm.LdapGroupRealm\n## search base for ldap groups (only relevant for LdapGroupRealm):\n#ldapRealm.contextFactory.environment[ldap.searchBase] = dc=COMPANY,dc=COM\n#ldapRealm.contextFactory.url = ldap://ldap.test.com:389\n#ldapRealm.userDnTemplate = uid={0},ou=Users,dc=COMPANY,dc=COM\n#ldapRealm.contextFactory.authenticationMechanism = SIMPLE\n\n### A sample PAM configuration\n#pamRealm=org.apache.zeppelin.realm.PamRealm\n#pamRealm.service=sshd\n\n\nsessionManager = org.apache.shiro.web.session.mgt.DefaultWebSessionManager\n### If caching of user is required then uncomment below lines\ncacheManager = org.apache.shiro.cache.MemoryConstrainedCacheManager\nsecurityManager.cacheManager = $cacheManager\n\nsecurityManager.sessionManager = $sessionManager\n# 86,400,000 milliseconds = 24 hour\nsecurityManager.sessionManager.globalSessionTimeout = 86400000\nshiro.loginUrl = /api/login\n\n[roles]\nrole1 = *\nrole2 = *\nrole3 = *\nadmin = *\n\n[urls]\n# This section is used for url-based security.\n# You can secure interpreter, configuration and credential information by urls. Comment or uncomment the below urls that you want to hide.\n# anon means the access is anonymous.\n# authc means Form based Auth Security\n# To enfore security, comment the line below and uncomment the next one\n/api/version = anon\n#/api/interpreter/** = authc, roles[admin]\n#/api/configurations/** = authc, roles[admin]\n#/api/credential/** = authc, roles[admin]\n#/** = anon\n/** = authc"
+    },
     "atlas-env" : {
         "content" : "\n      # The java implementation to use. If JAVA_HOME is not found we expect java and jar to be in path\n      export JAVA_HOME={{java64_home}}\n\n      # any additional java opts you want to set. This will apply to both client and server operations\n      {% if security_enabled %}\n      export ATLAS_OPTS=\"{{metadata_opts}} -Djava.security.auth.login.config={{atlas_jaas_file}}\"\n      {% else %}\n      export ATLAS_OPTS=\"{{metadata_opts}}\"\n      {% endif %}\n\n      # metadata configuration directory\n      export ATLAS_CONF={{conf_dir}}\n\n      # Where log files are stored. Defatult is logs directory under the base install location\n      export ATLAS_LOG_DIR={{log_dir}}\n\n      # additional classpath entries\n      export ATLASCPPATH={{metadata_classpath}}\n\n      # data dir\n      export ATLAS_DATA_DIR={{data_dir}}\n\n      # pid dir\n      export ATLAS_PID_DIR={{pid_dir}}\n\n      # hbase conf dir\n      export MANAGE_LOCAL_HBASE=false\n export MANAGE_LOCAL_SOLR=false\n\n\n      # Where do you want to expand the war file. By Default it is in /server/webapp dir under the base install dir.\n      export ATLAS_EXPANDED_WEBAPP_DIR={{expanded_war_dir}}\n      export ATLAS_SERVER_OPTS=\"-server -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+PrintTenuringDistribution -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$ATLAS_LOG_DIR/atlas_server.hprof -Xloggc:$ATLAS_LOG_DIRgc-worker.log -verbose:gc -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=1m -XX:+PrintGCDetails -XX:+PrintHeapAtGC -XX:+PrintGCTimeStamps\"\n      {% if java_version == 8 %}\n      export ATLAS_SERVER_HEAP=\"-Xms{{atlas_server_xmx}}m -Xmx{{atlas_server_xmx}}m -XX:MaxNewSize={{atlas_server_max_new_size}}m -XX:MetaspaceSize=100m -XX:MaxMetaspaceSize=512m\"\n      {% else %}\n      export ATLAS_SERVER_HEAP=\"-Xms{{atlas_server_xmx}}m -Xmx{{atlas_server_xmx}}m -XX:MaxNewSize={{atlas_server_max_new_size}}m -XX:MaxPermSize=512m\"\n      {% endif %}"
     }
@@ -266,6 +269,7 @@ EOF
         git clone https://github.com/seanorama/masterclass
         cd ~/masterclass/ranger-atlas/Scripts/
         ./create-secgovdemo-hortoniabank-userfolders.sh
+        yum -y install bzip2
         ./load-secgovdemo-hortoniabank-files.sh
 
         ## update ranger to support deny policies
@@ -306,6 +310,9 @@ EOF
 
         sleep 30
         ./create-secgovdemo-hortoniabank-tables.sh
+
+        ## update zeppelin notebooks
+        curl -sSL https://raw.githubusercontent.com/hortonworks-gallery/zeppelin-notebooks/master/update_all_notebooks.sh | sudo -E sh 
 
         # TODO
 
