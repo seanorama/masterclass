@@ -120,9 +120,6 @@ cat << EOF > configuration-custom.json
         "hive.server2.enable.doAs" : "true"
     },
     "hive-site": {
-        "hive.server2.authentication.ldap.url": "ldap://ad01.lab.hortonworks.net:389",
-        "hive.server2.authentication.ldap.Domain": "lab.hortonworks.net",
-        "hive.server2.authentication": "LDAP",
         "hive.server2.enable.doAs" : "true",
         "hive.server2.transport.mode": "http",
         "hive.exec.compress.output": "true",
