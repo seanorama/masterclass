@@ -313,6 +313,7 @@ EOF
 
         ## update zeppelin notebooks
         curl -sSL https://raw.githubusercontent.com/hortonworks-gallery/zeppelin-notebooks/master/update_all_notebooks.sh | sudo -E sh 
+        /usr/hdp/current/zeppelin-server/bin/zeppelin-daemon.sh restart &> /dev/null
 
         # TODO
 
