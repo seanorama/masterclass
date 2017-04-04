@@ -198,7 +198,7 @@ cat << EOF > configuration-custom.json
           "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
           "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
           "ranger.usersync.ldap.user.objectclass" : "user",
-          "ranger.usersync.ldap.user.searchbase" : "ou=dc=lab,dc=hortonworks,dc=net",
+          "ranger.usersync.ldap.user.searchbase" : "dc=lab,dc=hortonworks,dc=net",
           "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
