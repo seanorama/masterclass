@@ -80,17 +80,18 @@ For each task below:
 
 1. Login as ivana-eu-hr
   - [ ] Execute this query which shows EU country row filtering
-    ```
+```
 SELECT surname, streetaddress, country, countryfull, age, password, nationalid, ccnumber, mrn, birthday
 FROM hortoniabank.ww_customers LIMIT 50;
-    ```
+```
 
 1. Login as joe-analyst
   - [ ] Execute this query which shows data masking
-    ```
+```
 SELECT surname, streetaddress, age, password, nationalid, ccnumber, mrn, birthday
 FROM hortoniabank.us_customers LIMIT 20;
-    ```
+```
+
   - [ ] Execute this query
     ```
 select gender, title, givenname, streetaddress, city, state, country from hortoniabank.ww_customers
