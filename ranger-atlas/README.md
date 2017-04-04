@@ -78,14 +78,14 @@ For each task below:
 - Login as the user specified
 - Execute the queries listed.
 
-1. Login as ivana-eu-hr
+### Login as ivana-eu-hr
   - [ ] Execute this query which shows EU country row filtering
 ```
 SELECT surname, streetaddress, country, countryfull, age, password, nationalid, ccnumber, mrn, birthday
 FROM hortoniabank.ww_customers LIMIT 50;
 ```
 
-1. Login as joe-analyst
+### Login as joe-analyst
   - [ ] Execute this query which shows data masking
 ```
 SELECT surname, streetaddress, age, password, nationalid, ccnumber, mrn, birthday
@@ -107,7 +107,7 @@ limit 50;
 select * from finance.tax_2015;
 ```
 
-1. Login as kate-hr
+### Login as kate-hr
   - [ ] Execute this query to show no data masking
 ```
 SELECT surname, streetaddress, age, password, nationalid, ccnumber, mrn, birthday
@@ -120,7 +120,7 @@ from hortoniabank.ww_customers
 limit 50;
 ```
 
-2.	Login as compliance-admin
+### Login as compliance-admin
 - [ ] Execute this query to confirm access to expired data
 ```
 select * from finance.tax_2015;
