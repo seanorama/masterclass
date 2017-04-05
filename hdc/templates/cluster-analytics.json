@@ -1,0 +1,64 @@
+
+{
+    "ClusterName": "sroberts-analytics",
+    "HDPVersion": "2.6",
+    "ClusterType": "EDW-Analytics: Apache Hive 2 LLAP, Apache Zeppelin 0.7.0",
+    "Master": {
+        "InstanceType": "m4.4xlarge",
+        "VolumeType": "gp2",
+        "VolumeSize": 32,
+        "VolumeCount": 1
+    },
+    "Worker": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 3,
+        "RecoveryMode": "AUTO"
+    },
+    "Compute": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 1,
+        "RecoveryMode": "AUTO"
+    },
+    "SSHKeyName": "secloud",
+    "RemoteAccess": "0.0.0.0/0",
+    "WebAccess": true,
+    "HiveJDBCAccess": true,
+    "ClusterComponentAccess": true,
+    "ClusterAndAmbariUser": "admin",
+    "ClusterAndAmbariPassword": "",
+    "Tags": {
+        "Owner": "sroberts",
+        "Project": "summit"
+    },
+    "ClusterInputs": {
+        "LDAP_URL": "ldap://52.28.61.126:389",
+        "LDAP_BIND_PASSWORD": "BadPass#1",
+        "LDAP_SYNC_SEARCH_BASE": "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
+        "LDAP_DOMAIN": "lab.hortonworks.net",
+        "RANGER_ADMIN_USERNAME": "amb_ranger_admin",
+        "REMOTE_CLUSTER_NAME": "lake0",
+        "ATLAS_KAFKA_BOOTSTRAP_SERVERS": "ip-172-31-29-241.eu-central-1.compute.internal:6667,ip-172-31-22-240.eu-central-1.compute.internal:6667,ip-172-31-28-91.eu-central-1.compute.internal:6667",
+        "LDAP_BIND_DN": "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
+        "ADMIN_USERNAME": "admin",
+        "S3_BUCKET": "hdc-datalake/lake",
+        "ATLAS_KAFKA_HOOK_GROUP_ID": "atlas",
+        "LDAP_GROUP_SEARCH_BASE": "dc=lab,dc=hortonworks,dc=net",
+        "SOLR_ZOOKEPERS_URL": "ip-172-31-22-240.eu-central-1.compute.internal:2181,ip-172-31-28-91.eu-central-1.compute.internal:2181,ip-172-31-29-241.eu-central-1.compute.internal:2181/infra-solr",
+        "RANGER_ADMIN_PASSWORD": "Shio1dae",
+        "RANGER_REST_ADDRESS": "http://ip-172-31-28-91.eu-central-1.compute.internal:6080"
+    },
+    "InstanceRole": "CREATE",
+    "HiveMetastore": {
+        "Name": "hive0"
+    },
+    "Network": {
+        "VpcId": "vpc-56b8713f",
+        "SubnetId": "subnet-025cae79"
+    }
+}

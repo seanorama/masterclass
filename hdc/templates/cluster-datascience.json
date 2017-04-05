@@ -1,0 +1,64 @@
+
+{
+    "ClusterName": "sroberts-datascience",
+    "HDPVersion": "2.6",
+    "ClusterType": "Data Science: Apache Spark 2.1, Apache Zeppelin 0.6.2",
+    "Master": {
+        "InstanceType": "m4.4xlarge",
+        "VolumeType": "gp2",
+        "VolumeSize": 32,
+        "VolumeCount": 1
+    },
+    "Worker": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 3,
+        "RecoveryMode": "AUTO"
+    },
+    "Compute": {
+        "InstanceType": "m3.xlarge",
+        "VolumeType": "ephemeral",
+        "VolumeSize": 40,
+        "VolumeCount": 2,
+        "InstanceCount": 0,
+        "RecoveryMode": "AUTO"
+    },
+    "SSHKeyName": "secloud",
+    "RemoteAccess": "0.0.0.0/0",
+    "WebAccess": true,
+    "HiveJDBCAccess": true,
+    "ClusterComponentAccess": true,
+    "ClusterAndAmbariUser": "admin",
+    "ClusterAndAmbariPassword": "",
+    "Tags": {
+        "Owner": "sroberts",
+        "Project": "summit"
+    },
+    "ClusterInputs": {
+        "REMOTE_CLUSTER_NAME": "lake0",
+        "LDAP_BIND_PASSWORD": "BadPass#1",
+        "LDAP_SYNC_SEARCH_BASE": "ou=CorpUsers,dc=lab,dc=hortonworks,dc=net",
+        "ATLAS_KAFKA_BOOTSTRAP_SERVERS": "ip-172-31-29-241.eu-central-1.compute.internal:6667,ip-172-31-22-240.eu-central-1.compute.internal:6667,ip-172-31-28-91.eu-central-1.compute.internal:6667",
+        "ADMIN_USERNAME": "admin",
+        "LDAP_URL": "ldap://52.28.61.126:389",
+        "RANGER_REST_ADDRESS": "http://ip-172-31-28-91.eu-central-1.compute.internal:6080",
+        "SOLR_ZOOKEPERS_URL": "ip-172-31-22-240.eu-central-1.compute.internal:2181,ip-172-31-28-91.eu-central-1.compute.internal:2181,ip-172-31-29-241.eu-central-1.compute.internal:2181/infra-solr",
+        "LDAP_GROUP_SEARCH_BASE": "dc=lab,dc=hortonworks,dc=net",
+        "LDAP_DOMAIN": "lab.hortonworks.net",
+        "RANGER_ADMIN_USERNAME": "amb_ranger_admin",
+        "LDAP_BIND_DN": "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
+        "S3_BUCKET": "hdc-datalake/lake",
+        "ATLAS_KAFKA_HOOK_GROUP_ID": "atlas",
+        "RANGER_ADMIN_PASSWORD": "Shio1dae"
+    },
+    "InstanceRole": "CREATE",
+    "HiveMetastore": {
+        "Name": "hive0"
+    },
+    "Network": {
+        "VpcId": "vpc-56b8713f",
+        "SubnetId": "subnet-025cae79"
+    }
+}

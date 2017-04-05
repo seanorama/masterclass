@@ -1,11 +1,44 @@
-# Deploy many clusters with HDCloud Controller
+# Hortonworks Data Cloud
 
-## If running from the HDCloud Controller:
+## Fetch this repo
 ```
 sudo yum -y install git
 git clone https://github.com/seanorama/masterclass
 cd masterclass/hdc
 ```
+
+## Demo HDCloud
+
+### Demo: Show deployment options and integrations
+1. Create HDCloud Controller
+2. From HDCloud:
+  - Register Authentication (LDAP)
+  - Register Hive MetaStore (Postgresql on AWS RDS)
+3. From HDCloud:
+  - Create Shared Data Lake Services
+5. From HDCloud:
+  - Create Clusters
+
+### Demo: Show CLI
+
+1. SSH to Cloud controller
+2. Use `hdc` cli
+
+
+```
+## show options
+hdc
+
+## list clusters
+hdc list-clusters -output table
+
+## create a cluster
+hdc create-cluster --cli-input-json ./templates/cluster-datascience.json --input-json-param-ClusterAndAmbariPassword ${pass}
+```
+
+--------
+
+# Automated Deployment of many clusters
 
 ## Deploy clusters
 
