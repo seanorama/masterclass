@@ -1,5 +1,4 @@
 # Instructor notes
-========================================
 
 ## Before you start
 
@@ -9,14 +8,14 @@ See ../README.md for instructions on using the cluster management scripts.
 
 1. Get the repo and switch to the 'generic' directory
 
-    ```
+```
 git clone https://github.com/seanorama/masterclass
 cd masterclass/generic
-    ```
+```
 
 2. Set these variables, updating the values as appropriate:
 
-   ```sh
+```sh
 export AWS_DEFAULT_REGION=eu-west-1  ## region to deploy in
 export lab_prefix="${USER}"          ## template for naming the cloudformation stacks
 export lab_first=100                 ## number to start at in naming
@@ -41,7 +40,7 @@ export cfn_parameters='
   {"ParameterKey":"BootDiskSize","ParameterValue":"80"}
 ]
 '
-   ```
+```
 
 3. Create the cluster(s): `../bin/clusters-create.sh`
 
