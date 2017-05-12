@@ -307,7 +307,7 @@ EOF
         -H "Content-Type: multipart/form-data" \
         -H "Content-Type: application/json" \
         -F 'file=@ranger-policies-apply.json' \
-                  "${ranger_url}/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType=hdfs,hive"
+                  "${ranger_url}/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType=hive"
 
         sleep 30
         ./create-secgovdemo-hortoniabank-tables.sh

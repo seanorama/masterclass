@@ -41,12 +41,13 @@ export cfn_parameters='
   {"ParameterKey":"KeyName","ParameterValue":"secloud"},
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-76f4222f"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-1cb3f678"},
-  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER AMBARI_METRICS SPARK SLIDER SQOOP AMBARI_INFRA LOGSEARCH TEZ KNOX"},
-  {"ParameterKey":"PostCommand","ParameterValue":"/bin/true"},
-  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.1.0"},
+  {"ParameterKey":"AmbariServices","ParameterValue":"HDFS MAPREDUCE2 PIG HIVE YARN ZOOKEEPER SPARK AMBARI_INFRA AMBARI_METRICS TEZ ZEPPELIN SLIDER"},
+  {"ParameterKey":"PostCommand","ParameterValue":"curl -sSL https://raw.githubusercontent.com/seanorama/masterclass/master/generic/setup.sh | bash"},
+  {"ParameterKey":"AmbariVersion","ParameterValue":"2.4.2.0"},
   {"ParameterKey":"HDPStack","ParameterValue":"2.5"},
-  {"ParameterKey":"InstanceType","ParameterValue":"m4.xlarge"},
-  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"3"},
+  {"ParameterKey":"DeployCluster","ParameterValue":"true"},
+  {"ParameterKey":"InstanceType","ParameterValue":"m4.2xlarge"},
+  {"ParameterKey":"AdditionalInstanceCount","ParameterValue":"1"},
   {"ParameterKey":"BootDiskSize","ParameterValue":"100"}
 ]
 '

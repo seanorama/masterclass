@@ -162,7 +162,7 @@ KeyName = t.add_parameter(Parameter(
 
 
 t.add_mapping("CENTOS7", {
-    "eu-west-1": {"AMI": "ami-33734044"},
+    "eu-west-1": {"AMI": "ami-7abd0209"},
     "ap-southeast-1": {"AMI": "ami-2a7b6b78"},
     "ap-southeast-2": {"AMI": "ami-d38dc6e9"},
     "eu-central-1": {"AMI": "ami-e68f82fb"},

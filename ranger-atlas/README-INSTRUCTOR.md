@@ -55,6 +55,11 @@ Further, you should verify deletion of the CloudFormations & EC2 instances from 
 These additional steps are needed once the clusters are deployed. Use a cluster shell to execute.
 
 ```
+## this will give you a command to open tmux-cssh to all hosts:
+echo ${hosts} | xargs echo tmux-cssh -sa \"-o StrictHostKeyChecking=no\" -u centos blah
+```
+
+```
 ad_host="ad01.lab.hortonworks.net"
 ad_root="ou=CorpUsers,dc=lab,dc=hortonworks,dc=net"
 ad_user="cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net"

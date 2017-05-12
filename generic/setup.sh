@@ -5,16 +5,15 @@ export HOME=${HOME:-/root}
 export TERM=xterm
 : ${ambari_pass:="BadPass#1"}
 ambari_password="${ambari_pass}"
-: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA LOGSEARCH TEZ"}
-: ${install_ambari_server:=true}
-: ${ambari_stack_version:=2.5}
-cluster_name=${stack:-mycluster}
-
+: ${cluster_name:="mycluster"}
+: ${ambari_services:="HDFS MAPREDUCE2 PIG YARN HIVE ZOOKEEPER AMBARI_METRICS SLIDER AMBARI_INFRA TEZ"}
 : ${install_ambari_server:=true}
 : ${ambari_stack_version:=2.5}
 : ${host_count:=skip}
-
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
+
+: ${install_nifi:=false}
+nifi_version=1.1.2
 
 export install_ambari_server ambari_pass host_count ambari_services
 export ambari_password cluster_name recommendation_strategy
@@ -56,11 +55,8 @@ cat << EOF > configuration-custom.json
     "hdfs-site": {
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
-    "hive-interactive-env": {
-        "enable_hive_interactive": "true",
-        "llap_queue_capacity": "75"
-    },
     "hive-site": {
+        "hive.server2.transport.mode": "http",
         "hive.exec.compress.output": "true",
         "hive.merge.mapfiles": "true",
         "hive.server2.tez.initialize.default.sessions": "true"
@@ -78,9 +74,17 @@ cat << EOF > configuration-custom.json
 EOF
 
         ./deploy-recommended-cluster.bash
+
+        if [ "${install_nifi}" = "true" ]; then
+            cd /opt
+            curl -ssLO http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
+            tar -xzvf nifi-${nifi_version}-bin.tar.gz
+            sed -i 's/^\(nifi.web.http.port=\).*/\19090/' nifi-${nifi_version}/conf/nifi.properties
+            /opt/nifi-${nifi_version}/bin/nifi.sh start
+        fi
+
         cd ~
         sleep 5
-
         source ~/ambari-bootstrap/extras/ambari_functions.sh
         ambari_configs
         ambari_wait_request_complete 1
@@ -88,7 +92,6 @@ EOF
         sleep 10
 
         usermod -a -G users ${USER}
-        useradd -a -G users admin
         echo "${ambari_pass}" | passwd admin --stdin
         sudo sudo -u hdfs bash -c "
             hadoop fs -mkdir /user/admin;

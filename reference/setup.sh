@@ -113,15 +113,15 @@ EOF
         usermod -a -G users ${USER}
         usermod -a -G users admin
         echo "${ambari_pass}" | passwd admin --stdin
-        sudo sudo -u hdfs bash -c "
+        sudo -u hdfs bash -c "
             hadoop fs -mkdir /user/admin;
             hadoop fs -chown admin /user/admin;
             hdfs dfsadmin -refreshUserToGroupsMappings"
 
         UID_MIN=$(awk '$1=="UID_MIN" {print $2}' /etc/login.defs)
         users="$(getent passwd|awk -v UID_MIN="${UID_MIN}" -F: '$3>=UID_MIN{print $1}')"
-        for user in ${users}; do sudo usermod -a -G users ${user}; done
-        for user in ${users}; do sudo usermod -a -G hadoop-users ${user}; done
+        for user in ${users}; do usermod -a -G users ${user}; done
+        for user in ${users}; do usermod -a -G hadoop-users ${user}; done
         ~/ambari-bootstrap/extras/onboarding.sh
     fi
 fi
