@@ -19,15 +19,14 @@ Below are the steps, including many PowerShell commands to prepare an AD environ
 
 ## 2. Set hostname
 
-
 ## Change hostname, if needed, and restart
 
-   ```
+```
 ## this will restart the server
 $new_hostname = "ad01"
 Rename-Computer -NewName $new_hostname -Restart
-   ```
-   
+```
+
 ****************************************
 
 ## Install AD
@@ -37,15 +36,15 @@ Rename-Computer -NewName $new_hostname -Restart
 2. Prepare your environment. Update these to your liking.
 
 ```
-$domainname = "lab.hortonworks.net"
-$domainnetbiosname = "LAB"
+$domainname = "dev.hwxopsrv.com"
+$domainnetbiosname = "DEV"
 $password = "BadPass#1"
 ```
 
-3. Install AD features & Configure AD. You have 2 options:
+3. Install AD features & Configure AD. There are 2 options:
+  1. Deploy AD without DNS (relying on /etc/hosts or a separate DNS)
 
-  * a) Deploy AD without DNS (relying on /etc/hosts or a separate DNS)
-
+Install-WindowsFeature AD-Domain-Services –IncludeManagementTools, rsat-adds -IncludeAllSubFeature"
 ```
 Install-WindowsFeature AD-Domain-Services –IncludeManagementTools
 Import-Module ADDSDeployment
@@ -64,7 +63,7 @@ Install-ADDSForest `
 -Force:$true
 ```
 
-  * b) Deploy AD with DNS
+   2. Or deploy AD with DNS
 
 ```
 Install-WindowsFeature AD-Domain-Services –IncludeManagementTools
@@ -99,15 +98,27 @@ https://technet.microsoft.com/en-gb/library/cc772007.aspx
 
 There are several methods to enable SSL for LDAP (aka LDAPS).
 
-1. Use a certificate from a public respected certificate authority.
-2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
-3. Generate a self-signed certificate from your own certificate authority.
+a. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
+b. Use a certificate from a public respected certificate authority.
+c. Generate a self-signed certificate from your own certificate authority.
 
+### Instructions:
 
-Instructions for each:
+a. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
+  1. From PowerShell:
 
-1. See Active Directory documentation.
-2. Generate a self-signed certificate from your AD server, or other Windows Certificate Authority.
+```
+## Install & Configure Certificate Authority with defaults
+Import-Module ServerManager
+Get-WindowsFeature -Name AD-Certificate | Install-WindowsFeature -IncludeManagementTools
+Install-AdcsCertificationAuthority
+
+## Save Base64 Encoded CA certificate, as ad01.cer, to be deployed to all hosts which will use.
+Get-ChildItem C:\Windows\system32\CertSrv\CertEnroll *.crt | Copy-Item -Destination 'c:\Users\All Users\Desktop\ad01.crt'
+certutil -encode 'c:\Users\All Users\Desktop\ad01.crt' 'c:\Users\All Users\Desktop\ad01.cer'
+```
+
+  2. From UI:
   - On your Windows Server: [Install Active Directory Certificate Services](https://technet.microsoft.com/en-us/library/jj717285.aspx)
     - Ensure to configure as "Enterprise CA" not "Standalone CA".
     - Once it's installed:
@@ -119,6 +130,8 @@ Instructions for each:
       - Open with Notepad -> Copy Contents
       - This is your public CA to be distributed to all of your client hosts.
       - Reboot the Active Directory server for it to load the certificate.
+
+2. See Active Directory documentation.
 
 3. Generate a self-signed certificate however you like.
    - Many options for this. I prefer OpenSSL (run from wherever you like):
@@ -148,47 +161,41 @@ openssl pkcs12 -export -name "PEAP Certificate" -CSP 'Microsoft RSA SChannel Cry
 ## Configure AD OUs, Groups, Users, ...
 
 ```
-$my_base = "DC=lab,DC=hortonworks,DC=net"
-$my_ous = "CorpUsers","HadoopNodes","HadoopServices","ServiceUsers"
-$my_groups = "hadoop-users","ldap-users","legal","hr","sales","hadoop-admins","analyst","compliance","us_employees","eu_employees"
+$my_base = "DC=dev,DC=hwxopsrv,DC=com"
+$my_domain = 'dev.hwxopsrv.com'
+$my_groups = "hadoop-users","hadoop-admins","ldap-users","sre"
 
-$my_ous | ForEach-Object {
-  NEW-ADOrganizationalUnit $_;
-}
+$AccountPassword = "BadPass#1" | ConvertTo-SecureString -AsPlainText -Force
 
-$my_groups | ForEach-Object {
-    NEW-ADGroup –name $_ –groupscope Global –path "OU=CorpUsers,$my_base";
-}
+NEW-ADOrganizationalUnit "Corp"
+NEW-ADOrganizationalUnit "Users" -path "OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "People" -path "OU=Users,OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Groups" -path "OU=Users,OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Services" -path "OU=Users,OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Computers" -path "OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Hadoop" -path "OU=Computers,OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Services" -path "OU=Corp,$my_base"
+NEW-ADOrganizationalUnit "Hadoop" -path "OU=Services,OU=Corp,$my_base"
 
 $UserCSV = @"
 samAccountName,Name,ParentOU,Group
-hadoopadmin,"hadoopadmin","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hadoop-admins"
-rangeradmin,"rangeradmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
-ambari,"ambari","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
-keyadmin,"keyadmin","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","hadoop-users"
-ldap-reader,"ldap-reader","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","ldap-users"
-registersssd,"registersssd","OU=ServiceUsers,DC=lab,DC=hortonworks,DC=net","ldap-users"
-legal1,"Legal1 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","legal"
-legal2,"Legal2 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","legal"
-legal3,"Legal3 Legal","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","legal"
-sales1,"Sales1 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","sales"
-sales2,"Sales2 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","sales"
-sales3,"Sales3 Sales","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","sales"
-hr1,"Hr1 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
-hr2,"Hr2 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
-hr3,"Hr3 HR","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
-kate-hr,"kate-hr","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
-ivana-eu-hr,"ivana-eu-hr","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","hr"
-joe-analyst,"joe-analyst","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","analyst"
-compliance-admin,"compliance-admin","OU=CorpUsers,DC=lab,DC=hortonworks,DC=net","compliance"
+hadoop-admin,"hadoop-admin","OU=Services,OU=Users,OU=Corp,$my_base","hadoop-admins"
+ldap-reader,"ldap-reader","OU=Services,OU=Users,OU=Corp,$my_base","ldap-users"
+registersssd,"registersssd","OU=Services,OU=Users,OU=Corp,$my_base","ldap-users"
+sroberts,"Sean Roberts","OU=People,OU=Users,OU=Corp,$my_base","hadoop-users"
+awiebe,"Aaron Wiebe","OU=People,OU=Users,OU=Corp,$my_base","hadoop-users"
+mmcdowell,"Matthew McDowell","OU=People,OU=Users,OU=Corp,$my_base","hadoop-users"
 "@
 
-$UserCSV > Users.csv
-
-$AccountPassword = "BadPass#1" | ConvertTo-SecureString -AsPlainText -Force
 Import-Module ActiveDirectory
+
+$my_groups | ForEach-Object {
+    NEW-ADGroup –name $_ –groupscope Global –path "OU=Groups,OU=Users,OU=Corp,$my_base";
+}
+
+$UserCSV > Users.csv
 Import-Csv "Users.csv" | ForEach-Object {
-    $userPrincinpal = $_."samAccountName" + "@lab.hortonworks.net"
+    $userPrincinpal = $_."samAccountName" + "@${my_domain}"
     New-ADUser -Name $_.Name `
         -Path $_."ParentOU" `
         -SamAccountName  $_."samAccountName" `
@@ -201,13 +208,13 @@ Import-Csv "Users.csv" | ForEach-Object {
 }
 ```
 
-1. Delegate OU permissions to `hadoopadmin` for `OU=HadoopServices` (right click HadoopServices > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
+1. Delegate OU permissions to `hadoopadmin` for `OU=Hadoop,OU=Services,OU=Corp` (right click HadoopServices > Delegate Control > Add > hadoopadmin > checknames > OK >  "Create, delete, and manage user accounts" > OK)
 
 
-1. Give registersssd user permissions to join workstations to OU=HadoopNodes (needed to run 'adcli join' successfully)
+1. Give registersssd user permissions to join workstations to OU=Hadoop,OU=Computers,OU=Corp (needed to run 'adcli join' successfully)
 
 ```
-# CorpUsers > Properties > Security > Advanced > 
+# CorpUsers > Properties > Security > Advanced >
 #    Add > 'Select a principal' > registersssd > Check names > Ok > Select below checkboxes > OK
 #           Create Computer Objects
 #           Delete Computer Objects
@@ -224,15 +231,9 @@ Import-Csv "Users.csv" | ForEach-Object {
 
 For more details see: https://jonconwayuk.wordpress.com/2011/10/20/minimum-permissions-required-for-account-to-join-workstations-to-the-domain-during-deployment/
 
-
-1. create principal for Ambari. This will be used later to kerborize Ambari before setting up views
-```
-ktpass -out ambari.keytab -princ ambari@LAB.HORTONWORKS.NET -pass BadPass#1 -mapuser ambari@LAB.HORTONWORKS.NET -mapop set -crypto All -ptype KRB5_NT_PRINCIPAL
-```
-
 1. To test the LDAP connection from a Linux node
   ```
   sudo yum install openldap-clients
-  ldapsearch -h ad01.lab.hortonworks.net -p 389 -D "ldap-reader@lab.hortonworks.net" -w BadPass#1 -b "OU=CorpUsers,DC=lab,DC=hortonworks,DC=net" "(&(objectclass=person)(sAMAccountName=sales1))"
+  ldapsearch -h ad01.dev.hwxopsrv.com -p 389 -D "ldap-reader@lab.hortonworks.net" -w BadPass#1 -b "OU=Users,OU=Corp,DC=net,DC=hwxopsrv,DC=com" "(&(objectclass=person)(sAMAccountName=hadoop-admin))"
   ```
 
