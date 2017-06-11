@@ -27,14 +27,14 @@ export ambari_stack_version
 
 ########################################################################
 ########################################################################
-## 
+##
 cd
 
 yum makecache
-yum -y -q install epel-release
+yum -y -q install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum clean cache
 yum -y -q install git ntpd screen mysql-connector-java jq python-argparse python-configobj ack postgresql-jdbc
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
-
 
 ########################################################################
 ########################################################################
@@ -44,20 +44,12 @@ curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/ex
 ## Ambari Server specific tasks
 if [ "${install_ambari_server}" = "true" ]; then
 
-    ## add admin user to postgres for other services, such as Ranger
-    cd /tmp
-    sudo -u postgres createuser -U postgres -d -e -E -l -r -s admin
-    sudo -u postgres psql -c "ALTER USER admin PASSWORD 'BadPass#1'";
-    printf "\nhost\tall\tall\t0.0.0.0/0\tmd5\n" >> /var/lib/pgsql/data/pg_hba.conf
-    systemctl restart postgresql
-
     ## bug workaround:
-    sed -i "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
+    sed -i.bak "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
     bash -c "nohup ambari-server restart" || true
 
     sleep 60
 
-    ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
     ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
     ambari_change_pass admin admin ${ambari_pass}
@@ -70,7 +62,6 @@ cat << EOF > configuration-custom.json
 {
   "configurations" : {
     "core-site": {
-        "hadoop.proxyuser.root.users" : "admin",
         "fs.trash.interval": "4320"
     },
     "hdfs-site": {
