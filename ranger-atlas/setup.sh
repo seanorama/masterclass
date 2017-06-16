@@ -19,8 +19,6 @@ ambari_password="${ambari_pass}"
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
 : ${install_nifi:=false}
 : ${nifi_version:=1.1.2}
-: ${ad_ip:="172.31.28.220"}
-: ${ad_host:="ad01.lab.hortonworks.net"}
 
 ## overrides
 #export ambari_stack_version=2.6
@@ -38,17 +36,6 @@ yum makecache
 yum -y -q install git epel-release ntpd screen mysql-connector-java jq python-argparse python-configobj ack
 curl -sSL https://raw.githubusercontent.com/seanorama/ambari-bootstrap/master/extras/deploy/install-ambari-bootstrap.sh | bash
 
-########################################################################
-########################################################################
-## trust active directory
-echo "${ad_ip} ${ad_host} $(echo ${ad_host} | cut -d "." -f1)" | sudo tee -a /etc/hosts
-sudo yum -y install openldap-clients ca-certificates
-echo | openssl s_client -connect ${ad_host}:636  2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > ad.crt
-cp -a ad.crt /etc/pki/ca-trust/source/anchors/
-
-sudo update-ca-trust force-enable
-sudo update-ca-trust extract
-sudo update-ca-trust check
 
 ########################################################################
 ########################################################################
@@ -116,9 +103,6 @@ cat << EOF > configuration-custom.json
     "hdfs-site": {
       "dfs.namenode.safemode.threshold-pct": "0.99"
     },
-    "hive-interactive-site": {
-        "hive.server2.enable.doAs" : "true"
-    },
     "hive-site": {
         "hive.server2.enable.doAs" : "true",
         "hive.server2.transport.mode": "http",
@@ -166,9 +150,6 @@ cat << EOF > configuration-custom.json
         "ranger_privelege_user_jdbc_url" : "jdbc:postgresql://localhost:5432/postgres",
         "create_db_dbuser": "true"
     },
-    "ranger-tagsync-site": {
-        "ranger.tagsync.atlas.default.cluster.name.off":"${cluster_name}"
-    },
     "ranger-admin-site": {
         "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
         "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
@@ -178,28 +159,6 @@ cat << EOF > configuration-custom.json
         "xasecure.audit.destination.hdfs" : "true",
         "xasecure.audit.destination.solr" : "true",
         "xasecure.audit.destination.solr.zookeepers" : "localhost:2181/infra-solr"
-    },
-    "ranger-ugsync-site": {
-          "ranger.usersync.enabled" : "true",
-          "ranger.usersync.unix.minUserId":"1000",
-          "ranger.usersync.source.impl.class" : "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
-          "ranger.usersync.group.memberattributename" : "member",
-          "ranger.usersync.group.nameattribute" : "cn",
-          "ranger.usersync.group.objectclass" : "group",
-          "ranger.usersync.group.search.first.enabled" : "false",
-          "ranger.usersync.group.searchbase" : "dc=lab,dc=hortonworks,dc=net",
-          "ranger.usersync.group.searchenabled" : "false",
-          "ranger.usersync.group.searchfilter" : "(|(cn=sales)(cn=hadoop-admins)(cn=hadoop-users)(cn=hadoop-user)(cn=hr)(cn=compliance)(cn=analyst)(cn=us_employees)(cn=eu_employees))",
-          "ranger.usersync.group.usermapsyncenabled" : "true",
-          "ranger.usersync.ldap.binddn" : "cn=ldap-reader,ou=ServiceUsers,dc=lab,dc=hortonworks,dc=net",
-          "ranger.usersync.ldap.ldapbindpassword":"BadPass#1",
-          "ranger.usersync.ldap.groupname.caseconversion" : "none",
-          "ranger.usersync.ldap.searchBase" : "dc=lab,dc=hortonworks,dc=net",
-          "ranger.usersync.ldap.url" : "ldap://ad01.lab.hortonworks.net",
-          "ranger.usersync.ldap.user.nameattribute" : "sAMAccountName",
-          "ranger.usersync.ldap.user.objectclass" : "user",
-          "ranger.usersync.ldap.user.searchbase" : "dc=lab,dc=hortonworks,dc=net",
-          "ranger.usersync.ldap.user.searchfilter" : "(objectcategory=person)"
     },
     "application-properties": {
         "atlas.cluster.name.off":"${cluster_name}",
