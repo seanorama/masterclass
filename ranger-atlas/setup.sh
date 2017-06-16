@@ -17,8 +17,6 @@ ambari_password="${ambari_pass}"
 : ${deploy:=true}
 : ${host_count:=skip}
 : ${recommendation_strategy:="ALWAYS_APPLY_DONT_OVERRIDE_CUSTOM_VALUES"}
-: ${install_nifi:=false}
-: ${nifi_version:=1.1.2}
 
 ## overrides
 #export ambari_stack_version=2.6
@@ -81,18 +79,15 @@ if [ "${install_ambari_server}" = "true" ]; then
     sed -i "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
     bash -c "nohup ambari-server restart" || true
     
-    source ~/ambari-bootstrap/extras/ambari_functions.sh
-    until [ $(${ambari_curl}/hosts -o /dev/null -w "%{http_code}") -eq "200" ]; do
+    ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
+    until [ $(ambari_pass=BadPass#1 ${ambari_curl}/hosts -o /dev/null -w "%{http_code}") -eq "200" ]; do
         sleep 1
     done
-    sleep 10
+    ambari_change_pass admin admin ${ambari_pass}
 
     yum -y install postgresql-jdbc
     ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
     ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-    ambari_pass=admin source ~/ambari-bootstrap/extras/ambari_functions.sh
-    ambari_change_pass admin admin ${ambari_pass}
-    sleep 1
 
     cd ~/ambari-bootstrap/deploy
 
@@ -194,18 +189,10 @@ cat << EOF > configuration-custom.json
 }
 EOF
 
+    sleep 1
     ./deploy-recommended-cluster.bash
 
     if [ "${deploy}" = "true" ]; then
-
-
-        if [ "${install_nifi}" = "true" ]; then
-            cd /opt
-            curl -ssLO http://mirrors.ukfast.co.uk/sites/ftp.apache.org/nifi/${nifi_version}/nifi-${nifi_version}-bin.tar.gz
-            tar -xzvf nifi-${nifi_version}-bin.tar.gz
-            sed -i 's/^\(nifi.web.http.port=\).*/\19090/' nifi-${nifi_version}/conf/nifi.properties
-            /opt/nifi-${nifi_version}/bin/nifi.sh start
-        fi
 
         cd ~
         sleep 5
