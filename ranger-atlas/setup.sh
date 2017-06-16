@@ -80,8 +80,12 @@ if [ "${install_ambari_server}" = "true" ]; then
     ## bug workaround:
     sed -i "s/\(^    total_sinks_count = \)0$/\11/" /var/lib/ambari-server/resources/stacks/HDP/2.0.6/services/stack_advisor.py
     bash -c "nohup ambari-server restart" || true
-
-    sleep 60
+    
+    source ~/ambari-bootstrap/extras/ambari_functions.sh
+    until [ $(${ambari_curl}/hosts -o /dev/null -w "%{http_code}") -eq "200" ]; do
+        sleep 1
+    done
+    sleep 10
 
     yum -y install postgresql-jdbc
     ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
