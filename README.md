@@ -35,15 +35,15 @@ For preparing the host(s):
 
 1. Get this repo:
 
-   ```
+```
 git clone https://github.com/seanorama/masterclass
-   ```
+```
 
 1. Switch to the directory of the class, or use 'generic':
 
-    ```
+```
     cd masterclass/generic
-    ```
+```
 
 1. Check for conflicting/existing stacks (same name as what you plan to deploy):
     - Open the CloudFormat Web UI (ensure you have chosen the correct region in the top right)
@@ -54,12 +54,12 @@ git clone https://github.com/seanorama/masterclass
         - this deploys 2 clusters (mc-generic100, mc-generic101) in AWS region us-west-2
     - update 'lab_count' to the number of clusters you want
 
-   ```sh
+```sh
 export AWS_DEFAULT_REGION=us-west-2 ## region to deploy in
 export lab_prefix=mc-generic        ## template for naming the cloudformation stacks
 export lab_first=100                ## number to start at in naming
 export lab_count=2                  ## number of clusters to create
-   ```
+```
 
 2. Set parameters which are passed to CloudFormation:
   - **each class has specific instructions for this**. Below is a generic example.
@@ -68,7 +68,7 @@ export lab_count=2                  ## number of clusters to create
       - AdditionalInstanceCount: How many additional nodes to deploy. (Setting to 2 will deploy 3 nodes total)
       - SubnetId & SecurityGroups: This CloudFormation deploys in an existing Subnet & Security Group. **You must update this to your environment**.
 
-   ```sh
+```sh
 export cfn_parameters='
 [
   {"ParameterKey":"KeyName","ParameterValue":"training-keypair"},
@@ -76,44 +76,44 @@ export cfn_parameters='
   {"ParameterKey":"SubnetId","ParameterValue":"subnet-02edac67"},
   {"ParameterKey":"SecurityGroups","ParameterValue":"sg-a02d17c4"}]
 '
-   ```
+```
 
 1. Provision your clusters
 
-    ```
+```
 ../bin/clusters-create.sh
-    ```
+```
 
 1. Check the build status
     - From the CloudFormation Web UI
     - Or from the command-line:
 
-    ```
+```
 ../bin/cloudformation-status.sh
-    ```
+```
 
 1. Once your clusters are ready, get list of clusters nodes for providing to students:
 
-    ```
+```
 ..bin/clusters-report.sh
-    ```
+```
 
 1. Use the clusters:
    - `ssh centos@ipFromReportAbove` ## use the key which was specified during the build
 
 1. Terminate clusters
 
-    ```
+```
 ..bin/clusters-terminate.sh
-    ```
+```
 
 1. Verify that all clusters are terminated
     - From the AWS CloudFormation Web UI
     - Or from the CLI
 
-    ```
+```
 ../bin/cloudformation-status.sh
-    ```
+```
 
 ########
 
@@ -157,10 +157,10 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 
 * Example using cssh, csshX or tmux-cssh (you'll need to install it)
 
-    ```
+```
 ## for Ambari nodes only:
 ../bin/clusters-report.sh | awk '/^AmbariNode:/ {print $2}' | xargs echo tmux-cssh -u student
-    ```
+```
 
 * After executing you will get a terminal with small windows to all of the clusters.
 * Anything you type will go to all hosts.
@@ -169,9 +169,9 @@ If you suddenly notice that your instances/cloudformations/etc have vanished fro
 
 * Change Ambari to port 8081
 
-  ```
+```
 export TERM=xterm
 echo "client.api.port=8081" | sudo tee -a /etc/ambari-server/conf/ambari.properties
 sudo ambari-server restart
 sudo ambari-agent restart
-  ```
+```
