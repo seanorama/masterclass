@@ -48,10 +48,10 @@ In Ambari:
 - Click "Add Property"
 - Click the icon on the right to use "Bulk property add mode"
 - Add these properties:
-  ```
+ ```
 hadoop.proxyuser.root.groups=users,hadoop-users
 hadoop.proxyuser.root.hosts=*
-  ```
+ ```
 
 ______________________________________________________
 
