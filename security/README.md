@@ -110,10 +110,9 @@ Ambari Server 'sync-ldap' completed successfully.
 Try it out:
 
 - Go give user 'student' read-only rights to Ambari
-- Login to Ambari as the user 'student'
-- See the access
-
-____
+- Login to Ambari as the user `student`
+- Note what accesss they have
+- Logout and then back in as `admin`
 
 <!--
   
@@ -168,7 +167,6 @@ ____
   1. If you are happy with the principals, continue through the Wizard
 
 ______________________________________________________
-
 
 ### Lab: Using Kerberos
 
