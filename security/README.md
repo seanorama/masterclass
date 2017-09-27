@@ -2,49 +2,40 @@
 
 These notes are meant to accompany our Hadoop Security Masterclass.
 
-## Requirements
+____
 
-Tested with:
+## Requirements for lab environment
 
-    - Ambari 2.1.1
-    - HDP 2.3.0
-    - OpenJDK 8
+See [#Deployment Notes] for an automated deployment of lab hosts.
 
-More details on the deployment process at the end of this document.
+- CentOS 7
+- Ambari 2.1.1
+- HDP 2.3.0
+- OpenJDK 8
+- [Ambari Bootstrap](https://seanorama/ambari-bootstrap): `cd ~; git clone https://seanorama/ambari-bootstrap`
 
-Many manual steps are automated using scripts from my [Ambari Bootstrap scripts](https://seanorama/ambari-bootstrap). Clone them to your server with:
-`cd ~; git clone https://seanorama/ambari-bootstrap`
-
-## References
-
-- Ambari
-- Kerberos
-- Ranger
-
-______________________________________________________
+____
 
 ## Labs
-
-______________________________________________________
 
 ### Lab: Access your Lab
 
 1. Console via SSH or Web
   - SSH
     - User: student
-    - Keys: I'll provide a link to them.
-      - SSH users: ssh -i student.pri.key student@hostname
+    - Keys: *provided separately.*
+      - SSH users: ssh -i student.pri.key student@hostname
       - Putty users: configure the 'student.pri.ppk' here: http://i.imgur.com/Pxp8RGu.png
   - If you cannot use SSH, there is a web console:
     - http://hostname:4200
     - User: student
-    - Pass: *the pass we are using throughout the day*
+    - Pass: *provided separately*
 
 1. Ambari: http://yourhost:8080
-  - User: admin
-  - Pass: 
+   - User: admin
+   - Pass: *provided separately*
 
-______________________________________________________
+____
 
 ### Lab: Hadoop proxyuser/superusers & Ambari Views
 
@@ -57,7 +48,6 @@ In Ambari:
 - Click "Add Property"
 - Click the icon on the right to use "Bulk property add mode"
 - Add these properties:
-
   ```
 hadoop.proxyuser.root.groups=users,hadoop-users
 hadoop.proxyuser.root.hosts=*
@@ -540,6 +530,11 @@ ______________________________________________________
 
 
 ## Deployment notes
+
+Many manual steps are automated using [Ambari Bootstrap](https://seanorama/ambari-bootstrap).
+
+Clone them to your server with:
+`cd ~; git clone https://seanorama/ambari-bootstrap`
 
 ### Deploy your host(s)
 
